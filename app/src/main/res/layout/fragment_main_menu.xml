@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <ScrollView
+        android:id="@+id/main_menu_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/main_menu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/story_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/content_description_story_image"/>
+
+            <Button
+                android:id="@+id/continue_story"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/action_continue_story"/>
+
+            <Button
+                android:id="@+id/downloaded_stories"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/action_downloaded_stories"/>
+
+            <Button
+                android:id="@+id/my_stories"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/action_my_stories"/>
+
+            <Button
+                android:id="@+id/about"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/action_about"/>
+
+            <Button
+                android:id="@+id/sign_out"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/action_sign_out"/>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>
