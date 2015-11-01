@@ -27,7 +27,7 @@ public final class Story implements Serializable {
                 theOther.mStoryElements);
     }
 
-    private Story(String theId, String theAuthor, String theTitle, String theDescription,
+    public Story(String theId, String theAuthor, String theTitle, String theDescription,
                   Map<Integer, StoryElement> theStoryElements) {
         mTitle = theTitle;
         mStoryId = theId;

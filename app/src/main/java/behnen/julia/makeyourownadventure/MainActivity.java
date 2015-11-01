@@ -1,16 +1,35 @@
 package behnen.julia.makeyourownadventure;
 
+import android.content.Intent;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements
+        SignInFragment.OnSignInInteractionListener,
+        MainMenuFragment.OnMainMenuInteractionListener {
+
+    public static final String SHOW = "show";
+    public static final String SHOW_SIGN_IN = "SignIn";
+    public static final String SHOW_REGISTER = "Register";
+    public static final String SHOW_MAIN_MENU = "MainMenu";
+    public static final String ABOUT = "About";
+
+    public static final String USERNAME = "Username";
+    public static final String PASSWORD = "Password";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
+        Fragment fragment = new SignInFragment();
+        fm.beginTransaction()
+                .add(R.id.main_fragment_container, fragment)
+                .commit();
     }
 
     @Override
@@ -33,5 +52,51 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    // Sign In callback methods
+
+    @Override
+    public void onSignInSignInAction() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.main_fragment_container, new MainMenuFragment())
+                .commit();
+    }
+
+    @Override
+    public void onSignInRegisterAction(String username, String password) {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.main_fragment_container, new RegisterFragment())
+                .addToBackStack(null)
+                .commit();
+    }
+
+    // Main Menu callback methods
+
+    @Override
+    public void onMainMenuContinueStoryAction() {
+
+    }
+
+    @Override
+    public void onMainMenuDownloadedStoriesAction() {
+
+    }
+
+    @Override
+    public void onMainMenuMyStoriesAction() {
+
+    }
+
+    @Override
+    public void onMainMenuAboutAction() {
+
+    }
+
+    @Override
+    public void onMainMenuSignOutAction() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.main_fragment_container, new SignInFragment())
+                .commit();
     }
 }

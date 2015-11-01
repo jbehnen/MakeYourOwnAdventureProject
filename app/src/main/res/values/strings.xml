@@ -1,11 +1,12 @@
 <resources>
     <string name="app_name">Make Your Own Adventure</string>
 
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
 
     <!-- Strings related to login and registration-->
     <string name="title_activity_login">Sign in</string>
+
+    <string name="content_description_logo">Make Your Own Adventure</string>
 
     <string name="prompt_username">Username</string>
     <string name="prompt_password">Password</string>
@@ -18,4 +19,12 @@
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
+
+    <!--Strings related to the main menu-->
+    <string name="content_description_story_image">Current story image</string>
+    <string name="action_continue_story">Continue story</string>
+    <string name="action_downloaded_stories">Downloaded Stories</string>
+    <string name="action_my_stories">My Stories</string>
+    <string name="action_about">About</string>
+    <string name="action_sign_out">Sign out</string>
 </resources>
