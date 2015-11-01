@@ -23,6 +23,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import behnen.julia.makeyourownadventure.model.Helper;
+
 /**
  * Created by Julia on 10/30/2015.
  */
@@ -133,7 +135,7 @@ public class SignInFragment extends Fragment {
             focusView = mUsernameEditText;
             cancel = true;
 //        } else if (!isEmailValid(email)) {
-//            mEmailView.setError(getString(R.string.error_invalid_username));
+//            mEmailView.setError(getString(R.string.error_invalid_email));
 //            focusView = mEmailView;
 //            cancel = true;
         }
@@ -145,9 +147,8 @@ public class SignInFragment extends Fragment {
             Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
         } else {
             String loginUrl = URL + "?username=" + mUsernameEditText.getText().toString()
-                    + "&password=" + mPasswordEditText.getText().toString();
-            new UserSignInTask(username, password)
-                    .execute(loginUrl);
+                    + "&password=" + Helper.hashPassword(mPasswordEditText.getText().toString());
+            new UserSignInTask().execute(loginUrl);
         }
     }
 
@@ -161,18 +162,10 @@ public class SignInFragment extends Fragment {
     }
 
     /**
-     * Represents an asynchronous login/registration task used to authenticate
+     * Represents an asynchronous login task used to authenticate
      * the user.
      */
     public class UserSignInTask extends AsyncTask<String, Void, String> {
-
-        private final String mEmail;
-        private final String mPassword;
-
-        UserSignInTask(String email, String password) {
-            mEmail = email;
-            mPassword = password;
-        }
 
         @Override
         protected String doInBackground(String...urls) {
@@ -243,7 +236,6 @@ public class SignInFragment extends Fragment {
                     Toast.makeText(getActivity(), "Failed: " + reason,
                             Toast.LENGTH_SHORT).show();
                 }
-                getFragmentManager().popBackStackImmediate();
             } catch (Exception e) {
                 Log.d(TAG, "Parsing JSON Exception" + e.getMessage());
                 Toast.makeText(getActivity(), "Parsing JSON exception: " + s,

@@ -12,15 +12,6 @@ public class MainActivity extends AppCompatActivity implements
         RegisterFragment.OnRegisterInteractionListener,
         MainMenuFragment.OnMainMenuInteractionListener {
 
-    public static final String SHOW = "show";
-    public static final String SHOW_SIGN_IN = "SignIn";
-    public static final String SHOW_REGISTER = "Register";
-    public static final String SHOW_MAIN_MENU = "MainMenu";
-    public static final String ABOUT = "About";
-
-    public static final String USERNAME = "Username";
-    public static final String PASSWORD = "Password";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
