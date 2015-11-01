@@ -88,9 +88,7 @@ public class SignInFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (mCallback != null) {
-                    String username = mUsernameEditText.getText().toString();
-                    String password = mPasswordEditText.getText().toString();
-                    mCallback.onSignInRegisterAction(username, password);
+                    mCallback.onSignInRegisterAction();
                 }
             }
         });
@@ -151,10 +149,6 @@ public class SignInFragment extends Fragment {
             new UserSignInTask(username, password)
                     .execute(loginUrl);
         }
-    }
-
-    public void attemptRegister() {
-
     }
 
     private boolean isEmailValid(String email) {
@@ -259,7 +253,7 @@ public class SignInFragment extends Fragment {
     }
 
     public interface OnSignInInteractionListener {
-        public void onSignInSignInAction();
-        public void onSignInRegisterAction(String username, String password);
+        void onSignInSignInAction();
+        void onSignInRegisterAction();
     }
 }

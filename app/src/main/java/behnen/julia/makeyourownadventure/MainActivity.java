@@ -9,6 +9,7 @@ import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity implements
         SignInFragment.OnSignInInteractionListener,
+        RegisterFragment.OnRegisterInteractionListener,
         MainMenuFragment.OnMainMenuInteractionListener {
 
     public static final String SHOW = "show";
@@ -64,10 +65,19 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onSignInRegisterAction(String username, String password) {
+    public void onSignInRegisterAction() {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.main_fragment_container, new RegisterFragment())
                 .addToBackStack(null)
+                .commit();
+    }
+
+    // Register callback methods
+
+    @Override
+    public void onRegisterRegisterAction() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.main_fragment_container, new MainMenuFragment())
                 .commit();
     }
 

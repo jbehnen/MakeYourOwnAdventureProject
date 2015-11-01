@@ -37,7 +37,9 @@ public class MainMenuFragment extends Fragment {
         mSignOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mCallback.onMainMenuSignOutAction();
+                if (mCallback != null) {
+                    mCallback.onMainMenuSignOutAction();
+                }
             }
         });
 
@@ -51,16 +53,16 @@ public class MainMenuFragment extends Fragment {
             mCallback = (OnMainMenuInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + "must implement OnSignInInteractionListener");
+                    + "must implement OnMainMenuInteractionListener");
         }
     }
 
     public interface OnMainMenuInteractionListener {
-        public void onMainMenuContinueStoryAction();
-        public void onMainMenuDownloadedStoriesAction();
-        public void onMainMenuMyStoriesAction();
-        public void onMainMenuAboutAction();
-        public void onMainMenuSignOutAction();
+        void onMainMenuContinueStoryAction();
+        void onMainMenuDownloadedStoriesAction();
+        void onMainMenuMyStoriesAction();
+        void onMainMenuAboutAction();
+        void onMainMenuSignOutAction();
     }
 
 }
