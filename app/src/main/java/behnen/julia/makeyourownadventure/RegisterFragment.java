@@ -36,7 +36,7 @@ public class RegisterFragment extends Fragment {
     private static final String URL =
             "http://cssgate.insttech.washington.edu/~jbehnen/myoa/php/addUser.php";
 
-    private OnRegisterInteractionListener mCallback;
+    private RegisterInteractionListener mCallback;
 
     private EditText mUsernameEditText;
     private EditText mPasswordEditText;
@@ -108,14 +108,14 @@ public class RegisterFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mCallback = (OnRegisterInteractionListener) activity;
+            mCallback = (RegisterInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + "must implement OnRegisterInteractionListener");
+                    + "must implement RegisterInteractionListener");
         }
     }
 
-    public interface OnRegisterInteractionListener {
+    public interface RegisterInteractionListener {
         void onRegisterRegisterAction();
     }
 

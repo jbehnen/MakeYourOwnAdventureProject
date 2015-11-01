@@ -13,7 +13,7 @@ import android.widget.Button;
  */
 public class MainMenuFragment extends Fragment {
 
-    private OnMainMenuInteractionListener mCallback;
+    private MainMenuInteractionListener mCallback;
 
     private Button mContinueStoryButton;
     private Button mDownloadedStoriesButton;
@@ -34,6 +34,15 @@ public class MainMenuFragment extends Fragment {
         mAboutButton = (Button) v.findViewById(R.id.about);
         mSignOutButton = (Button) v.findViewById(R.id.sign_out);
 
+        mMyStoriesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mCallback != null) {
+                    mCallback.onMainMenuMyStoriesAction();
+                }
+            }
+        });
+
         mSignOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -50,14 +59,14 @@ public class MainMenuFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mCallback = (OnMainMenuInteractionListener) activity;
+            mCallback = (MainMenuInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + "must implement OnMainMenuInteractionListener");
+                    + "must implement MainMenuInteractionListener");
         }
     }
 
-    public interface OnMainMenuInteractionListener {
+    public interface MainMenuInteractionListener {
         void onMainMenuContinueStoryAction();
         void onMainMenuDownloadedStoriesAction();
         void onMainMenuMyStoriesAction();

@@ -16,10 +16,19 @@
             android:orientation="vertical">
 
             <ImageView
-                android:id="@+id/story_image"
+                android:id="@+id/login_logo"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/content_description_story_image"/>
+                android:layout_height="150dp"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/logo"
+                android:contentDescription="@string/content_description_logo">
+            </ImageView>
+
+            <!--<ImageView-->
+                <!--android:id="@+id/story_image"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:contentDescription="@string/content_description_story_image"/>-->
 
             <Button
                 android:id="@+id/continue_story"

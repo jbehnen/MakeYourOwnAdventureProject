@@ -11,22 +11,22 @@ public final class StoryElement implements Serializable {
 
     private final int mId;
     private final String mTitle;
-    private final Bitmap mImage;  // Are bitmaps immutable?
+    private final String mImageUrl;
     private final String mDescription;
     private final boolean mIsEnding;
     private final int[] mChoiceIds;
     private final String[] mChoiceDescriptions;
 
-    public StoryElement(int theId) {
-        this(theId, "", null, "", false, new int[2], new String[2]);
+    public StoryElement(int id) {
+        this(id, "", null, "", false, new int[2], new String[2]);
     }
 
-    public StoryElement(int id, String title, Bitmap image, String description,
+    public StoryElement(int id, String title, String imageUrl, String description,
                          boolean isEnding, int[] choiceIds,
                          String[] theChoiceDescriptions) {
         mId = id;
         mTitle = title;
-        mImage = image;
+        mImageUrl = imageUrl;
         mDescription = description;
         mIsEnding = isEnding;
         mChoiceIds = choiceIds.clone();
@@ -41,8 +41,8 @@ public final class StoryElement implements Serializable {
         return mTitle;
     }
 
-    public Bitmap getImage() {
-        return mImage;
+    public String getImageUrl() {
+        return mImageUrl;
     }
 
     public String getDescription() {

@@ -34,7 +34,7 @@ public class SignInFragment extends Fragment {
     private static final String URL =
             "http://cssgate.insttech.washington.edu/~jbehnen/myoa/php/login.php";
 
-    private OnSignInInteractionListener mCallback;
+    private SignInInteractionListener mCallback;
 
     private EditText mUsernameEditText;
     private EditText mPasswordEditText;
@@ -102,10 +102,10 @@ public class SignInFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mCallback = (OnSignInInteractionListener) activity;
+            mCallback = (SignInInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + "must implement OnSignInInteractionListener");
+                    + "must implement SignInInteractionListener");
         }
     }
 
@@ -212,7 +212,7 @@ public class SignInFragment extends Fragment {
         }
     }
 
-    public interface OnSignInInteractionListener {
+    public interface SignInInteractionListener {
         void onSignInSignInAction();
         void onSignInRegisterAction();
     }

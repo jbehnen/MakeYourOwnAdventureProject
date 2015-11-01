@@ -1,6 +1,7 @@
 package behnen.julia.makeyourownadventure.model;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Created by Julia on 10/31/2015.
@@ -11,7 +12,7 @@ public class Helper {
     private static final int HASH_MOD = 128;
 
     public static String hashPassword(String password) {
-        byte[] bytes = password.getBytes();
+        byte[] bytes = password.getBytes(StandardCharsets.UTF_8);
         if (bytes.length > 0) {
             bytes[0] *= (HASH_MULTIPLIER*127);
             bytes[0] %= HASH_MOD;
@@ -20,13 +21,7 @@ public class Helper {
                 bytes[i] %= HASH_MOD;
             }
         }
-        String output;
-        try {
-            output = new String(bytes, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            output = "";
-        }
-        return output;
+        return new String(bytes, StandardCharsets.UTF_8);
     }
 
 }

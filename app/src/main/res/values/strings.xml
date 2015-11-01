@@ -23,10 +23,19 @@
     <string name="error_field_required">This field is required</string>
 
     <!--Strings related to the main menu-->
-    <string name="content_description_story_image">Current story image</string>
+    <string name="content_description_story_image">Current story imageUrl</string>
     <string name="action_continue_story">Continue story</string>
     <string name="action_downloaded_stories">Downloaded Stories</string>
     <string name="action_my_stories">My Stories</string>
     <string name="action_about">About</string>
     <string name="action_sign_out">Sign out</string>
+
+    <!--Strings related to "My Stories"-->
+    <string name="action_upload_default_story">
+        Upload default story
+    </string>
+    <string name="text_upload_default_story">
+        After you press the button, you can download this story in "Downloaded Stories" using:\n
+        author = [your username], id = default_story
+    </string>
 </resources>

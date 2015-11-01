@@ -1,6 +1,5 @@
 package behnen.julia.makeyourownadventure;
 
-import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,9 +7,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity implements
-        SignInFragment.OnSignInInteractionListener,
-        RegisterFragment.OnRegisterInteractionListener,
-        MainMenuFragment.OnMainMenuInteractionListener {
+        SignInFragment.SignInInteractionListener,
+        RegisterFragment.RegisterInteractionListener,
+        MainMenuFragment.MainMenuInteractionListener,
+        MyStoriesFragment.MyStoriesInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +86,10 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onMainMenuMyStoriesAction() {
-
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.main_fragment_container, new MyStoriesFragment())
+                .addToBackStack(null)
+                .commit();
     }
 
     @Override
