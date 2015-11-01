@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import org.json.JSONObject;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -184,10 +185,10 @@ public class RegisterFragment extends Fragment {
             focusView.requestFocus();
             Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
         } else {
-            String registerUrl = URL + "?username=" + username
-                    + "&email=" + email
-                    + "&password=" + Helper.hashPassword(password);
-            new UserRegisterTask().execute(registerUrl);
+//            String registerUrl = URL + "?username=" + username
+//                    + "&email=" + email
+//                    + "&password=" + Helper.hashPassword(password);
+            new UserRegisterTask().execute(username, Helper.hashPassword(password), email);
         }
     }
 
@@ -210,26 +211,39 @@ public class RegisterFragment extends Fragment {
     public class UserRegisterTask extends AsyncTask<String, Void, String> {
 
         @Override
-        protected String doInBackground(String...urls) {
+        protected String doInBackground(String...params) {
             try {
-                return downloadUrl(urls[0]);
+                return downloadUrl(params[0], params[1], params[2]);
             } catch (IOException e) {
                 return "Unable to retrieve web page. URL may be invalid";
             }
         }
 
-        private String downloadUrl(String myurl) throws IOException {
+        private String downloadUrl(String username, String password, String email)
+                throws IOException {
             InputStream is = null;
             // only display the first 500 chars of the retrieved web page content
             int len = 500;
 
+            // Post request approach adapted from
+            // http://stackoverflow.com/questions/4205980/java-sending-http-parameters-via-post-method-easily
             try {
-                java.net.URL url = new URL(myurl);
+                URL url = new URL(URL);
+                String urlParameters = "username=" + username
+                        + "&password=" + password
+                        + "&email=" + email;
+                byte[] postData = urlParameters.getBytes();
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setReadTimeout(10000);
                 conn.setConnectTimeout(15000);
-                conn.setRequestMethod("GET");
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                conn.setRequestProperty("charset", "utf-8");
+                conn.setRequestProperty("Content-Length", Integer.toString(postData.length));
                 conn.setDoInput(true);
+                conn.setDoOutput(true);
+                DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
+                wr.write(postData);
                 conn.connect();
 
                 int response = conn.getResponseCode();

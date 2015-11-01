@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +14,7 @@ import android.widget.Toast;
 
 import org.json.JSONObject;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -110,55 +110,12 @@ public class SignInFragment extends Fragment {
     }
 
     public void attemptLogin() {
-
-        // Reset errors.
-        mUsernameEditText.setError(null);
-        mPasswordEditText.setError(null);
-
-        // Store values at the time of the login attempt.
         String username = mUsernameEditText.getText().toString();
         String password = mPasswordEditText.getText().toString();
 
-        boolean cancel = false;
-        View focusView = null;
-
-        // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            mPasswordEditText.setError(getString(R.string.error_invalid_password));
-            focusView = mPasswordEditText;
-            cancel = true;
-        }
-
-        // Check for a valid email address.
-        if (TextUtils.isEmpty(username)) {
-            mUsernameEditText.setError(getString(R.string.error_field_required));
-            focusView = mUsernameEditText;
-            cancel = true;
-//        } else if (!isEmailValid(email)) {
-//            mEmailView.setError(getString(R.string.error_invalid_email));
-//            focusView = mEmailView;
-//            cancel = true;
-        }
-
-        if (cancel) {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
-            focusView.requestFocus();
-            Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
-        } else {
-            String loginUrl = URL + "?username=" + mUsernameEditText.getText().toString()
-                    + "&password=" + Helper.hashPassword(mPasswordEditText.getText().toString());
-            new UserSignInTask().execute(loginUrl);
-        }
-    }
-
-    private boolean isEmailValid(String email) {
-        return email.contains("@");
-    }
-
-    private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
-        return password.length() > 4;
+//        String loginUrl = URL + "?username=" + username
+//                    + "&password=" + Helper.hashPassword(password);
+        new UserSignInTask().execute(username, Helper.hashPassword(password));
     }
 
     /**
@@ -168,26 +125,37 @@ public class SignInFragment extends Fragment {
     public class UserSignInTask extends AsyncTask<String, Void, String> {
 
         @Override
-        protected String doInBackground(String...urls) {
+        protected String doInBackground(String...params) {
             try {
-                return downloadUrl(urls[0]);
+                return downloadUrl(params[0], params[1]);
             } catch (IOException e) {
                 return "Unable to retrieve web page. URL may be invalid";
             }
         }
 
-        private String downloadUrl(String myurl) throws IOException {
+        private String downloadUrl(String username, String password) throws IOException {
             InputStream is = null;
             // only display the first 500 chars of the retrieved web page content
             int len = 500;
 
+            // Post request approach adapted from
+            // http://stackoverflow.com/questions/4205980/java-sending-http-parameters-via-post-method-easily
             try {
-                URL url = new URL(myurl);
+                URL url = new URL(URL);
+                String urlParameters = "username=" + username
+                        + "&password=" + password;
+                byte[] postData = urlParameters.getBytes();
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setReadTimeout(10000);
                 conn.setConnectTimeout(15000);
-                conn.setRequestMethod("GET");
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                conn.setRequestProperty("charset", "utf-8");
+                conn.setRequestProperty("Content-Length", Integer.toString(postData.length));
                 conn.setDoInput(true);
+                conn.setDoOutput(true);
+                DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
+                wr.write(postData);
                 conn.connect();
 
                 int response = conn.getResponseCode();
