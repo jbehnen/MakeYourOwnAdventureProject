@@ -2,30 +2,24 @@ package behnen.julia.makeyourownadventure;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
-import android.util.Log;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.ArrayList;
 
 import behnen.julia.makeyourownadventure.data.StoryDB;
 import behnen.julia.makeyourownadventure.model.Story;
-import behnen.julia.makeyourownadventure.support.AbstractPostAsyncTask;
-import behnen.julia.makeyourownadventure.support.AbstractStoryCheckTask;
 
 
 /**
@@ -36,7 +30,7 @@ import behnen.julia.makeyourownadventure.support.AbstractStoryCheckTask;
  * Use the {@link DownloadedStoriesListFragment #newInstance} factory method to
  * create an instance of this fragment.
  */
-public class DownloadedStoriesListFragment extends android.support.v4.app.Fragment
+public class DownloadedStoriesListFragment extends Fragment
         implements AbsListView.OnItemClickListener {
 
     private OnDownloadedStoriesListInteractionListener mCallback;
@@ -46,6 +40,11 @@ public class DownloadedStoriesListFragment extends android.support.v4.app.Fragme
     private String mStories;
     private TextView mStoryErrorText;
     private StoryDB storyDb;
+
+    // Placeholders for demonstration purposes
+    private static final String DEMO_STORY = "demo_story";
+    private Story mDemoStory;
+
     /**
      * The fragment's ListView/GridView.
      */
@@ -56,6 +55,23 @@ public class DownloadedStoriesListFragment extends android.support.v4.app.Fragme
      * Views.
      */
     private ListAdapter mAdapter;
+
+    // placeholder code for demo
+
+    public static DownloadedStoriesListFragment newInstance(String serializedStory) {
+        Bundle args = new Bundle();
+        args.putSerializable(DEMO_STORY, serializedStory);
+
+        DownloadedStoriesListFragment fragment = new DownloadedStoriesListFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -72,9 +88,36 @@ public class DownloadedStoriesListFragment extends android.support.v4.app.Fragme
         mAdapter = new StoryAdapter(view.getContext(), mStoryList);
 
         storyDb = new StoryDB(getContext());
+
+        // placeholder code for demo
+        if (getArguments() != null) {
+            String serializedStory = (String) getArguments().getSerializable(DEMO_STORY);
+            mStoryList.add(new Story(serializedStory));
+        }
+        // end placeholder
+
         loadDatabaseStories();
 
         return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_download_stories_list, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.action_download_new_story:
+                if(mCallback != null) {
+                    mCallback.onDownloadedStoriesListDownloadNewStory();
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -95,9 +138,15 @@ public class DownloadedStoriesListFragment extends android.support.v4.app.Fragme
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        loadDatabaseStories();
+    }
+
+    @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if (null != mCallback) {
-            mCallback.onStorySelected(mStoryList.get(position));
+            mCallback.onDownloadedStoriesListStorySelected(mStoryList.get(position));
         }
     }
 
@@ -113,7 +162,8 @@ public class DownloadedStoriesListFragment extends android.support.v4.app.Fragme
      */
     public interface OnDownloadedStoriesListInteractionListener {
         // TODO: Update argument type and name
-        public void onStorySelected(Story story);
+        public void onDownloadedStoriesListStorySelected(Story story);
+        public void onDownloadedStoriesListDownloadNewStory();
     }
 
     private void loadDatabaseStories() {

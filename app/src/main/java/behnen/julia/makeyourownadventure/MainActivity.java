@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -16,6 +17,8 @@ public class MainActivity extends AppCompatActivity implements
         MyStoriesFragment.MyStoriesInteractionListener,
         DownloadedStoriesListFragment.OnDownloadedStoriesListInteractionListener,
         DownloadStoryFragment.OnDownloadStoryInteractionListener {
+
+    private static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,12 +116,25 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onStorySelected(Story story) {
+    public void onDownloadedStoriesListStorySelected(Story story) {
 
     }
 
     @Override
-    public void onDownloadStoryDownloadSuccess() {
-        getSupportFragmentManager().popBackStackImmediate();
+    public void onDownloadedStoriesListDownloadNewStory() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.main_fragment_container, new DownloadStoryFragment())
+                .addToBackStack(null)
+                .commit();
+    }
+
+    @Override
+    public void onDownloadStoryDownloadSuccess(String serializedStory) {
+        // placeholder until database up and running
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.main_fragment_container,
+                        DownloadedStoriesListFragment.newInstance(serializedStory))
+                .commit();
+//        getSupportFragmentManager().popBackStackImmediate();
     }
 }

@@ -238,6 +238,11 @@ public class MyStoriesFragment extends Fragment {
         defaultStory.addStoryElement(endNow);
         defaultStory.addStoryElement(secondChoice);
         defaultStory.addStoryElement(inevitableEnd);
+
+        String serialized = defaultStory.getSerializedStory();
+        Story story = new Story(serialized);
+        Log.d(TAG, "AUTHOR: " + story.getAuthor());
+
         return defaultStory;
     }
 }

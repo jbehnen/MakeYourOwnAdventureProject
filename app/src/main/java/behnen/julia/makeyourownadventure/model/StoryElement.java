@@ -2,12 +2,18 @@ package behnen.julia.makeyourownadventure.model;
 
 import android.graphics.Bitmap;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.Serializable;
 
 /**
  * Created by Julia on 10/27/2015.
  */
 public final class StoryElement implements Serializable {
+
+    public static final long serialVersionUID = 45212343214451L;
 
     private final int mId;
     private final String mTitle;
@@ -65,4 +71,24 @@ public final class StoryElement implements Serializable {
     public String[] getChoiceDescriptions() {
         return mChoiceDescriptions.clone();
     }
+
+//    public JSONObject toJson() {
+//        JSONObject element;
+//        try {
+//            element = new JSONObject();
+//            element.put("id", mId);
+//            element.put("title", mTitle);
+//            element.put("imageUrl", mImageUrl);
+//            element.put("description", mDescription);
+//            element.put("choiceIds", new JSONArray(mChoiceIds));
+//            element.put("choiceDescriptions", new JSONArray(mChoiceDescriptions));
+//        } catch (JSONException e) {
+//            element = null;
+//        }
+//        return element;
+//    }
+//
+//    public StoryElement parseJson(String json) {
+//
+//    }
 }

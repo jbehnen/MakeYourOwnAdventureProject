@@ -42,5 +42,6 @@
     <!--Strings related to DownloadStoryFragment-->
     <string name="prompt_author">Author</string>
     <string name="prompt_story_id">Story ID</string>
+    <string name="action_download_story">Download</string>
 
 </resources>

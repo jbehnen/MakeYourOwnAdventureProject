@@ -16,6 +16,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
+import behnen.julia.makeyourownadventure.model.Story;
 import behnen.julia.makeyourownadventure.support.AbstractPostAsyncTask;
 import behnen.julia.makeyourownadventure.support.AbstractStoryCheckTask;
 
@@ -104,7 +105,7 @@ public class DownloadStoryFragment extends android.support.v4.app.Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnDownloadStoryInteractionListener {
-        void onDownloadStoryDownloadSuccess();
+        void onDownloadStoryDownloadSuccess(String serializedStory);
     }
 
     public class StoryCheckTask extends AbstractStoryCheckTask {
@@ -165,7 +166,8 @@ public class DownloadStoryFragment extends android.support.v4.app.Fragment {
                     Toast.makeText(getActivity(), "Story downloaded",
                             Toast.LENGTH_SHORT).show();
                     if (mCallback != null) {
-                        mCallback.onDownloadStoryDownloadSuccess();
+                        mCallback.onDownloadStoryDownloadSuccess(jsonObject
+                                .getString("serialized_story"));
                     }
 
                 } else {
@@ -174,8 +176,8 @@ public class DownloadStoryFragment extends android.support.v4.app.Fragment {
                             Toast.LENGTH_SHORT).show();
                 }
             } catch (Exception e) {
-                Log.d(TAG, "Parsing JSON Exception" + e.getMessage());
-                Toast.makeText(getActivity(), "Parsing JSON exception: " + s,
+                Log.d(TAG, "Parsing JSON Exception: " + e.getMessage());
+                Toast.makeText(getActivity(), "Parsing JSON exception",
                         Toast.LENGTH_SHORT).show();
             }
         }
