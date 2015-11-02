@@ -24,7 +24,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import behnen.julia.makeyourownadventure.model.Helper;
+import behnen.julia.makeyourownadventure.support.Helper;
 
 /**
  * Created by Julia on 10/30/2015.

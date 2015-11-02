@@ -1,4 +1,4 @@
-package behnen.julia.makeyourownadventure.model;
+package behnen.julia.makeyourownadventure.support;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;

@@ -21,6 +21,11 @@ public final class StoryElement implements Serializable {
         this(id, "", null, "", false, new int[2], new String[2]);
     }
 
+    // Constructs an ending
+    public StoryElement(int id, String title, String imageUrl, String description) {
+        this(id, title, imageUrl, description, true, new int[2], new String[2]);
+    }
+
     public StoryElement(int id, String title, String imageUrl, String description,
                          boolean isEnding, int[] choiceIds,
                          String[] theChoiceDescriptions) {
