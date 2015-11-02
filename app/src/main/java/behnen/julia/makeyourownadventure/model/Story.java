@@ -1,5 +1,7 @@
 package behnen.julia.makeyourownadventure.model;
 
+import android.annotation.SuppressLint;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -14,7 +16,7 @@ import java.util.Map;
 /**
  * Created by Julia on 10/27/2015.
  */
-public final class Story {
+public final class Story implements Serializable {
 
     public static final int START_ID = 0;
     private final String mAuthor;
@@ -24,6 +26,8 @@ public final class Story {
     private String mDescription;
     private Map<Integer, StoryElement> mStoryElements;
 
+
+    @SuppressLint("UseSparseArrays") // Sparse Arrays aren't Serializable
     public Story(String theId, String theAuthor) {
         this(theId, theAuthor, "", "", new HashMap<Integer, StoryElement>());
         addStoryElement(new StoryElement(START_ID)); // 0 maps to the START story element
@@ -43,13 +47,8 @@ public final class Story {
         mStoryElements = new HashMap<>(theStoryElements);
     }
 
-    public Story(String theId, String theAuthor, String theTitle, String theDescription,
-                 String theSerializedStoryElements) {
-        mTitle = theTitle;
-        mStoryId = theId;
-        mAuthor = theAuthor;
-        mDescription = theDescription;
-        mStoryElements = deserializeStoryElements(theSerializedStoryElements);
+    public Story(String serializedStory) {
+        this(deserializeStory(serializedStory));
     }
 
     public final void addStoryElement(StoryElement storyElement) {
@@ -96,12 +95,12 @@ public final class Story {
         mStoryElements = new HashMap<>(theStoryElements);
     }
 
-    public String getSerializedStoryElements() {
+    public String getSerializedStory() {
         String serialized;
         try {
             ByteArrayOutputStream os = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(os);
-            oos.writeObject(mStoryElements);
+            oos.writeObject(this);
             byte[] serializedBytes = os.toByteArray();
             serialized = new String(serializedBytes, StandardCharsets.UTF_8);
             oos.close();
@@ -112,17 +111,17 @@ public final class Story {
         return serialized;
     }
 
-    private Map<Integer, StoryElement> deserializeStoryElements(String serialized) {
-        Map<Integer, StoryElement> deserialized;
+    private static final Story deserializeStory(String serialized) {
+        Story deserialized;
         byte[] serializedBytes = serialized.getBytes(StandardCharsets.UTF_8);
         try {
             ByteArrayInputStream is = new ByteArrayInputStream(serializedBytes);
             ObjectInputStream ois = new ObjectInputStream(is);
-            deserialized = (HashMap<Integer, StoryElement>) ois.readObject();
+            deserialized = (Story) ois.readObject();
             ois.close();
             is.close();
         } catch (Exception e) {
-            deserialized = new HashMap<>();
+            deserialized = null;
         }
         return deserialized;
     }
