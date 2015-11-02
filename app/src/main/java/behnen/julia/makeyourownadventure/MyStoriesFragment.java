@@ -16,6 +16,7 @@ import java.io.IOException;
 
 import behnen.julia.makeyourownadventure.model.Story;
 import behnen.julia.makeyourownadventure.model.StoryElement;
+import behnen.julia.makeyourownadventure.support.AbstractStoryCheckTask;
 import behnen.julia.makeyourownadventure.support.PostAsyncTask;
 
 /**
@@ -24,12 +25,10 @@ import behnen.julia.makeyourownadventure.support.PostAsyncTask;
 public class MyStoriesFragment extends Fragment {
 
     private static final String TAG = "MyStoriesFragment";
-    private static final String CHECK_STORY_URL =
-            "http://cssgate.insttech.washington.edu/~jbehnen/myoa/php/checkStory.php";
     private static final String UPLOAD_STORY_URL =
-            "http://cssgate.insttech.washington.edu/~jbehnen/myoa/php/checkStory.php";
+            "http://cssgate.insttech.washington.edu/~jbehnen/myoa/php/addStory.php";
     private static final String UPDATE_STORY_URL =
-            "http://cssgate.insttech.washington.edu/~jbehnen/myoa/php/checkStory.php";
+            "http://cssgate.insttech.washington.edu/~jbehnen/myoa/php/updateStory.php";
 
     private MyStoriesInteractionListener mCallback;
     private Button mDefaultStoryButton;
@@ -81,6 +80,7 @@ public class MyStoriesFragment extends Fragment {
                     mUploadingStory.getTitle(), mUploadingStory.getDescription(),
                     mUploadingStory.getSerializedStory());
         }
+        mDefaultStoryButton.setEnabled(true);
     }
 
     private void attemptStoryUpload() {
@@ -88,21 +88,7 @@ public class MyStoriesFragment extends Fragment {
         new StoryCheckTask().execute(defaultStory.getAuthor(), defaultStory.getStoryId());
     }
 
-    public class StoryCheckTask extends PostAsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String...params) {
-            String author = params[0];
-            String storyId = params[1];
-
-            String urlParameters = "author=" + author
-                    + "&story_id=" + storyId;
-            try {
-                return downloadUrl(CHECK_STORY_URL, urlParameters, TAG);
-            } catch (IOException e) {
-                return "Unable to retrieve web page. URL may be invalid";
-            }
-        }
+    public class StoryCheckTask extends AbstractStoryCheckTask {
 
         @Override
         protected void onPostExecute(String s) {
@@ -115,16 +101,18 @@ public class MyStoriesFragment extends Fragment {
                 if (status.equalsIgnoreCase("success")) {
                     Toast.makeText(getActivity(), "Success",
                             Toast.LENGTH_SHORT).show();
-                    afterStoryCheck(Boolean.parseBoolean(jsonObject.getString("storyExists")));
+                    afterStoryCheck(jsonObject.getBoolean("storyExists"));
                 } else {
                     String reason = jsonObject.getString("error");
                     Toast.makeText(getActivity(), "Failed: " + reason,
                             Toast.LENGTH_SHORT).show();
+                    mDefaultStoryButton.setEnabled(true);
                 }
             } catch (Exception e) {
                 Log.d(TAG, "Parsing JSON Exception" + e.getMessage());
                 Toast.makeText(getActivity(), "Parsing JSON exception: " + s,
                         Toast.LENGTH_SHORT).show();
+                mDefaultStoryButton.setEnabled(true);
             }
         }
     }
