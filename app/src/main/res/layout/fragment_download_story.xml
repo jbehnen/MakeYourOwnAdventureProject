@@ -1,0 +1,27 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:orientation="vertical"
+             tools:context="behnen.julia.makeyourownadventure.DownloadStoryFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <EditText
+        android:id="@+id/download_author_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/prompt_author"/>
+
+    <EditText
+        android:id="@+id/download_story_id_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/prompt_story_id"/>
+
+    <Button
+        android:id="@+id/download_story_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Download story"/>
+
+</LinearLayout>

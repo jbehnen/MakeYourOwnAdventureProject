@@ -1,16 +1,21 @@
 package behnen.julia.makeyourownadventure;
 
+import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import behnen.julia.makeyourownadventure.model.Story;
+
 public class MainActivity extends AppCompatActivity implements
         SignInFragment.SignInInteractionListener,
         RegisterFragment.RegisterInteractionListener,
         MainMenuFragment.MainMenuInteractionListener,
-        MyStoriesFragment.MyStoriesInteractionListener {
+        MyStoriesFragment.MyStoriesInteractionListener,
+        DownloadedStoriesListFragment.OnDownloadedStoriesListInteractionListener,
+        DownloadStoryFragment.OnDownloadStoryInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +86,10 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onMainMenuDownloadedStoriesAction() {
-
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.main_fragment_container, new DownloadedStoriesListFragment())
+                .addToBackStack(null)
+                .commit();
     }
 
     @Override
@@ -102,5 +110,15 @@ public class MainActivity extends AppCompatActivity implements
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.main_fragment_container, new SignInFragment())
                 .commit();
+    }
+
+    @Override
+    public void onStorySelected(Story story) {
+
+    }
+
+    @Override
+    public void onDownloadStoryDownloadSuccess() {
+        getSupportFragmentManager().popBackStackImmediate();
     }
 }

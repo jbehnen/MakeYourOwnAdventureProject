@@ -1,7 +1,6 @@
 package behnen.julia.makeyourownadventure;
 
 import android.app.Activity;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -15,16 +14,10 @@ import android.widget.Toast;
 
 import org.json.JSONObject;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 import behnen.julia.makeyourownadventure.support.Helper;
+import behnen.julia.makeyourownadventure.support.AbstractPostAsyncTask;
 
 /**
  * Created by Julia on 10/30/2015.
@@ -77,27 +70,6 @@ public class RegisterFragment extends Fragment {
 
                 attemptRegister();
 
-//                if (mCallback != null) {
-//                    mCallback.onRegisterRegisterAction();
-//                }
-
-                // add the password checks; transfer/adapt logic from sign in
-
-
-//                if (prereqs.length() == 0) prereqs = null;
-//                mCourse = new Course(username, password, longDesc, prereqs);
-//
-//                try {
-//                    mCourseDB.insert(username, password, longDesc, prereqs);
-//                } catch (Exception e) {
-//                    Toast.makeText(v.getContext(), e.toString(), Toast.LENGTH_LONG)
-//                            .show();
-//
-//                    return;
-//                }
-//                Toast.makeText(v.getContext(), "Course added successfully!", Toast.LENGTH_SHORT)
-//                        .show();
-
             }
         });
 
@@ -113,6 +85,12 @@ public class RegisterFragment extends Fragment {
             throw new ClassCastException(activity.toString()
                     + "must implement RegisterInteractionListener");
         }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallback = null;
     }
 
     public interface RegisterInteractionListener {
@@ -185,9 +163,6 @@ public class RegisterFragment extends Fragment {
             focusView.requestFocus();
             Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
         } else {
-//            String registerUrl = URL + "?username=" + username
-//                    + "&email=" + email
-//                    + "&password=" + Helper.hashPassword(password);
             new UserRegisterTask().execute(username, Helper.hashPassword(password), email);
         }
     }
@@ -208,69 +183,18 @@ public class RegisterFragment extends Fragment {
      * Represents an asynchronous login task used to authenticate
      * the user.
      */
-    public class UserRegisterTask extends AsyncTask<String, Void, String> {
+    public class UserRegisterTask extends AbstractPostAsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String...params) {
+            String urlParameters = "username=" + params[0]
+                    + "&password=" + params[1]
+                    + "&email=" + params[2];
             try {
-                return downloadUrl(params[0], params[1], params[2]);
+                return downloadUrl(URL, urlParameters, TAG);
             } catch (IOException e) {
                 return "Unable to retrieve web page. URL may be invalid";
             }
-        }
-
-        private String downloadUrl(String username, String password, String email)
-                throws IOException {
-            InputStream is = null;
-            // only display the first 500 chars of the retrieved web page content
-            int len = 500;
-
-            // Post request approach adapted from
-            // http://stackoverflow.com/questions/4205980/java-sending-http-parameters-via-post-method-easily
-            try {
-                URL url = new URL(URL);
-                String urlParameters = "username=" + username
-                        + "&password=" + password
-                        + "&email=" + email;
-                byte[] postData = urlParameters.getBytes();
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setReadTimeout(10000);
-                conn.setConnectTimeout(15000);
-                conn.setRequestMethod("POST");
-                conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-                conn.setRequestProperty("charset", "utf-8");
-                conn.setRequestProperty("Content-Length", Integer.toString(postData.length));
-                conn.setDoInput(true);
-                conn.setDoOutput(true);
-                DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
-                wr.write(postData);
-                conn.connect();
-
-                int response = conn.getResponseCode();
-                Log.d(TAG, "The response is: " + response);
-                is = conn.getInputStream();
-
-                // Convert the InputStream into a string
-                String contentAsString = readIt(is, len);
-                Log.d(TAG, "The string is: " + contentAsString);
-                return contentAsString;
-            } catch(Exception e) {
-                Log.d(TAG, "Something happened: " + e.getMessage());
-            } finally {
-                if (is != null) {
-                    is.close();
-                }
-            }
-            return null;
-        }
-
-        // Reads an InputStream and converts it to a String
-        public String readIt(InputStream stream, int len) throws IOException, UnsupportedEncodingException {
-            Reader reader = null;
-            reader = new InputStreamReader(stream, "UTF-8");
-            char[] buffer = new char[len];
-            reader.read(buffer);
-            return new String(buffer);
         }
 
         @Override

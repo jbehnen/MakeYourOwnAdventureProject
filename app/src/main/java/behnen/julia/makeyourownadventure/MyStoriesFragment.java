@@ -17,7 +17,7 @@ import java.io.IOException;
 import behnen.julia.makeyourownadventure.model.Story;
 import behnen.julia.makeyourownadventure.model.StoryElement;
 import behnen.julia.makeyourownadventure.support.AbstractStoryCheckTask;
-import behnen.julia.makeyourownadventure.support.PostAsyncTask;
+import behnen.julia.makeyourownadventure.support.AbstractPostAsyncTask;
 
 /**
  * Created by Julia on 11/1/2015.
@@ -67,6 +67,12 @@ public class MyStoriesFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallback = null;
+    }
+
     public interface MyStoriesInteractionListener {
     }
 
@@ -99,8 +105,6 @@ public class MyStoriesFragment extends Fragment {
                 JSONObject jsonObject = new JSONObject(s);
                 String status = jsonObject.getString("result");
                 if (status.equalsIgnoreCase("success")) {
-                    Toast.makeText(getActivity(), "Success",
-                            Toast.LENGTH_SHORT).show();
                     afterStoryCheck(jsonObject.getBoolean("storyExists"));
                 } else {
                     String reason = jsonObject.getString("error");
@@ -120,7 +124,7 @@ public class MyStoriesFragment extends Fragment {
     /**
      * Represents an asynchronous task used to upload a Story.
      */
-    public class StoryUploadTask extends PostAsyncTask<String, Void, String> {
+    public class StoryUploadTask extends AbstractPostAsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String...params) {
@@ -151,7 +155,7 @@ public class MyStoriesFragment extends Fragment {
                 JSONObject jsonObject = new JSONObject(s);
                 String status = jsonObject.getString("result");
                 if (status.equalsIgnoreCase("success")) {
-                    Toast.makeText(getActivity(), "Success",
+                    Toast.makeText(getActivity(), "Story uploaded",
                             Toast.LENGTH_SHORT).show();
                 } else {
                     String reason = jsonObject.getString("error");
@@ -166,7 +170,7 @@ public class MyStoriesFragment extends Fragment {
         }
     }
 
-    public class StoryUpdateTask extends PostAsyncTask<String, Void, String> {
+    public class StoryUpdateTask extends AbstractPostAsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String...params) {
@@ -197,7 +201,7 @@ public class MyStoriesFragment extends Fragment {
                 JSONObject jsonObject = new JSONObject(s);
                 String status = jsonObject.getString("result");
                 if (status.equalsIgnoreCase("success")) {
-                    Toast.makeText(getActivity(), "Success",
+                    Toast.makeText(getActivity(), "Story updated",
                             Toast.LENGTH_SHORT).show();
                 } else {
                     String reason = jsonObject.getString("error");

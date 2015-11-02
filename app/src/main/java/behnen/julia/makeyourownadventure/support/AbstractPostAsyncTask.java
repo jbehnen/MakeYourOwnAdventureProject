@@ -15,7 +15,7 @@ import java.net.URL;
 /**
  * Created by Julia on 11/1/2015.
  */
-public abstract class PostAsyncTask<J, K, L> extends AsyncTask<J, K, L> {
+public abstract class AbstractPostAsyncTask<J, K, L> extends AsyncTask<J, K, L> {
     protected String downloadUrl(String urlString, String urlParameters, String tag) throws IOException {
         InputStream is = null;
         // only display the first 500 chars of the retrieved web page content

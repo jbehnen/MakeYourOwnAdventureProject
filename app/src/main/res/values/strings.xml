@@ -38,4 +38,9 @@
         After you press the button, you can download this story in "Downloaded Stories" using:\n
         author = [your username], id = default_story
     </string>
+
+    <!--Strings related to DownloadStoryFragment-->
+    <string name="prompt_author">Author</string>
+    <string name="prompt_story_id">Story ID</string>
+
 </resources>

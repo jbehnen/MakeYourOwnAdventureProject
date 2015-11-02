@@ -5,7 +5,7 @@ import java.io.IOException;
 /**
  * Created by Julia on 11/1/2015.
  */
-public abstract class AbstractStoryCheckTask extends PostAsyncTask<String, Void, String> {
+public abstract class AbstractStoryCheckTask extends AbstractPostAsyncTask<String, Void, String> {
 
     private static final String TAG = "AbstractStoryCheckTask";
     private static final String CHECK_STORY_URL =

@@ -34,6 +34,15 @@ public class MainMenuFragment extends Fragment {
         mAboutButton = (Button) v.findViewById(R.id.about);
         mSignOutButton = (Button) v.findViewById(R.id.sign_out);
 
+        mDownloadedStoriesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mCallback != null) {
+                    mCallback.onMainMenuDownloadedStoriesAction();
+                }
+            }
+        });
+
         mMyStoriesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -64,6 +73,12 @@ public class MainMenuFragment extends Fragment {
             throw new ClassCastException(activity.toString()
                     + "must implement MainMenuInteractionListener");
         }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallback = null;
     }
 
     public interface MainMenuInteractionListener {
