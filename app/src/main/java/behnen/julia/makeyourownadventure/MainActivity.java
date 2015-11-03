@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onMainMenuDownloadedStoriesAction() {
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.main_fragment_container, new DownloadedStoriesListFragment())
+                .replace(R.id.main_fragment_container, new DownloadStoryFragment())
                 .addToBackStack(null)
                 .commit();
     }

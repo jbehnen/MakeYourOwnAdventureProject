@@ -247,18 +247,18 @@ public class MyStoriesFragment extends Fragment {
     private List<StoryElement> getStoryElements(String author, String storyId) {
         List<StoryElement> storyElements = new ArrayList<>();
         StoryElement start = new StoryElement(author, storyId, 0, "Start of the Story",
-                "/public_html/images/shared/trees_1.jpg",
-                "This is the start of the story," + author + ". End now or make another choice?",
+                "trees_1.jpg",
+                "This is the start of the story, " + author + ". End now or make another choice?",
                 false, 1, 2, "End now", "Another choice");
         StoryElement endNow = new StoryElement(author, storyId, 1, "Start of the Story",
-                "/public_html/images/shared/trees_1.jpg",
+                "trees_1.jpg",
                 "Thanks for making this quick.");
         StoryElement secondChoice = new StoryElement(author, storyId, 2, "You are doomed",
-                "/public_html/images/shared/trees_1.jpg",
+                "trees_1.jpg",
                 "Your next choice will end the game.",
                 false, 3, 3, "End now", "Another choice");
         StoryElement inevitableEnd = new StoryElement(author, storyId, 3, "Start of the Story",
-                "/public_html/images/shared/trees_1.jpg",
+                "trees_1.jpg",
                 "This was inevitable. Thanks for testing this game, " + author + "!");
         storyElements.add(start);
         storyElements.add(endNow);

@@ -111,7 +111,7 @@ public final class StoryElement {
         return element.toString();
     }
 
-    private StoryElement parseJson(String json) {
+    public static final StoryElement parseJson(String json) {
         StoryElement storyElement;
         try {
             JSONObject obj = new JSONObject(json);
