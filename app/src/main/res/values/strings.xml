@@ -41,5 +41,23 @@
     <string name="prompt_author">Author</string>
     <string name="prompt_story_id">Story ID</string>
     <string name="action_download_story">Download</string>
+    <string name="action_play_story">Play (Get first element)</string>
+
+    <string name="label_author">Author: </string>
+    <string name="label_story_id">Story ID: </string>
+    <string name="label_title">Title: </string>
+    <string name="label_description">Description: </string>
+
+    <string name="label_element_id">Element id: </string>
+    <string name="label_image_url">Image url: </string>
+    <string name="label_is_ending">Is ending: </string>
+    <string name="label_choice1_id">Choice 1 element id: </string>
+    <string name="label_choice2_id">Choice 2 element id: </string>
+    <string name="label_choice1_text">Choice 1 text: </string>
+    <string name="label_choice2_text">Choice 2 text: </string>
+
+    <!--Strings related to editing a story-->
+    <string name="prompt_title">Title</string>
+    <string name="prompt_description">Description</string>
 
 </resources>
