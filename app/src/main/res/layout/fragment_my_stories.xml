@@ -15,12 +15,32 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <EditText
+                android:id="@+id/create_story_author_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/prompt_author"/>
+
+            <EditText
+                android:id="@+id/create_story_story_id_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/prompt_story_id"/>
+
             <Button
-                android:id="@+id/default_story_upload_button"
+                android:id="@+id/story_create_button"
                 style="?android:textAppearanceSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/action_upload_default_story"
+                android:text="@string/action_create_story"
+                android:textStyle="bold"/>
+
+            <Button
+                android:id="@+id/story_upload_button"
+                style="?android:textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/action_upload_story"
                 android:textStyle="bold"/>
 
             <TextView

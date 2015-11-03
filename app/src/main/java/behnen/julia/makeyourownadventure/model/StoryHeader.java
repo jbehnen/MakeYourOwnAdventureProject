@@ -3,7 +3,7 @@ package behnen.julia.makeyourownadventure.model;
 /**
  * Created by Julia on 10/27/2015.
  */
-public final class Story {
+public final class StoryHeader {
 
     private static final String TAG = "Story";
 
@@ -13,15 +13,15 @@ public final class Story {
     private final String mTitle;
     private final String mDescription;
 
-    public Story(String theAuthor, String theId) {
+    public StoryHeader(String theAuthor, String theId) {
         this(theAuthor, theId, "", ""); // 0 maps to the START story element
     }
 
-    public Story(Story theOther) {
+    public StoryHeader(StoryHeader theOther) {
         this(theOther.mAuthor, theOther.mStoryId, theOther.mTitle, theOther.mDescription);
     }
 
-    public Story(String theAuthor, String theId, String theTitle, String theDescription) {
+    public StoryHeader(String theAuthor, String theId, String theTitle, String theDescription) {
         mTitle = theTitle;
         mStoryId = theId;
         mAuthor = theAuthor;
@@ -42,10 +42,5 @@ public final class Story {
 
     public String getDescription() {
         return mDescription;
-    }
-
-    public int newStoryElement() {
-        // TODO: implement
-        return -1;
     }
 }

@@ -1,14 +1,12 @@
 package behnen.julia.makeyourownadventure;
 
-import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import behnen.julia.makeyourownadventure.model.Story;
+import behnen.julia.makeyourownadventure.model.StoryHeader;
 
 public class MainActivity extends AppCompatActivity implements
         SignInFragment.SignInInteractionListener,
@@ -116,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onDownloadedStoriesListStorySelected(Story story) {
+    public void onDownloadedStoriesListStorySelected(StoryHeader storyHeader) {
 
     }
 

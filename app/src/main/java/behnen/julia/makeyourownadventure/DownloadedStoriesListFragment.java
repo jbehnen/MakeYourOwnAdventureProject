@@ -19,7 +19,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import behnen.julia.makeyourownadventure.data.StoryDB;
-import behnen.julia.makeyourownadventure.model.Story;
+import behnen.julia.makeyourownadventure.model.StoryHeader;
 
 
 /**
@@ -35,7 +35,7 @@ public class DownloadedStoriesListFragment extends Fragment
 
     private OnDownloadedStoriesListInteractionListener mCallback;
 
-    private ArrayList<Story> mStoryList;
+    private ArrayList<StoryHeader> mStoryHeaderList;
     private ProgressDialog mProgressDialog;
     private String mStories;
     private TextView mStoryErrorText;
@@ -84,8 +84,8 @@ public class DownloadedStoriesListFragment extends Fragment
         mStoriesListView = (ListView) view.findViewById(R.id.story_list_view);
         mStoriesListView.setOnItemClickListener(this);
 
-        mStoryList = new ArrayList<>();
-        mAdapter = new StoryAdapter(view.getContext(), mStoryList);
+        mStoryHeaderList = new ArrayList<>();
+        mAdapter = new StoryAdapter(view.getContext(), mStoryHeaderList);
 
 //        storyDb = new StoryDB(getContext());
 
@@ -146,7 +146,7 @@ public class DownloadedStoriesListFragment extends Fragment
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if (null != mCallback) {
-            mCallback.onDownloadedStoriesListStorySelected(mStoryList.get(position));
+            mCallback.onDownloadedStoriesListStorySelected(mStoryHeaderList.get(position));
         }
     }
 
@@ -162,7 +162,7 @@ public class DownloadedStoriesListFragment extends Fragment
      */
     public interface OnDownloadedStoriesListInteractionListener {
         // TODO: Update argument type and name
-        public void onDownloadedStoriesListStorySelected(Story story);
+        public void onDownloadedStoriesListStorySelected(StoryHeader storyHeader);
         public void onDownloadedStoriesListDownloadNewStory();
     }
 

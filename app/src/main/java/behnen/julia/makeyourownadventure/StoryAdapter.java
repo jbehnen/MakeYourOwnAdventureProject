@@ -9,20 +9,20 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import behnen.julia.makeyourownadventure.model.Story;
+import behnen.julia.makeyourownadventure.model.StoryHeader;
 
 /**
  * Created by Julia on 11/1/2015.
  */
-public class StoryAdapter extends ArrayAdapter<Story> {
+public class StoryAdapter extends ArrayAdapter<StoryHeader> {
 
-    public StoryAdapter(Context context, ArrayList<Story> objects) {
+    public StoryAdapter(Context context, ArrayList<StoryHeader> objects) {
         super(context, 0, objects);
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Story story = getItem(position);
+        StoryHeader storyHeader = getItem(position);
 
         // Check if an existing view is being reused, otherwise inflate the view
         if (convertView == null) {
@@ -36,10 +36,10 @@ public class StoryAdapter extends ArrayAdapter<Story> {
         TextView author = (TextView) convertView.findViewById(R.id.item_story_author);
         TextView id = (TextView) convertView.findViewById(R.id.item_story_id);
 
-        title.setText(story.getTitle());
-        description.setText(story.getDescription());
-        author.setText(story.getAuthor());
-        id.setText(story.getStoryId());
+        title.setText(storyHeader.getTitle());
+        description.setText(storyHeader.getDescription());
+        author.setText(storyHeader.getAuthor());
+        id.setText(storyHeader.getStoryId());
 
         return convertView;
     }

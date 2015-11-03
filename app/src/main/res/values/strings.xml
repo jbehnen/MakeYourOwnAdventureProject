@@ -31,12 +31,10 @@
     <string name="action_sign_out">Sign out</string>
 
     <!--Strings related to "My Stories"-->
-    <string name="action_upload_default_story">
-        Upload default story
-    </string>
+    <string name="action_create_story">Create story</string>
+    <string name="action_upload_story">Upload story</string>
     <string name="text_upload_default_story">
-        After you press the button, you can download this story in "Downloaded Stories" using:\n
-        author = [your username], id = default_story
+        After you press the button, you can download this story in "Bookmarked Stories"
     </string>
 
     <!--Strings related to DownloadStoryFragment-->

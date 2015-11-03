@@ -1,7 +1,6 @@
 package behnen.julia.makeyourownadventure;
 
 import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.util.Log;
@@ -16,7 +15,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
-import behnen.julia.makeyourownadventure.model.Story;
 import behnen.julia.makeyourownadventure.support.AbstractPostAsyncTask;
 import behnen.julia.makeyourownadventure.support.AbstractStoryCheckTask;
 

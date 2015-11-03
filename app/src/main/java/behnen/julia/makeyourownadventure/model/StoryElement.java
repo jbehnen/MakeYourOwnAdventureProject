@@ -46,6 +46,50 @@ public final class StoryElement {
         mChoice2Text = choice2Text;
     }
 
+    public String getChoice2Text() {
+        return mChoice2Text;
+    }
+
+    public String getAuthor() {
+        return mAuthor;
+    }
+
+    public String getStoryId() {
+        return mStoryId;
+    }
+
+    public int getElementId() {
+        return mElementId;
+    }
+
+    public String getTitle() {
+        return mTitle;
+    }
+
+    public String getImageUrl() {
+        return mImageUrl;
+    }
+
+    public String getDescription() {
+        return mDescription;
+    }
+
+    public boolean isEnding() {
+        return mIsEnding;
+    }
+
+    public int getChoice1Id() {
+        return mChoice1Id;
+    }
+
+    public int getChoice2Id() {
+        return mChoice2Id;
+    }
+
+    public String getChoice1Text() {
+        return mChoice1Text;
+    }
+
     public String toJson() {
         JSONObject element;
         try {
