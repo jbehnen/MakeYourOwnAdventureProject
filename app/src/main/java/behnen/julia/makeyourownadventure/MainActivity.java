@@ -130,11 +130,11 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onDownloadStoryDownloadSuccess(String serializedStory) {
-        // placeholder until database up and running
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.main_fragment_container,
-                        DownloadedStoriesListFragment.newInstance(serializedStory))
-                .commit();
-//        getSupportFragmentManager().popBackStackImmediate();
+//        // placeholder until database up and running
+//        getSupportFragmentManager().beginTransaction()
+//                .replace(R.id.main_fragment_container,
+//                        DownloadedStoriesListFragment.newInstance(serializedStory))
+//                .commit();
+////        getSupportFragmentManager().popBackStackImmediate();
     }
 }

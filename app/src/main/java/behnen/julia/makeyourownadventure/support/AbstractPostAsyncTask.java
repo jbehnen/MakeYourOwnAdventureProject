@@ -19,8 +19,7 @@ public abstract class AbstractPostAsyncTask<J, K, L> extends AsyncTask<J, K, L> 
     protected String downloadUrl(String urlString, String urlParameters, String tag) throws IOException {
         InputStream is = null;
 
-        // TODO: fix this stopgap
-        int len = 100000;
+        int len = 4000;
 
         // Post request approach adapted from
         // http://stackoverflow.com/questions/4205980/java-sending-http-parameters-via-post-method-easily

@@ -41,9 +41,9 @@ public class DownloadedStoriesListFragment extends Fragment
     private TextView mStoryErrorText;
     private StoryDB storyDb;
 
-    // Placeholders for demonstration purposes
-    private static final String DEMO_STORY = "demo_story";
-    private Story mDemoStory;
+//    // Placeholders for demonstration purposes
+//    private static final String DEMO_STORY = "demo_story";
+//    private Story mDemoStory;
 
     /**
      * The fragment's ListView/GridView.
@@ -58,14 +58,14 @@ public class DownloadedStoriesListFragment extends Fragment
 
     // placeholder code for demo
 
-    public static DownloadedStoriesListFragment newInstance(String serializedStory) {
-        Bundle args = new Bundle();
-        args.putSerializable(DEMO_STORY, serializedStory);
-
-        DownloadedStoriesListFragment fragment = new DownloadedStoriesListFragment();
-        fragment.setArguments(args);
-        return fragment;
-    }
+//    public static DownloadedStoriesListFragment newInstance(String serializedStory) {
+//        Bundle args = new Bundle();
+//        args.putSerializable(DEMO_STORY, serializedStory);
+//
+//        DownloadedStoriesListFragment fragment = new DownloadedStoriesListFragment();
+//        fragment.setArguments(args);
+//        return fragment;
+//    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -87,16 +87,16 @@ public class DownloadedStoriesListFragment extends Fragment
         mStoryList = new ArrayList<>();
         mAdapter = new StoryAdapter(view.getContext(), mStoryList);
 
-        storyDb = new StoryDB(getContext());
+//        storyDb = new StoryDB(getContext());
 
-        // placeholder code for demo
-        if (getArguments() != null) {
-            String serializedStory = (String) getArguments().getSerializable(DEMO_STORY);
-            mStoryList.add(new Story(serializedStory));
-        }
-        // end placeholder
+//        // placeholder code for demo
+//        if (getArguments() != null) {
+//            String serializedStory = (String) getArguments().getSerializable(DEMO_STORY);
+//            mStoryList.add(new Story(serializedStory));
+//        }
+//        // end placeholder
 
-        loadDatabaseStories();
+//        loadDatabaseStories();
 
         return view;
     }
@@ -137,11 +137,11 @@ public class DownloadedStoriesListFragment extends Fragment
         mCallback = null;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        loadDatabaseStories();
-    }
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        loadDatabaseStories();
+//    }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -166,11 +166,11 @@ public class DownloadedStoriesListFragment extends Fragment
         public void onDownloadedStoriesListDownloadNewStory();
     }
 
-    private void loadDatabaseStories() {
-        ArrayList<Story> databaseStories = storyDb.selectAll();
-        for (Story story: databaseStories) {
-            mStoryList.add(story);
-        }
-        mStoriesListView.setAdapter(mAdapter);
-    }
+//    private void loadDatabaseStories() {
+//        ArrayList<Story> databaseStories = storyDb.selectAll();
+//        for (Story story: databaseStories) {
+//            mStoryList.add(story);
+//        }
+//        mStoriesListView.setAdapter(mAdapter);
+//    }
 }

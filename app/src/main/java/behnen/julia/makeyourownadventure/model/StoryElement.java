@@ -51,16 +51,16 @@ public final class StoryElement {
         try {
             element = new JSONObject();
             element.put("author", mAuthor);
-            element.put("storyId", mStoryId);
-            element.put("elementId", mElementId);
+            element.put("story_id", mStoryId);
+            element.put("element_id", mElementId);
             element.put("title", mTitle);
-            element.put("imageUrl", mImageUrl);
+            element.put("image_url", mImageUrl);
             element.put("description", mDescription);
-            element.put("isEnding", mIsEnding);
-            element.put("choice1Id", mChoice1Id);
-            element.put("choice2Id", mChoice2Id);
-            element.put("choice1Text", mChoice1Text);
-            element.put("choice2Text", mChoice2Text);
+            element.put("is_ending", mIsEnding);
+            element.put("choice1_id", mChoice1Id);
+            element.put("choice2_id", mChoice2Id);
+            element.put("choice1_text", mChoice1Text);
+            element.put("choice2_text", mChoice2Text);
         } catch (JSONException e) {
             element = new JSONObject();
         }
@@ -72,16 +72,16 @@ public final class StoryElement {
         try {
             JSONObject obj = new JSONObject(json);
             String author = obj.getString("author");
-            String storyId = obj.getString("storyId");
-            int elementId = obj.getInt("elementId");
+            String storyId = obj.getString("story_id");
+            int elementId = obj.getInt("element_id");
             String title = obj.getString("title");
-            String imageUrl = obj.getString("imageUrl");
+            String imageUrl = obj.getString("image_url");
             String description = obj.getString("description");
-            boolean isEnding = obj.getBoolean("isEnding");
-            int choice1Id = obj.getInt("choice1Id");
-            int choice2Id = obj.getInt("choice2Id");
-            String choice1Text = obj.getString("choice1Text");
-            String choice2Text = obj.getString("choice2Text");
+            boolean isEnding = obj.getBoolean("is_ending");
+            int choice1Id = obj.getInt("choice1_id");
+            int choice2Id = obj.getInt("choice2_id");
+            String choice1Text = obj.getString("choice1_text");
+            String choice2Text = obj.getString("choice2_text");
             storyElement = new StoryElement(author, storyId, elementId, title, imageUrl,
                     description, isEnding, choice1Id, choice2Id, choice1Text, choice2Text);
         } catch (JSONException e) {
