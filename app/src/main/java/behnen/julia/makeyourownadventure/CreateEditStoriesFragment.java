@@ -1,6 +1,7 @@
 package behnen.julia.makeyourownadventure;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -23,9 +24,9 @@ import behnen.julia.makeyourownadventure.model.StoryElement;
 /**
  * Created by Julia on 11/1/2015.
  */
-public class MyStoriesFragment extends Fragment {
+public class CreateEditStoriesFragment extends Fragment {
 
-    private static final String TAG = "MyStoriesFragment";
+    private static final String TAG = "Cre8EditStoriesFragment";
     private static final String REGISTER_STORY_URL =
             "http://cssgate.insttech.washington.edu/~jbehnen/myoa/php/registerStory.php";
     private static final String UPLOAD_STORY_HEADER_URL =
@@ -69,12 +70,12 @@ public class MyStoriesFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
         try {
-            mCallback = (MyStoriesInteractionListener) activity;
+            mCallback = (MyStoriesInteractionListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
+            throw new ClassCastException(context.toString()
                     + "must implement MyStoriesInteractionListener");
         }
     }
