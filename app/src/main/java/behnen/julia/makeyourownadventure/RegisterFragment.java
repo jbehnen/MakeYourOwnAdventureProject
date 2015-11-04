@@ -1,6 +1,5 @@
 package behnen.julia.makeyourownadventure;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -20,7 +19,10 @@ import java.io.IOException;
 import behnen.julia.makeyourownadventure.support.Helper;
 
 /**
- * Created by Julia on 10/30/2015.
+ * A fragment that allows a new user to register with the app.
+ *
+ * @author Julia Behnen
+ * @version November 4, 2015
  */
 public class RegisterFragment extends Fragment {
 //    private Course mCourse;
@@ -38,7 +40,6 @@ public class RegisterFragment extends Fragment {
     private EditText mPasswordEditText;
     private EditText mPasswordConfirmEditText;
     private EditText mEmailEditText;
-    private Button mRegisterButton;
 
     /**
      * This interface must be implemented by activities that contain this
@@ -61,9 +62,8 @@ public class RegisterFragment extends Fragment {
         mPasswordEditText = (EditText) v.findViewById(R.id.password);
         mPasswordConfirmEditText = (EditText) v.findViewById(R.id.password_confirm);
         mEmailEditText = (EditText) v.findViewById(R.id.email);
-        mRegisterButton = (Button) v.findViewById(R.id.register_button);
 
-//        mCourseDB = new CourseDB(v.getContext());
+        Button mRegisterButton = (Button) v.findViewById(R.id.register_button);
 
         mRegisterButton.setOnClickListener(new View.OnClickListener() {
             @Override

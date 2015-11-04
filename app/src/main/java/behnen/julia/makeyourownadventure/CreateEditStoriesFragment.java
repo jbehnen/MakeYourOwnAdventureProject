@@ -1,6 +1,5 @@
 package behnen.julia.makeyourownadventure;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -21,7 +20,10 @@ import behnen.julia.makeyourownadventure.model.StoryHeader;
 import behnen.julia.makeyourownadventure.model.StoryElement;
 
 /**
- * Created by Julia on 11/1/2015.
+ * [PHASE I DEMO] A fragment that allows users to create and upload a new story.
+ *
+ * @author Julia Behnen
+ * @version November 4, 2015
  */
 public class CreateEditStoriesFragment extends Fragment {
 

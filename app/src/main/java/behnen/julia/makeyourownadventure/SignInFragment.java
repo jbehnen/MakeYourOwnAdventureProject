@@ -1,6 +1,5 @@
 package behnen.julia.makeyourownadventure;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -19,7 +18,10 @@ import java.io.IOException;
 import behnen.julia.makeyourownadventure.support.Helper;
 
 /**
- * Created by Julia on 10/30/2015.
+ * A fragment that allows a new user to sign in to the app.
+ *
+ * @author Julia Behnen
+ * @version November 4, 2015
  */
 public class SignInFragment extends Fragment {
 
@@ -34,8 +36,6 @@ public class SignInFragment extends Fragment {
 
     private EditText mUsernameEditText;
     private EditText mPasswordEditText;
-    private Button mSignInButton;
-    private Button mRegisterButton;
 
     /**
      * This interface must be implemented by activities that contain this
@@ -57,10 +57,9 @@ public class SignInFragment extends Fragment {
 
         mUsernameEditText = (EditText) v.findViewById(R.id.username);
         mPasswordEditText = (EditText) v.findViewById(R.id.password);
-        mSignInButton = (Button) v.findViewById(R.id.sign_in_button);
-        mRegisterButton = (Button) v.findViewById(R.id.register_button);
 
-//        mCourseDB = new CourseDB(v.getContext());
+        Button mSignInButton = (Button) v.findViewById(R.id.sign_in_button);
+        Button mRegisterButton = (Button) v.findViewById(R.id.register_button);
 
         mSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override

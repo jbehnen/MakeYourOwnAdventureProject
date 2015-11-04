@@ -9,7 +9,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 /**
- * Created by Julia on 10/31/2015.
+ * A fragment that provides the central navigation of the app in the form of a menu.
+ *
+ * @author Julia Behnen
+ * @version November 4, 2015
  */
 public class MainMenuFragment extends Fragment {
 
@@ -25,6 +28,7 @@ public class MainMenuFragment extends Fragment {
      * activity.
      */
     public interface MainMenuInteractionListener {
+
         /**
          * Callback triggered when the user has pressed the "Continue Story" button
          * in MainMenuFragment.

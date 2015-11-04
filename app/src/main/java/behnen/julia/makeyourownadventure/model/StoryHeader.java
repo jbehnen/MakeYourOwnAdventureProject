@@ -48,17 +48,6 @@ public final class StoryHeader {
     }
 
     /**
-     * StoryHeader constructor which constructs a StoryHeader with only the minimum required
-     * identification information.
-     *
-     * @param theAuthor The author of the story that this StoryHeader represents.
-     * @param theId The story ID of the story that this StoryHeader represents.
-     */
-    public StoryHeader(String theAuthor, String theId) {
-        this(theAuthor, theId, "", ""); // 0 maps to the START story element
-    }
-
-    /**
      * Returns the StoryHeader's author.
      * @return The StoryHeader's author.
      */
@@ -117,7 +106,7 @@ public final class StoryHeader {
      * @return The StoryHeader encoded in the string if the string can be parsed successfully,
      * null otherwise.
      */
-    public static final StoryHeader parseJson(String json) {
+    public static StoryHeader parseJson(String json) {
         StoryHeader storyHeader;
         try {
             JSONObject obj = new JSONObject(json);

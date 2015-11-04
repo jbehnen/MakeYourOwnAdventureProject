@@ -1,12 +1,10 @@
 package behnen.julia.makeyourownadventure;
 
-import android.app.Activity;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,11 +25,13 @@ import java.net.URL;
 import behnen.julia.makeyourownadventure.model.StoryElement;
 import behnen.julia.makeyourownadventure.model.StoryHeader;
 
-
 /**
+ * [PHASE I DEMO] A fragment that allows users to download a story and view its first element.
  *
+ * @author Julia Behnen
+ * @version November 4, 2015
  */
-public class DownloadStoryFragment extends android.support.v4.app.Fragment {
+public class DownloadStoryFragment extends Fragment {
 
     private static final String TAG = "DownloadStoryFragment";
     private static final String GET_STORY_HEADER_URL =
@@ -298,21 +298,13 @@ public class DownloadStoryFragment extends android.support.v4.app.Fragment {
                     bitmap = BitmapFactory.decodeStream(is);
 
                 } catch (Exception e) {
-                    String response = "Unable to download the image, Reason: "
-                            + e.getMessage();
+                    Toast.makeText(getActivity(), "Unable to download the image, Reason: "
+                            + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
             return bitmap;
         }
 
-
-        /**
-         * It checks to see if there was a problem with the URL(Network) which is when an
-         * exception is caught. If there was an exception, it is displayed in red using the text
-         * view widget. It tries to call the parse Method and checks to see if it was successful.
-         * If not, it displays the exception.
-         * @param bitmap
-         */
         @Override
         protected void onPostExecute(Bitmap bitmap) {
             mDownloadedElementImage.setImageBitmap(bitmap);

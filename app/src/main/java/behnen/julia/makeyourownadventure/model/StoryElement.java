@@ -133,19 +133,6 @@ public final class StoryElement {
     }
 
     /**
-     * StoryElement constructor which constructs a StoryElement with only the minimum required
-     * identification information.
-     *
-     * @param author The author of the story that this StoryElement is associated with.
-     * @param storyId The story ID of the story that this StoryElement is associated with.
-     * @param elementId The element ID of the StoryElement.
-     */
-    public StoryElement(String author, String storyId, int elementId) {
-        this(author, storyId, elementId, "", "", "", false, NO_NEXT_ELEMENT_ID, NO_NEXT_ELEMENT_ID,
-                "", "");
-    }
-
-    /**
      * StoryElement constructor which is sufficient to construct a fully-described ending.
      *
      * @param author The author of the story that this StoryElement is associated with.
@@ -283,7 +270,7 @@ public final class StoryElement {
      * @return The StoryElement encoded in the string if the string can be parsed successfully,
      * null otherwise.
      */
-    public static final StoryElement parseJson(String json) {
+    public static StoryElement parseJson(String json) {
         StoryElement storyElement;
         try {
             JSONObject obj = new JSONObject(json);
