@@ -240,10 +240,26 @@ public class MyStoriesFragment extends Fragment {
         }
     }
 
+    /**
+     * Returns the StoryHeader associated with a given author and story ID in the local
+     * database, or null if it doesn't exist.
+     * @param author The author of the StoryHeader.
+     * @param storyId The story ID of the StoryHeader.
+     * @return The StoryHeader associated with a given author and story ID in the local
+     * database; null if it doesn't exist.
+     */
     private StoryHeader getStoryHeader(String author, String storyId) {
         return new StoryHeader(author, storyId, "Title!", "Description!");
     }
 
+    /**
+     * Returns the list of StoryElement objects associated with a given author and story ID in the
+     * local database, or an empty list if none exist.
+     * @param author The author of the StoryElement objects.
+     * @param storyId The story ID of the StoryElement objects.
+     * @return The list of StoryElement objects associated with a given author and story ID in the
+     * local database; an empty list if none exist.
+     */
     private List<StoryElement> getStoryElements(String author, String storyId) {
         List<StoryElement> storyElements = new ArrayList<>();
         StoryElement start = new StoryElement(author, storyId, 0, "Start of the Story",
