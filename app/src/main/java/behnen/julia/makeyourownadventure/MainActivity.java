@@ -6,8 +6,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import behnen.julia.makeyourownadventure.model.StoryHeader;
-
 /**
  * The main activity for MakeYourOwnAdventure.
  *
@@ -21,7 +19,7 @@ public class MainActivity extends AppCompatActivity implements
         SignInFragment.SignInInteractionListener,
         RegisterFragment.RegisterInteractionListener,
         MainMenuFragment.MainMenuInteractionListener,
-        MyStoriesFragment.MyStoriesInteractionListener,
+        CreateEditStoriesFragment.MyStoriesInteractionListener,
         DownloadStoryFragment.OnDownloadStoryInteractionListener {
 
     /**
@@ -107,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onMainMenuMyStoriesAction() {
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.main_fragment_container, new MyStoriesFragment())
+                .replace(R.id.main_fragment_container, new CreateEditStoriesFragment())
                 .addToBackStack(null)
                 .commit();
     }

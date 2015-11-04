@@ -1,6 +1,7 @@
 package behnen.julia.makeyourownadventure;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -163,12 +164,12 @@ public class DownloadStoryFragment extends android.support.v4.app.Fragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
         try {
-            mCallback = (OnDownloadStoryInteractionListener) activity;
+            mCallback = (OnDownloadStoryInteractionListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
+            throw new ClassCastException(context.toString()
                     + " must implement OnDownloadStoryInteractionListener");
         }
     }
