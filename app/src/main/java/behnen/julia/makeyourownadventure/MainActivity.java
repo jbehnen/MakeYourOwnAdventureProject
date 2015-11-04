@@ -13,7 +13,6 @@ public class MainActivity extends AppCompatActivity implements
         RegisterFragment.RegisterInteractionListener,
         MainMenuFragment.MainMenuInteractionListener,
         MyStoriesFragment.MyStoriesInteractionListener,
-        DownloadedStoriesListFragment.OnDownloadedStoriesListInteractionListener,
         DownloadStoryFragment.OnDownloadStoryInteractionListener {
 
     private static final String TAG = "MainActivity";
@@ -111,28 +110,5 @@ public class MainActivity extends AppCompatActivity implements
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.main_fragment_container, new SignInFragment())
                 .commit();
-    }
-
-    @Override
-    public void onDownloadedStoriesListStorySelected(StoryHeader storyHeader) {
-
-    }
-
-    @Override
-    public void onDownloadedStoriesListDownloadNewStory() {
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.main_fragment_container, new DownloadStoryFragment())
-                .addToBackStack(null)
-                .commit();
-    }
-
-    @Override
-    public void onDownloadStoryDownloadSuccess(String serializedStory) {
-//        // placeholder until database up and running
-//        getSupportFragmentManager().beginTransaction()
-//                .replace(R.id.main_fragment_container,
-//                        DownloadedStoriesListFragment.newInstance(serializedStory))
-//                .commit();
-////        getSupportFragmentManager().popBackStackImmediate();
     }
 }

@@ -136,7 +136,7 @@ public class DownloadStoryFragment extends android.support.v4.app.Fragment {
                     String author = mStoryHeader.getAuthor();
                     String storyId = mStoryHeader.getStoryId();
                     new StoryGetElementTask().execute(author, storyId,
-                            Integer.toString(StoryHeader.START_ID));
+                            Integer.toString(StoryElement.START_ID));
                 }
             }
         });
@@ -200,7 +200,6 @@ public class DownloadStoryFragment extends android.support.v4.app.Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnDownloadStoryInteractionListener {
-        void onDownloadStoryDownloadSuccess(String serializedStory);
     }
 
     public class StoryGetHeaderTask extends AbstractPostAsyncTask<String, Void, String> {

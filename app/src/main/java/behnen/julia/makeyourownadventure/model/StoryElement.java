@@ -4,32 +4,87 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Created by Julia on 10/27/2015.
+ * Describes an immutable story element.
+ *
+ * A story element is an atomic piece of a choose-your-own-adventure story. It can be either a
+ * choice or an ending. A choice element contains two options, each of which points to another
+ * story element. An ending does not. A story element is uniquely identified in a database by
+ * its author, story ID, and element ID, thus only one story element with this combination can
+ * be permanently stored at any time.
+ *
+ * @author Julia Behnen
+ * @version November 4, 2015
  */
 public final class StoryElement {
 
+    /**
+     * The element ID of the StoryElement that starts the story with the same author and story ID.
+     */
+    public static final int START_ID = 0;
+    /**
+     * The element ID used to indicate a non-existent element.
+     */
+    public static final int NO_NEXT_ELEMENT_ID = -1;
+
+    /**
+     * The author of the story that this StoryElement is associated with.
+     */
     private final String mAuthor;
+    /**
+     * The story ID of the story that this StoryElement is associated with.
+     */
     private final String mStoryId;
+    /**
+     * The element ID of the StoryElement.
+     */
     private final int mElementId;
+    /**
+     * The title of the StoryElement.
+     */
     private final String mTitle;
+    /**
+     * The URL of the image used in the StoryElement.
+     */
     private final String mImageUrl;
+    /**
+     * The description of the StoryElement.
+     */
     private final String mDescription;
+    /**
+     * True if the StoryElement is an ending, false otherwise.
+     */
     private final boolean mIsEnding;
+    /**
+     * The element ID of the StoryElement that the first choice points to.
+     */
     private final int mChoice1Id;
+    /**
+     * The element ID of the StoryElement that the second choice points to.
+     */
     private final int mChoice2Id;
+    /**
+     * The text description of the first choice.
+     */
     private final String mChoice1Text;
+    /**
+     * The text description of the second choice.
+     */
     private final String mChoice2Text;
 
-    public StoryElement(String author, String storyId, int elementId) {
-        this(author, storyId, elementId, "", "", "", false, -1, -1, "", "");
-    }
-
-    // Constructs an ending
-    public StoryElement(String author, String storyId, int elementId, String title,
-                        String imageUrl, String description) {
-        this(author, storyId, elementId, title, imageUrl, description, true, -1, -1, "", "");
-    }
-
+    /**
+     * StoryElement constructor.
+     * @param author The author of the story that this StoryElement is associated with.
+     * @param storyId The story ID of the story that this StoryElement is associated with.
+     * @param elementId The element ID of the StoryElement.
+     * @param title The title of the StoryElement.
+     * @param imageUrl The URL of the image used in the StoryElement.
+     * @param description The description of the StoryElement.
+     * @param isEnding True if the StoryElement is an ending, false otherwise.
+     * @param choice1Id The element ID of the StoryElement that the first choice points to.
+     * @param choice2Id The element ID of the StoryElement that the second choice points to.
+     * @param choice1Text The text description of the first choice.
+     * @param choice2Text The text description of the second choice.
+     */
     public StoryElement(String author, String storyId, int elementId, String title, String imageUrl,
                         String description, boolean isEnding, int choice1Id, int choice2Id,
                          String choice1Text, String choice2Text) {
@@ -46,51 +101,130 @@ public final class StoryElement {
         mChoice2Text = choice2Text;
     }
 
-    public String getChoice2Text() {
-        return mChoice2Text;
+    /**
+     * StoryElement constructor which constructs a StoryElement with only the minimum required
+     * identification information.
+     *
+     * @param author The author of the story that this StoryElement is associated with.
+     * @param storyId The story ID of the story that this StoryElement is associated with.
+     * @param elementId The element ID of the StoryElement.
+     */
+    public StoryElement(String author, String storyId, int elementId) {
+        this(author, storyId, elementId, "", "", "", false, NO_NEXT_ELEMENT_ID, NO_NEXT_ELEMENT_ID,
+                "", "");
     }
 
+    /**
+     * StoryElement constructor which can be used to construct an ending.
+     *
+     * @param author The author of the story that this StoryElement is associated with.
+     * @param storyId The story ID of the story that this StoryElement is associated with.
+     * @param elementId The element ID of the StoryElement.
+     * @param title The title of the StoryElement.
+     * @param imageUrl The URL of the image used in the StoryElement.
+     * @param description The description of the StoryElement.
+     */
+    public StoryElement(String author, String storyId, int elementId, String title,
+                        String imageUrl, String description) {
+        this(author, storyId, elementId, title, imageUrl, description, true, NO_NEXT_ELEMENT_ID,
+                NO_NEXT_ELEMENT_ID, "", "");
+    }
+
+    /**
+     * Returns the StoryElement's author.
+     * @return The StoryElement's author.
+     */
     public String getAuthor() {
         return mAuthor;
     }
 
+    /**
+     * Returns the StoryElement's story ID.
+     * @return The StoryElement's story ID.
+     */
     public String getStoryId() {
         return mStoryId;
     }
 
+    /**
+     * Returns the StoryElement's element ID.
+     * @return The StoryElement's element ID.
+     */
     public int getElementId() {
         return mElementId;
     }
 
+    /**
+     * Returns the StoryElement's title.
+     * @return The StoryElement's title.
+     */
     public String getTitle() {
         return mTitle;
     }
 
+    /**
+     * Returns the StoryElement's image URL.
+     * @return The StoryElement's image URL.
+     */
     public String getImageUrl() {
         return mImageUrl;
     }
 
+    /**
+     * Returns the StoryElement's description.
+     * @return The StoryElement's description.
+     */
     public String getDescription() {
         return mDescription;
     }
 
+    /**
+     * Returns true if the StoryElement is an ending, false otherwise.
+     * @return The StoryElement's author.
+     */
     public boolean isEnding() {
         return mIsEnding;
     }
 
+    /**
+     * Returns the StoryElement's choice 1 element ID.
+     * @return The StoryElement's choice 1 element ID.
+     */
     public int getChoice1Id() {
         return mChoice1Id;
     }
 
+    /**
+     * Returns the StoryElement's choice 2 element ID.
+     * @return The StoryElement's choice 2 element ID.
+     */
     public int getChoice2Id() {
         return mChoice2Id;
     }
 
+    /**
+     * Returns the StoryElement's choice 1 text.
+     * @return The StoryElement's choice 1 text.
+     */
     public String getChoice1Text() {
         return mChoice1Text;
     }
 
-    public String toJson() {
+    /**
+     * Returns the StoryElement's choice 2 text.
+     * @return The StoryElement's choice 2 text.
+     */
+    public String getChoice2Text() {
+        return mChoice2Text;
+    }
+
+    /**
+     * Returns the StoryElement object and its member fields as a JSON string.
+     * @return The StoryElement object and its member fields as a JSON string; returns
+     * an empty JSONObject string if a JSON exception is thrown.
+     */
+    @Override
+    public String toString() {
         JSONObject element;
         try {
             element = new JSONObject();
@@ -111,6 +245,13 @@ public final class StoryElement {
         return element.toString();
     }
 
+    /**
+     * Returns the StoryElement that is encoded in a JSON string.
+     * @param json A JSON string; can be parsed to form a StoryElement if encoded using the
+     *             StoryElement toString() format.
+     * @return The StoryElement encoded in the string if the string can be parsed successfully,
+     * null otherwise.
+     */
     public static final StoryElement parseJson(String json) {
         StoryElement storyElement;
         try {
