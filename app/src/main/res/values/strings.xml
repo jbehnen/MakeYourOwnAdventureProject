@@ -27,7 +27,7 @@
     <string name="action_continue_story">Continue story</string>
     <string name="action_the_story_so_far">The Story So Far</string>
     <string name="action_downloaded_stories">Bookmarked Stories</string>
-    <string name="action_my_stories">Create Or Edit A Story</string>
+    <string name="action_my_stories">Create Or Edit Stories</string>
     <string name="action_about">About</string>
     <string name="action_sign_out">Sign out</string>
 

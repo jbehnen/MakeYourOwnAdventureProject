@@ -29,12 +29,7 @@ import behnen.julia.makeyourownadventure.model.StoryHeader;
 
 
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link OnDownloadStoryInteractionListener} interface
- * to handle interaction events.
- * Use the {@link DownloadStoryFragment# newInstance} factory method to
- * create an instance of this fragment.
+ *
  */
 public class DownloadStoryFragment extends android.support.v4.app.Fragment {
 
@@ -90,9 +85,6 @@ public class DownloadStoryFragment extends android.support.v4.app.Fragment {
      * downloaded stories in another fragment.
      */
     StoryHeader mStoryHeader;
-
-
-    private OnDownloadStoryInteractionListener mCallback;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -163,23 +155,6 @@ public class DownloadStoryFragment extends android.support.v4.app.Fragment {
         return view;
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        try {
-            mCallback = (OnDownloadStoryInteractionListener) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString()
-                    + " must implement OnDownloadStoryInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mCallback = null;
-    }
-
     private void downloadHeaderSuccess(StoryHeader storyHeader) {
         if (storyHeader != null) {
             mDownloadedStoryAuthor.setText(storyHeader.getAuthor());
@@ -206,19 +181,6 @@ public class DownloadStoryFragment extends android.support.v4.app.Fragment {
             mDownloadedElementChoice1Text.setText(storyElement.getChoice1Text());
             mDownloadedElementChoice2Text.setText(storyElement.getChoice2Text());
         }
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnDownloadStoryInteractionListener {
     }
 
     public class StoryGetHeaderTask extends AbstractPostAsyncTask<String, Void, String> {
@@ -295,13 +257,11 @@ public class DownloadStoryFragment extends android.support.v4.app.Fragment {
                 JSONObject jsonObject = new JSONObject(s);
                 String status = jsonObject.getString("result");
                 if (status.equalsIgnoreCase("success")) {
-                    if (mCallback != null) {
-                        String elementString = jsonObject.getString("storyElement");
-                        StoryElement element = StoryElement.parseJson(elementString);
-                        Toast.makeText(getActivity(), "Success",
-                                Toast.LENGTH_SHORT).show();
-                        downloadElementSuccess(element);
-                    }
+                    String elementString = jsonObject.getString("storyElement");
+                    StoryElement element = StoryElement.parseJson(elementString);
+                    Toast.makeText(getActivity(), "Success",
+                            Toast.LENGTH_SHORT).show();
+                    downloadElementSuccess(element);
 
                 } else {
                     String reason = jsonObject.getString("error");
@@ -318,9 +278,7 @@ public class DownloadStoryFragment extends android.support.v4.app.Fragment {
     }
 
     /**
-     * Running the loading of the JSON in a separate thread.
-     * Code adapted from http://www.vogella.com/tutorials/AndroidBackgroundProcessing/article.html
-     * Code re-adapted from CSSAppWithFragments
+     * An asynchronous task for downloading a story element image.
      */
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
 

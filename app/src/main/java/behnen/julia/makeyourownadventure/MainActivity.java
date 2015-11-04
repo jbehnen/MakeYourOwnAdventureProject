@@ -18,14 +18,7 @@ import android.view.MenuItem;
 public class MainActivity extends AppCompatActivity implements
         SignInFragment.SignInInteractionListener,
         RegisterFragment.RegisterInteractionListener,
-        MainMenuFragment.MainMenuInteractionListener,
-        CreateEditStoriesFragment.MyStoriesInteractionListener,
-        DownloadStoryFragment.OnDownloadStoryInteractionListener {
-
-    /**
-     * The tag used for logging.
-     */
-    private static final String TAG = "MainActivity";
+        MainMenuFragment.MainMenuInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements
         return super.onOptionsItemSelected(item);
     }
 
-    // Sign In callback methods
+    // SignInFragment callback methods
 
     @Override
     public void onSignInSignInAction() {
@@ -78,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements
                 .commit();
     }
 
-    // Register callback methods
+    // RegisterFragment callback methods
 
     @Override
     public void onRegisterRegisterAction() {
@@ -87,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements
                 .commit();
     }
 
-    // Main Menu callback methods
+    // MainMenuFragment callback methods
 
     @Override
     public void onMainMenuContinueStoryAction() {
@@ -95,7 +88,12 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onMainMenuDownloadedStoriesAction() {
+    public void onMainMenuStorySoFarAction() {
+
+    }
+
+    @Override
+    public void onMainMenuBookmarkedStoriesAction() {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.main_fragment_container, new DownloadStoryFragment())
                 .addToBackStack(null)
@@ -103,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onMainMenuMyStoriesAction() {
+    public void onMainMenuCreateEditStoriesAction() {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.main_fragment_container, new CreateEditStoriesFragment())
                 .addToBackStack(null)

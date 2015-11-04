@@ -33,8 +33,6 @@ public class CreateEditStoriesFragment extends Fragment {
     private static final String UPLOAD_STORY_ELEMENT_URL =
             "http://cssgate.insttech.washington.edu/~jbehnen/myoa/php/uploadStoryElement.php";
 
-    private MyStoriesInteractionListener mCallback;
-
     private EditText mAuthorEditText;
     private EditText mStoryIdEditText;
 
@@ -67,26 +65,6 @@ public class CreateEditStoriesFragment extends Fragment {
         return v;
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        try {
-            mCallback = (MyStoriesInteractionListener) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString()
-                    + "must implement MyStoriesInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mCallback = null;
-    }
-
-    public interface MyStoriesInteractionListener {
-    }
-
     private void attemptStoryRegister() {
         String author = mAuthorEditText.getText().toString();
         String storyId = mStoryIdEditText.getText().toString();
@@ -94,14 +72,17 @@ public class CreateEditStoriesFragment extends Fragment {
         new StoryRegisterTask().execute(author, storyId);
     }
 
+    /**
+     * Attempts to upload a story: both the story header and the story elements. The
+     * story elements are uploaded first. If all of the story elements are uploaded
+     * successfully, then the story header is uploaded.
+     */
     private void attemptStoryUpload() {
         String author = mAuthorEditText.getText().toString();
         String storyId = mStoryIdEditText.getText().toString();
         StoryHeader storyHeader = getStoryHeader(author, storyId);
-
-        new StoryHeaderUploadTask().execute(author, storyId, storyHeader.getTitle(),
-                storyHeader.getDescription());
-
+        // todo: mark story as "final" (no longer editable) in database in case
+        // full upload does not work the first time
         List<StoryElement> storyElements = getStoryElements(author, storyId);
 
         for (StoryElement element: storyElements) {
@@ -112,6 +93,12 @@ public class CreateEditStoriesFragment extends Fragment {
                     Integer.toString(element.getChoice2Id()),
                     element.getChoice1Text(), element.getChoice2Text());
         }
+
+        //TODO: if all story elements deleted from local database (proxy for "uploaded"),
+        // THEN and ONLY upload the story header. Then delete the story from create/edit list.
+        new StoryHeaderUploadTask().execute(author, storyId, storyHeader.getTitle(),
+                storyHeader.getDescription());
+
     }
 
     /**

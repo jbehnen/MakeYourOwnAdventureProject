@@ -27,12 +27,26 @@ public class SignInFragment extends Fragment {
     private static final String URL =
             "http://cssgate.insttech.washington.edu/~jbehnen/myoa/php/login.php";
 
+    /**
+     * The context which implements the interface methods.
+     */
     private SignInInteractionListener mCallback;
 
     private EditText mUsernameEditText;
     private EditText mPasswordEditText;
     private Button mSignInButton;
     private Button mRegisterButton;
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     */
+    public interface SignInInteractionListener {
+        void onSignInSignInAction();
+        void onSignInRegisterAction();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -143,10 +157,5 @@ public class SignInFragment extends Fragment {
                         Toast.LENGTH_SHORT).show();
             }
         }
-    }
-
-    public interface SignInInteractionListener {
-        void onSignInSignInAction();
-        void onSignInRegisterAction();
     }
 }

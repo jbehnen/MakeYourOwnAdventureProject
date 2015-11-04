@@ -29,6 +29,9 @@ public class RegisterFragment extends Fragment {
     private static final String URL =
             "http://cssgate.insttech.washington.edu/~jbehnen/myoa/php/addUser.php";
 
+    /**
+     * The context which implements the interface methods.
+     */
     private RegisterInteractionListener mCallback;
 
     private EditText mUsernameEditText;
@@ -36,6 +39,16 @@ public class RegisterFragment extends Fragment {
     private EditText mPasswordConfirmEditText;
     private EditText mEmailEditText;
     private Button mRegisterButton;
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     */
+    public interface RegisterInteractionListener {
+        void onRegisterRegisterAction();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -175,12 +188,8 @@ public class RegisterFragment extends Fragment {
         return password.length() > 4;
     }
 
-    public interface RegisterInteractionListener {
-        void onRegisterRegisterAction();
-    }
-
     /**
-     * Represents an asynchronous login task used to authenticate
+     * Represents an asynchronous login task used to register
      * the user.
      */
     public class UserRegisterTask extends AbstractPostAsyncTask<String, Void, String> {
