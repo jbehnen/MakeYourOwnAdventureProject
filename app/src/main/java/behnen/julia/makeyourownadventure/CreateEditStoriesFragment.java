@@ -1,6 +1,5 @@
 package behnen.julia.makeyourownadventure;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -38,8 +37,6 @@ public class CreateEditStoriesFragment extends Fragment {
 
     private EditText mAuthorEditText;
     private EditText mStoryIdEditText;
-    private Button mCreateStoryButton;
-    private Button mUploadStoryButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -50,8 +47,9 @@ public class CreateEditStoriesFragment extends Fragment {
 
         mAuthorEditText = (EditText) v.findViewById(R.id.create_story_author_edit_text);
         mStoryIdEditText = (EditText) v.findViewById(R.id.create_story_story_id_edit_text);
-        mCreateStoryButton = (Button) v.findViewById(R.id.story_create_button);
-        mUploadStoryButton = (Button) v.findViewById(R.id.story_upload_button);
+
+        Button mCreateStoryButton = (Button) v.findViewById(R.id.story_create_button);
+        Button mUploadStoryButton = (Button) v.findViewById(R.id.story_upload_button);
 
         mCreateStoryButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -277,6 +275,11 @@ public class CreateEditStoriesFragment extends Fragment {
                 if (status.equalsIgnoreCase("success")) {
                     Toast.makeText(getActivity(), "Story element uploaded",
                             Toast.LENGTH_SHORT).show();
+                    // TODO: delete element from local database after successful upload. Then,
+                    // once all of the uploads have been attempted (or a set period of time),
+                    // check the database and see if any elements are remaining. If none are
+                    // left, delete the story header from local storage (give user a head's up
+                    // first, let them move it to bookmarked stories).
                 } else {
                     String reason = jsonObject.getString("error");
                     Toast.makeText(getActivity(), "Failed: " + reason,
