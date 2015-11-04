@@ -28,11 +28,11 @@ public class MainMenuFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_main_menu, container, false);
 
-        mContinueStoryButton = (Button) v.findViewById(R.id.continue_story);
-        mDownloadedStoriesButton = (Button) v.findViewById(R.id.downloaded_stories);
-        mMyStoriesButton = (Button) v.findViewById(R.id.my_stories);
-        mAboutButton = (Button) v.findViewById(R.id.about);
-        mSignOutButton = (Button) v.findViewById(R.id.sign_out);
+        mContinueStoryButton = (Button) v.findViewById(R.id.main_menu_continue_story_button);
+        mDownloadedStoriesButton = (Button) v.findViewById(R.id.main_menu_bookmarked_stories_button);
+        mMyStoriesButton = (Button) v.findViewById(R.id.main_menu_create_edit_stories_button);
+        mAboutButton = (Button) v.findViewById(R.id.main_menu_about_button);
+        mSignOutButton = (Button) v.findViewById(R.id.main_menu_sign_out_button);
 
         mDownloadedStoriesButton.setOnClickListener(new View.OnClickListener() {
             @Override

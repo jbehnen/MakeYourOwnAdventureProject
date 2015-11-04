@@ -17,7 +17,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 import behnen.julia.makeyourownadventure.support.Helper;
-import behnen.julia.makeyourownadventure.support.AbstractPostAsyncTask;
 
 /**
  * Created by Julia on 10/30/2015.
@@ -93,10 +92,6 @@ public class RegisterFragment extends Fragment {
         mCallback = null;
     }
 
-    public interface RegisterInteractionListener {
-        void onRegisterRegisterAction();
-    }
-
     private void attemptRegister() {
         // Reset errors.
         mUsernameEditText.setError(null);
@@ -163,7 +158,7 @@ public class RegisterFragment extends Fragment {
             focusView.requestFocus();
             Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
         } else {
-            new UserRegisterTask().execute(username, Helper.hashPassword(password), email);
+            new UserRegisterTask().execute(username, Helper.encryptPassword(password), email);
         }
     }
 
@@ -177,6 +172,10 @@ public class RegisterFragment extends Fragment {
 
     private boolean isPasswordValid(String password) {
         return password.length() > 4;
+    }
+
+    public interface RegisterInteractionListener {
+        void onRegisterRegisterAction();
     }
 
     /**

@@ -1,24 +1,34 @@
 package behnen.julia.makeyourownadventure.support;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
 /**
- * Created by Julia on 10/31/2015.
+ * Static helper methods shared between multiple classes.
+ *
+ * @author Julia Behnen
+ * @version November 3, 2015
  */
 public class Helper {
 
-    private static final int HASH_MULTIPLIER = 37;
-    private static final int HASH_MOD = 128;
+    /**
+     * Encrypts and returns a string.
+     *
+     * The string is encrypted the same way each time and uses UTF-8 encoding.
+     *
+     * @param string The string to be encrypted.
+     * @return The encrypted string.
+     */
+    public static String encryptPassword(String string) {
+        final int multiplier = 37;
+        final int mod = 128;
 
-    public static String hashPassword(String password) {
-        byte[] bytes = password.getBytes(StandardCharsets.UTF_8);
+        byte[] bytes = string.getBytes(StandardCharsets.UTF_8);
         if (bytes.length > 0) {
-            bytes[0] *= (HASH_MULTIPLIER*127);
-            bytes[0] %= HASH_MOD;
+            bytes[0] *= (multiplier *127);
+            bytes[0] %= mod;
             for (int i = 1; i < bytes.length; i++) {
-                bytes[i] *= (HASH_MULTIPLIER * bytes[i-1]);
-                bytes[i] %= HASH_MOD;
+                bytes[i] *= (multiplier * bytes[i-1]);
+                bytes[i] %= mod;
             }
         }
         return new String(bytes, StandardCharsets.UTF_8);

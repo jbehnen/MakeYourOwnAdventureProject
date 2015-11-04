@@ -16,7 +16,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 import behnen.julia.makeyourownadventure.support.Helper;
-import behnen.julia.makeyourownadventure.support.AbstractPostAsyncTask;
 
 /**
  * Created by Julia on 10/30/2015.
@@ -98,7 +97,7 @@ public class SignInFragment extends Fragment {
         String username = mUsernameEditText.getText().toString();
         String password = mPasswordEditText.getText().toString();
 
-        new UserSignInTask().execute(username, Helper.hashPassword(password));
+        new UserSignInTask().execute(username, Helper.encryptPassword(password));
     }
 
     /**

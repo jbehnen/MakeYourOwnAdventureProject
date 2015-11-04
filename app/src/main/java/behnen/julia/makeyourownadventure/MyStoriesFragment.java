@@ -19,7 +19,6 @@ import java.util.List;
 
 import behnen.julia.makeyourownadventure.model.StoryHeader;
 import behnen.julia.makeyourownadventure.model.StoryElement;
-import behnen.julia.makeyourownadventure.support.AbstractPostAsyncTask;
 
 /**
  * Created by Julia on 11/1/2015.
@@ -114,6 +113,56 @@ public class MyStoriesFragment extends Fragment {
                     Integer.toString(element.getChoice2Id()),
                     element.getChoice1Text(), element.getChoice2Text());
         }
+    }
+
+    /**
+     * Returns the StoryHeader associated with a given author and story ID in the local
+     * database, or null if it doesn't exist.
+     * @param author The author of the StoryHeader.
+     * @param storyId The story ID of the StoryHeader.
+     * @return The StoryHeader associated with a given author and story ID in the local
+     * database; null if it doesn't exist.
+     */
+    private StoryHeader getStoryHeader(String author, String storyId) {
+
+        // For demo purposes, sample StoryHeader is generated.
+
+        return new StoryHeader(author, storyId, "Title!", "Description!");
+    }
+
+    /**
+     * Returns the list of StoryElement objects associated with a given author and story ID in the
+     * local database, or an empty list if none exist.
+     * @param author The author of the StoryElement objects.
+     * @param storyId The story ID of the StoryElement objects.
+     * @return The list of StoryElement objects associated with a given author and story ID in the
+     * local database; an empty list if none exist.
+     */
+    private List<StoryElement> getStoryElements(String author, String storyId) {
+
+        // For demo purposes, a sample List is generated
+
+        List<StoryElement> storyElements = new ArrayList<>();
+        StoryElement start = new StoryElement(author, storyId, 0, "Start of the Story",
+                "trees_1.jpg",
+                "This is the start of the story, " + author + ". End now or make another choice?",
+                1, 2, "End now", "Another choice");
+        StoryElement endNow = new StoryElement(author, storyId, 1, "Start of the Story",
+                "trees_1.jpg",
+                "Thanks for making this quick.");
+        StoryElement secondChoice = new StoryElement(author, storyId, 2, "You are doomed",
+                "trees_1.jpg",
+                "Your next choice will end the game.",
+                3, 3, "End now", "Another choice");
+        StoryElement inevitableEnd = new StoryElement(author, storyId, 3, "Start of the Story",
+                "trees_1.jpg",
+                "This was inevitable. Thanks for testing this game, " + author + "!");
+        storyElements.add(start);
+        storyElements.add(endNow);
+        storyElements.add(secondChoice);
+        storyElements.add(inevitableEnd);
+
+        return storyElements;
     }
 
     public class StoryRegisterTask extends AbstractPostAsyncTask<String, Void, String> {
@@ -238,49 +287,5 @@ public class MyStoriesFragment extends Fragment {
                         Toast.LENGTH_SHORT).show();
             }
         }
-    }
-
-    /**
-     * Returns the StoryHeader associated with a given author and story ID in the local
-     * database, or null if it doesn't exist.
-     * @param author The author of the StoryHeader.
-     * @param storyId The story ID of the StoryHeader.
-     * @return The StoryHeader associated with a given author and story ID in the local
-     * database; null if it doesn't exist.
-     */
-    private StoryHeader getStoryHeader(String author, String storyId) {
-        return new StoryHeader(author, storyId, "Title!", "Description!");
-    }
-
-    /**
-     * Returns the list of StoryElement objects associated with a given author and story ID in the
-     * local database, or an empty list if none exist.
-     * @param author The author of the StoryElement objects.
-     * @param storyId The story ID of the StoryElement objects.
-     * @return The list of StoryElement objects associated with a given author and story ID in the
-     * local database; an empty list if none exist.
-     */
-    private List<StoryElement> getStoryElements(String author, String storyId) {
-        List<StoryElement> storyElements = new ArrayList<>();
-        StoryElement start = new StoryElement(author, storyId, 0, "Start of the Story",
-                "trees_1.jpg",
-                "This is the start of the story, " + author + ". End now or make another choice?",
-                false, 1, 2, "End now", "Another choice");
-        StoryElement endNow = new StoryElement(author, storyId, 1, "Start of the Story",
-                "trees_1.jpg",
-                "Thanks for making this quick.");
-        StoryElement secondChoice = new StoryElement(author, storyId, 2, "You are doomed",
-                "trees_1.jpg",
-                "Your next choice will end the game.",
-                false, 3, 3, "End now", "Another choice");
-        StoryElement inevitableEnd = new StoryElement(author, storyId, 3, "Start of the Story",
-                "trees_1.jpg",
-                "This was inevitable. Thanks for testing this game, " + author + "!");
-        storyElements.add(start);
-        storyElements.add(endNow);
-        storyElements.add(secondChoice);
-        storyElements.add(inevitableEnd);
-
-        return storyElements;
     }
 }

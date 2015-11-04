@@ -1,4 +1,4 @@
-package behnen.julia.makeyourownadventure.support;
+package behnen.julia.makeyourownadventure;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -13,16 +13,31 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * Created by Julia on 11/1/2015.
+ * Represents an asynchronous POST request.
+ *
+ * @author Julia Behnen
+ * @version November 4, 2015
  */
 public abstract class AbstractPostAsyncTask<J, K, L> extends AsyncTask<J, K, L> {
-    protected String downloadUrl(String urlString, String urlParameters, String tag) throws IOException {
+
+    /**
+     * Downloads and returns content from the specified URL using a POST request.
+     * @param urlString The URL target of the POST request.
+     * @param urlParameters The parameters of the POST request formatted as a GET query (?q=p&r=t)
+     * @param tag The tag used for logging output.
+     * @return The POST response as a string; null if failure.
+     * @throws IOException
+     */
+    protected String downloadUrl(String urlString, String urlParameters, String tag)
+            throws IOException {
         InputStream is = null;
 
+        // Cutoff for characters returned
         int len = 4000;
 
         // Post request approach adapted from
-        // http://stackoverflow.com/questions/4205980/java-sending-http-parameters-via-post-method-easily
+        // http://stackoverflow.com/questions/4205980/
+        // java-sending-http-parameters-via-post-method-easily
         try {
             URL url = new URL(urlString);
             byte[] postData = urlParameters.getBytes();
@@ -57,9 +72,16 @@ public abstract class AbstractPostAsyncTask<J, K, L> extends AsyncTask<J, K, L> 
         return null;
     }
 
-    // Reads an InputStream and converts it to a String
-    public String readIt(InputStream stream, int len) throws IOException, UnsupportedEncodingException {
-        Reader reader = null;
+    /**
+     * Reads an InputStream and converts it to a String of with a set maximum length.
+     * @param stream The stream to be read.
+     * @param len The maximum characters in the returned string; the cutoff value
+     *            for the amount of the stream that is read.
+     * @return A string containing the contents of the input stream up to length len.
+     * @throws IOException
+     */
+    public String readIt(InputStream stream, int len) throws IOException {
+        Reader reader;
         reader = new InputStreamReader(stream, "UTF-8");
         char[] buffer = new char[len];
         reader.read(buffer);

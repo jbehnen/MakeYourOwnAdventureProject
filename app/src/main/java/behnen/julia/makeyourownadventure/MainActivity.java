@@ -8,6 +8,15 @@ import android.view.MenuItem;
 
 import behnen.julia.makeyourownadventure.model.StoryHeader;
 
+/**
+ * The main activity for MakeYourOwnAdventure.
+ *
+ * This is the only activity for the app, it contains and manages all of the fragments
+ * that build the app.
+ *
+ * @author Julia Behnen
+ * @version November 4, 2015
+ */
 public class MainActivity extends AppCompatActivity implements
         SignInFragment.SignInInteractionListener,
         RegisterFragment.RegisterInteractionListener,
@@ -15,6 +24,9 @@ public class MainActivity extends AppCompatActivity implements
         MyStoriesFragment.MyStoriesInteractionListener,
         DownloadStoryFragment.OnDownloadStoryInteractionListener {
 
+    /**
+     * The tag used for logging.
+     */
     private static final String TAG = "MainActivity";
 
     @Override

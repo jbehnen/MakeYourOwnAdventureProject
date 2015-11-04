@@ -31,31 +31,37 @@
                 <!--android:contentDescription="@string/content_description_story_image"/>-->
 
             <Button
-                android:id="@+id/continue_story"
+                android:id="@+id/main_menu_continue_story_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/action_continue_story"/>
 
             <Button
-                android:id="@+id/downloaded_stories"
+                android:id="@+id/main_menu_the_story_so_far_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/action_the_story_so_far"/>
+
+            <Button
+                android:id="@+id/main_menu_bookmarked_stories_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/action_downloaded_stories"/>
 
             <Button
-                android:id="@+id/my_stories"
+                android:id="@+id/main_menu_create_edit_stories_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/action_my_stories"/>
 
             <Button
-                android:id="@+id/about"
+                android:id="@+id/main_menu_about_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/action_about"/>
 
             <Button
-                android:id="@+id/sign_out"
+                android:id="@+id/main_menu_sign_out_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/action_sign_out"/>

@@ -25,7 +25,6 @@ import java.net.URL;
 
 import behnen.julia.makeyourownadventure.model.StoryElement;
 import behnen.julia.makeyourownadventure.model.StoryHeader;
-import behnen.julia.makeyourownadventure.support.AbstractPostAsyncTask;
 
 
 /**
@@ -52,11 +51,19 @@ public class DownloadStoryFragment extends android.support.v4.app.Fragment {
     Button mDownloadStoryButton;
     Button mPlayStoryButton;
 
+    /**
+     * The following are temporary variables for demonstration purposes. They all reference
+     * TextViews used to display the downloaded data for the requested story header.
+     */
     TextView mDownloadedStoryAuthor;
     TextView mDownloadedStoryStoryId;
     TextView mDownloadedStoryTitle;
     TextView mDownloadedStoryDescription;
 
+    /**
+     * The following are temporary variables for demonstration purposes. They all reference
+     * TextViews used to display the downloaded data for the requested story element.
+     */
     TextView mDownloadedElementAuthor;
     TextView mDownloadedElementStoryId;
     TextView mDownloadedElementElementId;
@@ -69,9 +76,20 @@ public class DownloadStoryFragment extends android.support.v4.app.Fragment {
     TextView mDownloadedElementChoice1Text;
     TextView mDownloadedElementChoice2Text;
 
+    /**
+     * Temporary variable for demonstration purposes.
+     * The ImageView used to display the downloaded image for the requested story element.
+     */
     ImageView mDownloadedElementImage;
 
+    /**
+     * Temporary variable for demonstration purposes.
+     * Holds the downloaded story header so that its first story element can be downloaded.
+     * Would normally be loaded from the database upon request from a ListView of all
+     * downloaded stories in another fragment.
+     */
     StoryHeader mStoryHeader;
+
 
     private OnDownloadStoryInteractionListener mCallback;
 

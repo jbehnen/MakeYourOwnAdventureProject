@@ -7,7 +7,7 @@ import org.json.JSONObject;
  * Describes an immutable story element.
  *
  * A story element is an atomic piece of a choose-your-own-adventure story. It can be either a
- * choice or an ending. A choice element contains two options, each of which points to another
+ * choice or an ending. A choice element includes two options, each of which points to another
  * story element. An ending does not. A story element is uniquely identified in a database by
  * its author, story ID, and element ID, thus only one story element with this combination can
  * be permanently stored at any time.
@@ -73,6 +73,7 @@ public final class StoryElement {
 
     /**
      * StoryElement constructor.
+     *
      * @param author The author of the story that this StoryElement is associated with.
      * @param storyId The story ID of the story that this StoryElement is associated with.
      * @param elementId The element ID of the StoryElement.
@@ -85,7 +86,7 @@ public final class StoryElement {
      * @param choice1Text The text description of the first choice.
      * @param choice2Text The text description of the second choice.
      */
-    public StoryElement(String author, String storyId, int elementId, String title, String imageUrl,
+    private StoryElement(String author, String storyId, int elementId, String title, String imageUrl,
                         String description, boolean isEnding, int choice1Id, int choice2Id,
                          String choice1Text, String choice2Text) {
         mAuthor = author;
@@ -95,6 +96,36 @@ public final class StoryElement {
         mImageUrl = imageUrl;
         mDescription = description;
         mIsEnding = isEnding;
+        mChoice1Id = choice1Id;
+        mChoice2Id = choice2Id;
+        mChoice1Text = choice1Text;
+        mChoice2Text = choice2Text;
+    }
+
+    /**
+     * StoryElement constructor. Sufficient to construct a fully-described choice.
+     *
+     * @param author The author of the story that this StoryElement is associated with.
+     * @param storyId The story ID of the story that this StoryElement is associated with.
+     * @param elementId The element ID of the StoryElement.
+     * @param title The title of the StoryElement.
+     * @param imageUrl The URL of the image used in the StoryElement.
+     * @param description The description of the StoryElement.
+     * @param choice1Id The element ID of the StoryElement that the first choice points to.
+     * @param choice2Id The element ID of the StoryElement that the second choice points to.
+     * @param choice1Text The text description of the first choice.
+     * @param choice2Text The text description of the second choice.
+     */
+    public StoryElement(String author, String storyId, int elementId, String title, String imageUrl,
+                        String description, int choice1Id, int choice2Id,
+                        String choice1Text, String choice2Text) {
+        mAuthor = author;
+        mStoryId = storyId;
+        mElementId = elementId;
+        mTitle = title;
+        mImageUrl = imageUrl;
+        mDescription = description;
+        mIsEnding = false;
         mChoice1Id = choice1Id;
         mChoice2Id = choice2Id;
         mChoice1Text = choice1Text;
@@ -115,7 +146,7 @@ public final class StoryElement {
     }
 
     /**
-     * StoryElement constructor which can be used to construct an ending.
+     * StoryElement constructor which is sufficient to construct a fully-described ending.
      *
      * @param author The author of the story that this StoryElement is associated with.
      * @param storyId The story ID of the story that this StoryElement is associated with.
