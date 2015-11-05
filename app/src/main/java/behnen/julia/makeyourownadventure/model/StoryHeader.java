@@ -6,7 +6,7 @@ import org.json.JSONObject;
 /**
  * Describes an immutable story header.
  *
- * A story element holds the metadata of a choose-your-own-adventure story. It holds the
+ * A story header holds the metadata of a choose-your-own-adventure story. It holds the
  * title/story ID combination that identifies the story uniquely in a database and also
  * includes the title and description of the story.
  *
