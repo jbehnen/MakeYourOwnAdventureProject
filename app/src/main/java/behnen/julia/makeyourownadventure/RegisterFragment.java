@@ -25,9 +25,11 @@ import behnen.julia.makeyourownadventure.support.Helper;
  * @version November 4, 2015
  */
 public class RegisterFragment extends Fragment {
-//    private Course mCourse;
 
     private static final String TAG = "RegisterFragment";
+    /**
+     * The URL for user registration requests.
+     */
     private static final String URL =
             "http://cssgate.insttech.washington.edu/~jbehnen/myoa/php/addUser.php";
 
@@ -106,6 +108,9 @@ public class RegisterFragment extends Fragment {
         mCallback = null;
     }
 
+    /**
+     * Attempts to register the new user.
+     */
     private void attemptRegister() {
         // Reset errors.
         mUsernameEditText.setError(null);
@@ -176,24 +181,43 @@ public class RegisterFragment extends Fragment {
         }
     }
 
+    /**
+     * Returns true if the username is valid, false otherwise.
+     * @param username The username.
+     * @return True if the username is valid, false otherwise.
+     */
     private boolean isUsernameValid(String username) {
         return username.length() > 4;
     }
 
+    /**
+     * Returns true if the email is valid, false otherwise.
+     * @param email The email.
+     * @return True if the email is valid, false otherwise.
+     */
     private boolean isEmailValid(String email) {
         return email.contains("@");
     }
 
+    /**
+     * Returns true if the password is valid, false otherwise.
+     * @param password The password.
+     * @return True if the password is valid, false otherwise.
+     */
     private boolean isPasswordValid(String password) {
         return password.length() > 4;
     }
 
     /**
-     * Represents an asynchronous login task used to register
-     * the user.
+     * Represents an asynchronous login task used to register the user.
      */
     public class UserRegisterTask extends AbstractPostAsyncTask<String, Void, String> {
 
+        /**
+         * Starts the user registration process.
+         * @param params The username, password, and email, in that order.
+         * @return A string holding the result of the request.
+         */
         @Override
         protected String doInBackground(String...params) {
             String urlParameters = "username=" + params[0]

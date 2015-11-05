@@ -1,7 +1,5 @@
 package behnen.julia.makeyourownadventure.support;
 
-import java.nio.charset.StandardCharsets;
-
 /**
  * Static helper methods shared between multiple classes.
  *
@@ -22,7 +20,7 @@ public class Helper {
         final int multiplier = 37;
         final int mod = 128;
 
-        byte[] bytes = string.getBytes(StandardCharsets.UTF_8);
+        byte[] bytes = string.getBytes();
         if (bytes.length > 0) {
             bytes[0] *= (multiplier *127);
             bytes[0] %= mod;
@@ -31,7 +29,7 @@ public class Helper {
                 bytes[i] %= mod;
             }
         }
-        return new String(bytes, StandardCharsets.UTF_8);
+        return new String(bytes);
     }
 
 }

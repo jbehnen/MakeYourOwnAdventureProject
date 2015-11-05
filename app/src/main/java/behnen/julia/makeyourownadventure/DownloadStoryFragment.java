@@ -34,10 +34,19 @@ import behnen.julia.makeyourownadventure.model.StoryHeader;
 public class DownloadStoryFragment extends Fragment {
 
     private static final String TAG = "DownloadStoryFragment";
+    /**
+     * The URL for story header download requests.
+     */
     private static final String GET_STORY_HEADER_URL =
             "http://cssgate.insttech.washington.edu/~jbehnen/myoa/php/getStoryHeader.php";
+    /**
+     * The URL for story element download requests.
+     */
     private static final String GET_STORY_ELEMENT_URL =
             "http://cssgate.insttech.washington.edu/~jbehnen/myoa/php/getStoryElement.php";
+    /**
+     * The URL for story element download requests from the shared image directory.
+     */
     private static final String SHARED_IMAGES_URL =
             "http://cssgate.insttech.washington.edu/~jbehnen/myoa/images/shared/";
 
@@ -155,6 +164,10 @@ public class DownloadStoryFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Sets the display text to show the data from the StoryHeader.
+     * @param storyHeader The StoryHeader that was downloaded.
+     */
     private void downloadHeaderSuccess(StoryHeader storyHeader) {
         if (storyHeader != null) {
             mDownloadedStoryAuthor.setText(storyHeader.getAuthor());
@@ -164,6 +177,10 @@ public class DownloadStoryFragment extends Fragment {
         }
     }
 
+    /**
+     * Sets the display text to show the data from the StoryElement.
+     * @param storyElement The StoryElement that was downloaded.
+     */
     private void downloadElementSuccess(StoryElement storyElement) {
         if (storyElement != null) {
 
@@ -183,8 +200,16 @@ public class DownloadStoryFragment extends Fragment {
         }
     }
 
+    /**
+     * Downloads a StoryHeader from the online database.
+     */
     public class StoryGetHeaderTask extends AbstractPostAsyncTask<String, Void, String> {
 
+        /**
+         * Starts the story header retrieval process.
+         * @param params The story header author and story ID, in that order.
+         * @return A string holding the result of the request.
+         */
         @Override
         protected String doInBackground(String...params) {
             final String author = params[0];
@@ -228,10 +253,15 @@ public class DownloadStoryFragment extends Fragment {
     }
 
     /**
-     * Represents an asynchronous task used to upload a Story.
+     * Downloads a StoryElement from the online database.
      */
     public class StoryGetElementTask extends AbstractPostAsyncTask<String, Void, String> {
 
+        /**
+         * Starts the story header retrieval process.
+         * @param params The story header author, story ID, and element ID, in that order.
+         * @return A string holding the result of the request.
+         */
         @Override
         protected String doInBackground(String...params) {
             String author = params[0];
@@ -288,6 +318,11 @@ public class DownloadStoryFragment extends Fragment {
             super.onPreExecute();
         }
 
+        /**
+         * Starts the image download process.
+         * @param urls The URL of the image.
+         * @return A string holding the result of the request.
+         */
         @Override
         protected Bitmap doInBackground(String... urls) {
             Bitmap bitmap = null;

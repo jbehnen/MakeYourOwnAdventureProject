@@ -28,10 +28,19 @@ import behnen.julia.makeyourownadventure.model.StoryElement;
 public class CreateEditStoriesFragment extends Fragment {
 
     private static final String TAG = "Cre8EditStoriesFragment";
+    /**
+     * The URL for story registration requests.
+     */
     private static final String REGISTER_STORY_URL =
             "http://cssgate.insttech.washington.edu/~jbehnen/myoa/php/registerStory.php";
+    /**
+     * The URL for story header upload requests.
+     */
     private static final String UPLOAD_STORY_HEADER_URL =
             "http://cssgate.insttech.washington.edu/~jbehnen/myoa/php/uploadStoryHeader.php";
+    /**
+     * The URL for story element upload requests.
+     */
     private static final String UPLOAD_STORY_ELEMENT_URL =
             "http://cssgate.insttech.washington.edu/~jbehnen/myoa/php/uploadStoryElement.php";
 
@@ -113,7 +122,7 @@ public class CreateEditStoriesFragment extends Fragment {
      */
     private StoryHeader getStoryHeader(String author, String storyId) {
 
-        // For demo purposes, sample StoryHeader is generated.
+        // For demo purposes, a sample StoryHeader is generated.
 
         return new StoryHeader(author, storyId, "Title!", "Description!");
     }
@@ -153,8 +162,20 @@ public class CreateEditStoriesFragment extends Fragment {
         return storyElements;
     }
 
+    /**
+     * Registers a story in the database. Since author and story ID are primary keys
+     * for identifying a story both locally and in the online database, a user registers
+     * them with the online database in a StoryHeader when a story is first created to make
+     * sure that the later upload of the full story will be successful. Registration
+     * StoryHeaders can be identified by their null title and description.
+     */
     public class StoryRegisterTask extends AbstractPostAsyncTask<String, Void, String> {
 
+        /**
+         * Starts the registration process.
+         * @param params The story author and story ID, in that order.
+         * @return A string holding the result of the request.
+         */
         @Override
         protected String doInBackground(String...params) {
             String urlParameters = "author=" + params[0]
@@ -190,8 +211,19 @@ public class CreateEditStoriesFragment extends Fragment {
         }
     }
 
+    /**
+     * Uploads a StoryHeader to the online database. This alters the existing placeholder
+     * StoryHeader uploaded for the story, which would previously contain null values for title
+     * and description. This upload occurs only when the final version of the story is being
+     * added to the database.
+     */
     public class StoryHeaderUploadTask extends AbstractPostAsyncTask<String, Void, String> {
 
+        /**
+         * Starts the story header upload process.
+         * @param params The story header author, story ID, title, and description, in that order.
+         * @return A string holding the result of the request.
+         */
         @Override
         protected String doInBackground(String...params) {
 
@@ -230,8 +262,20 @@ public class CreateEditStoriesFragment extends Fragment {
         }
     }
 
+    /**
+     * Uploads a StoryElement to the online database. This will only occur when the final
+     * version of the story is being uploaded, so if it takes multiple attempts and the
+     * StoryElement is already in the database, this does not count as an error.
+     */
     public class StoryElementUploadTask extends AbstractPostAsyncTask<String, Void, String> {
 
+        /**
+         * Starts the story element upload process.
+         * @param params The story element author, story ID, element ID title, image URL,
+         *               description, isEnding, choice 1 ID, choice 2 ID, choice 1 text, and
+         *               choice 2 text, in that order.
+         * @return A string holding the result of the request.
+         */
         @Override
         protected String doInBackground(String...params) {
 

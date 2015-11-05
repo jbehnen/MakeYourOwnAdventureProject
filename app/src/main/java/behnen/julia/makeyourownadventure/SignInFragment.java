@@ -26,6 +26,9 @@ import behnen.julia.makeyourownadventure.support.Helper;
 public class SignInFragment extends Fragment {
 
     private static final String TAG = "SignInFragment";
+    /**
+     * The URL for login requests.
+     */
     private static final String URL =
             "http://cssgate.insttech.washington.edu/~jbehnen/myoa/php/login.php";
 
@@ -115,11 +118,15 @@ public class SignInFragment extends Fragment {
     }
 
     /**
-     * Represents an asynchronous login task used to authenticate
-     * the user.
+     * Represents an asynchronous login task used to authenticate the user.
      */
     public class UserSignInTask extends AbstractPostAsyncTask<String, Void, String> {
 
+        /**
+         * Starts the login process.
+         * @param params The username and password, in that order.
+         * @return A string holding the result of the request.
+         */
         @Override
         protected String doInBackground(String...params) {
             String urlParameters = "username=" + params[0]
