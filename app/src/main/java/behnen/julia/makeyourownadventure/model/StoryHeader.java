@@ -3,6 +3,8 @@ package behnen.julia.makeyourownadventure.model;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
+
 /**
  * Describes an immutable story header.
  *
@@ -13,7 +15,7 @@ import org.json.JSONObject;
  * @author Julia Behnen
  * @version November 4, 2015
  */
-public final class StoryHeader {
+public final class StoryHeader implements Serializable {
 
     /**
      * The author of the story that this StoryHeader represents.

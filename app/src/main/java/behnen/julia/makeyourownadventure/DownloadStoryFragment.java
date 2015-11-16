@@ -1,8 +1,6 @@
 package behnen.julia.makeyourownadventure;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -17,10 +15,7 @@ import android.widget.Toast;
 
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 
 import behnen.julia.makeyourownadventure.model.StoryElement;
 import behnen.julia.makeyourownadventure.model.StoryHeader;
@@ -95,15 +90,28 @@ public class DownloadStoryFragment extends Fragment {
      */
     StoryHeader mStoryHeader;
 
+    /**
+     * The context which implements the interface methods.
+     */
+    private DownloadStoryInteractionListener mCallback;
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     */
+    public interface DownloadStoryInteractionListener {
+        // TODO move method to new home
+        //public void downloadStory
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_download_story, container, false);
 
-        mAuthorEditText = (EditText) view.findViewById(R.id.download_author_edit_text);
-        mStoryIdEditText = (EditText) view.findViewById(R.id.download_story_id_edit_text);
-        mDownloadStoryButton = (Button) view.findViewById(R.id.download_story_button);
         mPlayStoryButton = (Button) view.findViewById(R.id.download_story_play_story_button);
 
         mDownloadedStoryAuthor = (TextView) view.findViewById(R.id.download_downloaded_author);
@@ -310,36 +318,7 @@ public class DownloadStoryFragment extends Fragment {
     /**
      * An asynchronous task for downloading a story element image.
      */
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        /**
-         * Starts the image download process.
-         * @param urls The URL of the image.
-         * @return A string holding the result of the request.
-         */
-        @Override
-        protected Bitmap doInBackground(String... urls) {
-            Bitmap bitmap = null;
-            for (String url : urls) {
-                try {
-                    URL urlObject = new URL(url);
-                    InputStream is = new BufferedInputStream(urlObject.openStream());
-                    bitmap = BitmapFactory.decodeStream(is);
-
-                } catch (Exception e) {
-                    Toast.makeText(getActivity(), "Unable to download the image, Reason: "
-                            + e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            }
-            return bitmap;
-        }
-
+    private class DownloadImageTask extends AbstractDownloadImageTask {
         @Override
         protected void onPostExecute(Bitmap bitmap) {
             mDownloadedElementImage.setImageBitmap(bitmap);

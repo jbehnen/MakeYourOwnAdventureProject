@@ -3,6 +3,8 @@ package behnen.julia.makeyourownadventure.model;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
+
 /**
  * Describes an immutable story element.
  *
@@ -15,7 +17,7 @@ import org.json.JSONObject;
  * @author Julia Behnen
  * @version November 4, 2015
  */
-public final class StoryElement {
+public final class StoryElement implements Serializable {
 
     /**
      * The element ID of the StoryElement that starts the story with the same author and story ID.

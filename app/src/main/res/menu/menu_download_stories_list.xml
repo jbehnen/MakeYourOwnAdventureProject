@@ -2,6 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/action_download_new_story"
-          android:title="@string/action_download_story"
+          android:title="Placeholder"
           app:showAsAction="ifRoom" />
 </menu>
