@@ -1,6 +1,5 @@
 package behnen.julia.makeyourownadventure;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -33,25 +32,10 @@ public class RegisterFragment extends Fragment {
     private static final String URL =
             "http://cssgate.insttech.washington.edu/~jbehnen/myoa/php/addUser.php";
 
-    /**
-     * The context which implements the interface methods.
-     */
-    private RegisterInteractionListener mCallback;
-
     private EditText mUsernameEditText;
     private EditText mPasswordEditText;
     private EditText mPasswordConfirmEditText;
     private EditText mEmailEditText;
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     */
-    public interface RegisterInteractionListener {
-        void onRegisterRegisterAction();
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -89,23 +73,6 @@ public class RegisterFragment extends Fragment {
         });
 
         return v;
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        try {
-            mCallback = (RegisterInteractionListener) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString()
-                    + "must implement RegisterInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mCallback = null;
     }
 
     /**
@@ -241,9 +208,7 @@ public class RegisterFragment extends Fragment {
                 if (status.equalsIgnoreCase("success")) {
                     Toast.makeText(getActivity(), "Success",
                             Toast.LENGTH_SHORT).show();
-                    if (mCallback != null) {
-                        mCallback.onRegisterRegisterAction();
-                    }
+                    getActivity().getSupportFragmentManager().popBackStackImmediate();
                 } else {
                     String reason = jsonObject.getString("error");
                     Toast.makeText(getActivity(), "Failed: " + reason,

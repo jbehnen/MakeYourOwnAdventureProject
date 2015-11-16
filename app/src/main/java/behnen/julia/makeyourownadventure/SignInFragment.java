@@ -1,6 +1,7 @@
 package behnen.julia.makeyourownadventure;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -37,8 +38,13 @@ public class SignInFragment extends Fragment {
      */
     private SignInInteractionListener mCallback;
 
+    private SharedPreferences mSharedPreferences;
+
     private EditText mUsernameEditText;
     private EditText mPasswordEditText;
+
+    private Button mSignInButton;
+    private Button mRegisterButton;
 
     /**
      * This interface must be implemented by activities that contain this
@@ -61,8 +67,8 @@ public class SignInFragment extends Fragment {
         mUsernameEditText = (EditText) v.findViewById(R.id.username);
         mPasswordEditText = (EditText) v.findViewById(R.id.password);
 
-        Button mSignInButton = (Button) v.findViewById(R.id.sign_in_button);
-        Button mRegisterButton = (Button) v.findViewById(R.id.register_button);
+        mSignInButton = (Button) v.findViewById(R.id.sign_in_button);
+        mRegisterButton = (Button) v.findViewById(R.id.register_button);
 
         mSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,7 +82,7 @@ public class SignInFragment extends Fragment {
                             .show();
                     return;
                 }
-
+                enableButtons(false);
                 attemptLogin();
             }
         });
@@ -110,11 +116,25 @@ public class SignInFragment extends Fragment {
         mCallback = null;
     }
 
+    private void enableButtons(boolean areEnabled) {
+        mSignInButton.setEnabled(areEnabled);
+        mRegisterButton.setEnabled(areEnabled);
+    }
+
     public void attemptLogin() {
         String username = mUsernameEditText.getText().toString();
         String password = mPasswordEditText.getText().toString();
 
         new UserSignInTask().execute(username, Helper.encryptPassword(password));
+    }
+
+    private void updateSharedPreferences(String username) {
+        mSharedPreferences = getActivity().getSharedPreferences(
+                getString(R.string.SHARED_PREFS), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.putString(getString(R.string.USERNAME), username);
+        editor.putBoolean(getString(R.string.LOGGEDIN), true);
+        editor.commit();
     }
 
     /**
@@ -149,15 +169,19 @@ public class SignInFragment extends Fragment {
                 if (status.equalsIgnoreCase("success")) {
                     Toast.makeText(getActivity(), "Success",
                             Toast.LENGTH_SHORT).show();
+                    updateSharedPreferences(mUsernameEditText.getText().toString());
+                    enableButtons(true);
                     if (mCallback != null) {
                         mCallback.onSignInSignInAction();
                     }
                 } else {
+                    enableButtons(true);
                     String reason = jsonObject.getString("error");
                     Toast.makeText(getActivity(), "Failed: " + reason,
                             Toast.LENGTH_SHORT).show();
                 }
             } catch (Exception e) {
+                enableButtons(true);
                 Log.d(TAG, "Parsing JSON Exception" + e.getMessage());
                 Toast.makeText(getActivity(), "Parsing JSON exception: " + s,
                         Toast.LENGTH_SHORT).show();

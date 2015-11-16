@@ -1,6 +1,7 @@
 package behnen.julia.makeyourownadventure;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -32,6 +33,12 @@ public class GetNewStoryFragment extends Fragment {
 
     private Button mGetStoryButton;
 
+    private OnGetNewStoryInteractionListener mCallback;
+
+    public interface OnGetNewStoryInteractionListener {
+        public boolean onGetNewStoryAddStory(StoryHeader storyHeader);
+    }
+
     public GetNewStoryFragment() {
         // Required empty public constructor
     }
@@ -60,6 +67,23 @@ public class GetNewStoryFragment extends Fragment {
         );
 
         return view;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            mCallback = (OnGetNewStoryInteractionListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + "must implement SignInInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallback = null;
     }
 
     /**
@@ -95,16 +119,20 @@ public class GetNewStoryFragment extends Fragment {
                 JSONObject jsonObject = new JSONObject(s);
                 String status = jsonObject.getString("result");
                 if (status.equalsIgnoreCase("success")) {
-                    StoryHeader storyHeader =
-                            StoryHeader.parseJson(jsonObject.getString("storyHeader"));
-                    boolean added = MainActivity.addBookmarkedStory(getContext(), storyHeader);
-                    if (added) {
-                        Toast.makeText(getActivity(), "Story bookmarked",
-                                Toast.LENGTH_SHORT).show();
-                        getFragmentManager().popBackStackImmediate();
-                    } else {
-                        Toast.makeText(getActivity(), "Story could not be saved",
-                                Toast.LENGTH_SHORT).show();
+                    mGetStoryButton.setEnabled(true);
+                    if (mCallback != null) {
+                        StoryHeader storyHeader =
+                                StoryHeader.parseJson(jsonObject.getString("storyHeader"));
+                        boolean added = mCallback.onGetNewStoryAddStory(storyHeader);
+                        if (added) {
+                            Toast.makeText(getActivity(), "Story bookmarked",
+                                    Toast.LENGTH_SHORT).show();
+                            getFragmentManager().popBackStackImmediate();
+                        } else {
+                            // TODO: get error code and specify why (eg existing story)
+                            Toast.makeText(getActivity(), "Story could not be saved",
+                                    Toast.LENGTH_SHORT).show();
+                        }
                     }
                 } else {
                     String reason = jsonObject.getString("error");

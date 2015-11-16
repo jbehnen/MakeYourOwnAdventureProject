@@ -3,6 +3,10 @@
 
     <string name="action_settings">Settings</string>
 
+    <string name="SHARED_PREFS">behnen.julia.MakeYourOwnAdventureProject.sharedprefs</string>
+    <string name="USERNAME">username</string>
+    <string name="LOGGEDIN">loggedin</string>
+
     <!-- Strings related to login and registration-->
     <string name="title_activity_login">Sign in</string>
 

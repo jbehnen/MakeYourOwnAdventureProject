@@ -1,8 +1,9 @@
 package behnen.julia.makeyourownadventure;
 
-import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,20 +25,41 @@ import behnen.julia.makeyourownadventure.model.StoryHeader;
  */
 public class MainActivity extends AppCompatActivity implements
         SignInFragment.SignInInteractionListener,
-        RegisterFragment.RegisterInteractionListener,
         MainMenuFragment.MainMenuInteractionListener,
-        BookmarkedStoriesFragment.OnBookmarkedStoriesInteractionListener {
+        BookmarkedStoriesFragment.OnBookmarkedStoriesInteractionListener,
+        GetNewStoryFragment.OnGetNewStoryInteractionListener {
+
+    private SharedPreferences mSharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+    }
 
-        android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
-        Fragment fragment = new SignInFragment();
-        fm.beginTransaction()
-                .add(R.id.main_fragment_container, fragment)
-                .commit();
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        mSharedPreferences = getSharedPreferences(
+                getString(R.string.SHARED_PREFS), MODE_PRIVATE);
+        boolean loggedIn = mSharedPreferences.getBoolean(
+                getString(R.string.LOGGEDIN), false);
+        if (findViewById(R.id.main_fragment_container) != null) {
+            FragmentTransaction fragmentTransaction =
+                    getSupportFragmentManager().beginTransaction();
+            if (!loggedIn) {
+                Fragment loginFragment = new SignInFragment();
+                fragmentTransaction.add(R.id.main_fragment_container, loginFragment)
+                        .commit();
+            }
+            else {
+                Fragment menuFragment = new MainMenuFragment();
+                fragmentTransaction.add(R.id.main_fragment_container, menuFragment)
+                        .commit();
+            }
+        }
+
     }
 
     @Override
@@ -64,6 +86,10 @@ public class MainActivity extends AppCompatActivity implements
 
     // Shared methods
 
+    private String getCurrentUser() {
+        return mSharedPreferences.getString(getString(R.string.USERNAME), null);
+    }
+
     private void downloadStoryElement(String author, String storyId, int elementId) {
 
     }
@@ -82,18 +108,18 @@ public class MainActivity extends AppCompatActivity implements
 
     // Bookmarked Stories database methods
 
-    public static boolean addBookmarkedStory(Context c, StoryHeader storyHeader) {
-        BookmarkedStoryDB bookmarkedStoryDB = new BookmarkedStoryDB(c);
-        // TODO: get username from shared preferences
-        boolean wasAdded = bookmarkedStoryDB.insertStory("database_test_user", storyHeader);
+    private boolean addBookmarkedStory(StoryHeader storyHeader) {
+        BookmarkedStoryDB bookmarkedStoryDB = new BookmarkedStoryDB(this);
+        String username = getCurrentUser();
+        boolean wasAdded = bookmarkedStoryDB.insertStory(username, storyHeader);
         bookmarkedStoryDB.closeDB();
         return wasAdded;
     }
 
-    public static List<StoryHeader> getBookmarkedStories(Context c) {
-        BookmarkedStoryDB bookmarkedStoryDB = new BookmarkedStoryDB(c);
-        // TODO: get username from shared preferences
-        List<StoryHeader> list = bookmarkedStoryDB.getStoriesByUsername("database_test_user");
+    private List<StoryHeader> getBookmarkedStories() {
+        BookmarkedStoryDB bookmarkedStoryDB = new BookmarkedStoryDB(this);
+        String username = getCurrentUser();
+        List<StoryHeader> list = bookmarkedStoryDB.getStoriesByUsername(username);
         bookmarkedStoryDB.closeDB();
         return list;
     }
@@ -112,15 +138,6 @@ public class MainActivity extends AppCompatActivity implements
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.main_fragment_container, new RegisterFragment())
                 .addToBackStack(null)
-                .commit();
-    }
-
-    // RegisterFragment callback methods
-
-    @Override
-    public void onRegisterRegisterAction() {
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.main_fragment_container, new MainMenuFragment())
                 .commit();
     }
 
@@ -159,12 +176,21 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onMainMenuSignOutAction() {
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.putString(getString(R.string.USERNAME), null);
+        editor.putBoolean(getString(R.string.LOGGEDIN), false);
+        editor.commit();
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.main_fragment_container, new SignInFragment())
                 .commit();
     }
 
     // BookmarkedStoriesFragment callback methods
+
+    @Override
+    public List<StoryHeader> onBookmarkedStoriesGetStories() {
+        return getBookmarkedStories();
+    }
 
     @Override
     public void onBookmarkedStoriesSelectStory(StoryHeader storyHeader) {
@@ -176,5 +202,10 @@ public class MainActivity extends AppCompatActivity implements
                 .replace(R.id.main_fragment_container, new GetNewStoryFragment())
                 .addToBackStack(null)
                 .commit();
+    }
+
+    @Override
+    public boolean onGetNewStoryAddStory(StoryHeader storyHeader) {
+        return addBookmarkedStory(storyHeader);
     }
 }

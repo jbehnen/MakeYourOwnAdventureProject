@@ -25,6 +25,7 @@ public class BookmarkedStoriesFragment extends Fragment {
     private OnBookmarkedStoriesInteractionListener mCallback;
 
     public interface OnBookmarkedStoriesInteractionListener {
+        public List<StoryHeader> onBookmarkedStoriesGetStories();
         public void onBookmarkedStoriesSelectStory(StoryHeader storyHeader);
         public void onBookmarkedStoriesAddStory();
     }
@@ -57,10 +58,12 @@ public class BookmarkedStoriesFragment extends Fragment {
             }
         });
 
-        List<StoryHeader> list = MainActivity.getBookmarkedStories(view.getContext());
+        if (mCallback != null) {
+            List<StoryHeader> list = mCallback.onBookmarkedStoriesGetStories();
 
-        ListAdapter adapter = new StoryHeaderAdapter(view.getContext(), list);
-        bookmarkedStories.setAdapter(adapter);
+            ListAdapter adapter = new StoryHeaderAdapter(view.getContext(), list);
+            bookmarkedStories.setAdapter(adapter);
+        }
 
         return view;
     }
