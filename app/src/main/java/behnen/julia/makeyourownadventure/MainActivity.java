@@ -24,7 +24,7 @@ import behnen.julia.makeyourownadventure.model.StoryHeader;
  * @version November 4, 2015
  */
 public class MainActivity extends AppCompatActivity implements
-        SignInFragment.SignInInteractionListener,
+        SignInFragment.OnSignInInteractionListener,
         MainMenuFragment.MainMenuInteractionListener,
         BookmarkedStoriesFragment.OnBookmarkedStoriesInteractionListener,
         GetNewStoryFragment.OnGetNewStoryInteractionListener {

@@ -208,7 +208,7 @@ public class RegisterFragment extends Fragment {
                 if (status.equalsIgnoreCase("success")) {
                     Toast.makeText(getActivity(), "Success",
                             Toast.LENGTH_SHORT).show();
-                    getActivity().getSupportFragmentManager().popBackStackImmediate();
+                    getFragmentManager().popBackStackImmediate();
                 } else {
                     String reason = jsonObject.getString("error");
                     Toast.makeText(getActivity(), "Failed: " + reason,

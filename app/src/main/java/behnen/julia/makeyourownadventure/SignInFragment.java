@@ -36,7 +36,7 @@ public class SignInFragment extends Fragment {
     /**
      * The context which implements the interface methods.
      */
-    private SignInInteractionListener mCallback;
+    private OnSignInInteractionListener mCallback;
 
     private SharedPreferences mSharedPreferences;
 
@@ -52,7 +52,7 @@ public class SignInFragment extends Fragment {
      * to the activity and potentially other fragments contained in that
      * activity.
      */
-    public interface SignInInteractionListener {
+    public interface OnSignInInteractionListener {
         void onSignInSignInAction();
         void onSignInRegisterAction();
     }
@@ -103,10 +103,10 @@ public class SignInFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            mCallback = (SignInInteractionListener) context;
+            mCallback = (OnSignInInteractionListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
-                    + "must implement SignInInteractionListener");
+                    + "must implement OnSignInInteractionListener");
         }
     }
 
