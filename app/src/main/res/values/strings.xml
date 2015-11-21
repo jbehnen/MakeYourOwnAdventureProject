@@ -47,9 +47,11 @@
     <string name="prompt_story_id">Story ID</string>
     <string name="action_get_new_story">Get Story</string>
 
-    <!--Stray strings-->
-    <string name="action_play_story">Play (Get first element)</string>
+    <!--Strings related to bookmarked story overview-->
+    <string name="action_play_story">Play</string>
+    <string name="action_delete_story">Delete</string>
 
+    <!--Stray strings-->
     <string name="label_author">Author: </string>
     <string name="label_story_id">Story ID: </string>
     <string name="label_title">Title: </string>
@@ -63,9 +65,9 @@
     <string name="label_choice1_text">Choice 1 text: </string>
     <string name="label_choice2_text">Choice 2 text: </string>
 
-    <!--Strings related to editing a story-->
+    <!--Strings related to creating/editing a story-->
     <string name="prompt_title">Title</string>
-    <string name="prompt_description">Description</string>
+    <string name="prompt_description">Description (optional)</string>
 
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

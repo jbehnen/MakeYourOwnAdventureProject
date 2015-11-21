@@ -30,7 +30,7 @@ public class ChoiceFragment extends Fragment {
     public static ChoiceFragment newInstance(StoryElement storyElement, String storyTitle) {
 
         Bundle args = new Bundle();
-        args.putSerializable(STORY_ELEMENT_ARG, storyElement);
+        args.putSerializable(STORY_ELEMENT_ARG, storyElement.toString());
         args.putString(STORY_TITLE, storyTitle);
 
         ChoiceFragment fragment = new ChoiceFragment();
@@ -45,7 +45,8 @@ public class ChoiceFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_choice, container, false);
 
         // TODO: test for story element and title existing/not null
-        StoryElement choice = (StoryElement) savedInstanceState.getSerializable(STORY_ELEMENT_ARG);
+        StoryElement choice = StoryElement.parseJson(
+                (String) savedInstanceState.getSerializable(STORY_ELEMENT_ARG));
         String title = savedInstanceState.getString(STORY_TITLE);
 
         displayChoiceElement(v, choice, title);

@@ -45,6 +45,15 @@ public class BookmarkedStoryDB {
         return rowId != -1;
     }
 
+    public boolean deleteStory(String username, String author, String storyId) {
+        long rowsAffected = mSQLiteDatabase.delete(
+                TABLE_NAME,
+                "username = ? AND author = ? AND storyId = ?",
+                new String[]{username, author, storyId}
+        );
+        return rowsAffected == 1;
+    }
+
     public List<StoryHeader> getStoriesByUsername(String username) {
         String[] columns = {
           "author", "storyId", "title", "description"

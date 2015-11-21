@@ -45,7 +45,10 @@ public class BookmarkedStoriesFragment extends Fragment {
         bookmarkedStories.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                // TODO: fill in
+                if (mCallback != null) {
+                    StoryHeader storyHeader = (StoryHeader) adapterView.getItemAtPosition(position);
+                    mCallback.onBookmarkedStoriesSelectStory(storyHeader);
+                }
             }
         });
 

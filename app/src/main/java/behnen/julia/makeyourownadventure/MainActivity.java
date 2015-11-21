@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -27,7 +28,8 @@ public class MainActivity extends AppCompatActivity implements
         SignInFragment.OnSignInInteractionListener,
         MainMenuFragment.MainMenuInteractionListener,
         BookmarkedStoriesFragment.OnBookmarkedStoriesInteractionListener,
-        GetNewStoryFragment.OnGetNewStoryInteractionListener {
+        GetNewStoryFragment.OnGetNewStoryInteractionListener,
+        StoryOverviewFragment.OnStoryOverviewInteractionListener {
 
     private SharedPreferences mSharedPreferences;
 
@@ -116,6 +118,14 @@ public class MainActivity extends AppCompatActivity implements
         return wasAdded;
     }
 
+    private boolean deleteBookmarkedStory(String author, String storyId) {
+        BookmarkedStoryDB bookmarkedStoryDB = new BookmarkedStoryDB(this);
+        String username = getCurrentUser();
+        boolean wasDeleted = bookmarkedStoryDB.deleteStory(username, author, storyId);
+        bookmarkedStoryDB.closeDB();
+        return wasDeleted;
+    }
+
     private List<StoryHeader> getBookmarkedStories() {
         BookmarkedStoryDB bookmarkedStoryDB = new BookmarkedStoryDB(this);
         String username = getCurrentUser();
@@ -194,6 +204,11 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onBookmarkedStoriesSelectStory(StoryHeader storyHeader) {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.main_fragment_container,
+                        StoryOverviewFragment.newInstance(storyHeader))
+                .addToBackStack(null)
+                .commit();
     }
 
     @Override
@@ -204,8 +219,22 @@ public class MainActivity extends AppCompatActivity implements
                 .commit();
     }
 
+    // GetNewStoryFragment callback methods
+
     @Override
     public boolean onGetNewStoryAddStory(StoryHeader storyHeader) {
         return addBookmarkedStory(storyHeader);
+    }
+
+    // StoryOverviewFragment callback methods
+
+    @Override
+    public void playStory(String author, String storyId) {
+        Toast.makeText(this, "Play story", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public boolean deleteStory(String author, String storyId) {
+        return deleteBookmarkedStory(author, storyId);
     }
 }
