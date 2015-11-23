@@ -38,8 +38,8 @@ public class BookmarkedStoryDB {
         contentValues.put("username", username);
         contentValues.put("author", storyHeader.getAuthor());
         contentValues.put("storyId", storyHeader.getStoryId());
-        contentValues.put("title", storyHeader.getTitle());
-        contentValues.put("description", storyHeader.getDescription());
+        contentValues.put("storyTitle", storyHeader.getTitle());
+        contentValues.put("storyDescription", storyHeader.getDescription());
 
         long rowId = mSQLiteDatabase.insert(TABLE_NAME, null, contentValues);
         return rowId != -1;
@@ -56,7 +56,7 @@ public class BookmarkedStoryDB {
 
     public List<StoryHeader> getStoriesByUsername(String username) {
         String[] columns = {
-          "author", "storyId", "title", "description"
+          "author", "storyId", "storyTitle", "storyDescription"
         };
 
         Cursor c = mSQLiteDatabase.query(
@@ -81,21 +81,17 @@ public class BookmarkedStoryDB {
             c.moveToNext();
         }
         return list;
-//        List<StoryHeader> test = new ArrayList<>();
-//        test.add(new StoryHeader("author 1", "id 1", "title 1", "description 1"));
-//        test.add(new StoryHeader("author 2", "id 2", "title 2", "description 2"));
-//        test.add(new StoryHeader("author 3", "id 3", "title 3", "description 3"));
-//        return test;
     }
     
     private class BookmarkedStoryDBHelper extends SQLiteOpenHelper {
 
         private static final String CREATE_STORY_PROGRESS_SQL =
                 "CREATE TABLE IF NOT EXISTS BookmarkedStory " +
-                        "(username TEXT, author TEXT, storyId TEXT, title TEXT, description TEXT, " +
-                        "progress TEXT, PRIMARY KEY (username, author, storyId))";
+                        "(username TEXT, author TEXT, storyId TEXT, storyTitle TEXT, " +
+                        "storyDescription TEXT, progress TEXT, " +
+                        "PRIMARY KEY (username, author, storyId))";
 
-        private static final String DROP_STORY_PROGRESS_SQL =
+        private static final String DROP_BOOKMARKED_STORY_SQL =
                 "DROP TABLE IF EXISTS BookmarkedStory";
         
         public BookmarkedStoryDBHelper(Context context, String name, 
@@ -110,7 +106,7 @@ public class BookmarkedStoryDB {
         
         @Override
         public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int il) {
-            sqLiteDatabase.execSQL(DROP_STORY_PROGRESS_SQL);
+            sqLiteDatabase.execSQL(DROP_BOOKMARKED_STORY_SQL);
             onCreate(sqLiteDatabase);
         }
     }

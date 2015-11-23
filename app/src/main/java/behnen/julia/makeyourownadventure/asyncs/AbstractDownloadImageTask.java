@@ -1,4 +1,4 @@
-package behnen.julia.makeyourownadventure;
+package behnen.julia.makeyourownadventure.asyncs;
 
 import android.graphics.Bitmap;
 import android.os.AsyncTask;

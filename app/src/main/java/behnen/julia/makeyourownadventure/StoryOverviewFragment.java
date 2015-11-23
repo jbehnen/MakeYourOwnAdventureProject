@@ -23,8 +23,8 @@ public class StoryOverviewFragment extends Fragment {
     private OnStoryOverviewInteractionListener mCallback;
 
     public interface OnStoryOverviewInteractionListener {
-        public void onStoryOverviewFragmentPlayStory(String author, String storyId);
-        public boolean onStoryOverviewFragmentDeleteStory(String author, String storyId);
+        void onStoryOverviewFragmentPlayStory(String author, String storyId);
+        boolean onStoryOverviewFragmentDeleteStory(String author, String storyId);
     }
 
     public static StoryOverviewFragment newInstance(StoryHeader storyHeader) {

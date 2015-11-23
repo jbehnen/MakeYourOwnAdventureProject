@@ -1,4 +1,4 @@
-package behnen.julia.makeyourownadventure;
+package behnen.julia.makeyourownadventure.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import behnen.julia.makeyourownadventure.R;
 import behnen.julia.makeyourownadventure.model.StoryHeader;
 
 /**

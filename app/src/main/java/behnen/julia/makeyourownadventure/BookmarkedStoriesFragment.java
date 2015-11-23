@@ -14,6 +14,7 @@ import android.widget.ListView;
 
 import java.util.List;
 
+import behnen.julia.makeyourownadventure.adapters.StoryHeaderAdapter;
 import behnen.julia.makeyourownadventure.model.StoryHeader;
 
 
@@ -25,13 +26,9 @@ public class BookmarkedStoriesFragment extends Fragment {
     private OnBookmarkedStoriesInteractionListener mCallback;
 
     public interface OnBookmarkedStoriesInteractionListener {
-        public List<StoryHeader> onBookmarkedStoriesGetStories();
-        public void onBookmarkedStoriesSelectStory(StoryHeader storyHeader);
-        public void onBookmarkedStoriesAddStory();
-    }
-
-    public BookmarkedStoriesFragment() {
-        // Required empty public constructor
+        List<StoryHeader> onBookmarkedStoriesGetStories();
+        void onBookmarkedStoriesSelectStory(StoryHeader storyHeader);
+        void onBookmarkedStoriesAddStory();
     }
 
     @Override

@@ -15,6 +15,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
+import behnen.julia.makeyourownadventure.asyncs.AbstractPostAsyncTask;
 import behnen.julia.makeyourownadventure.support.Helper;
 
 /**

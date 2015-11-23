@@ -1,4 +1,4 @@
-package behnen.julia.makeyourownadventure;
+package behnen.julia.makeyourownadventure.asyncs;
 
 import android.os.AsyncTask;
 import android.util.Log;

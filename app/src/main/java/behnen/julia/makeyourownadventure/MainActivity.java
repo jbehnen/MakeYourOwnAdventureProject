@@ -15,7 +15,9 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.List;
 
+import behnen.julia.makeyourownadventure.asyncs.AbstractPostAsyncTask;
 import behnen.julia.makeyourownadventure.data.BookmarkedStoryDB;
+import behnen.julia.makeyourownadventure.data.CreatedStoryHeaderDB;
 import behnen.julia.makeyourownadventure.model.StoryElement;
 import behnen.julia.makeyourownadventure.model.StoryHeader;
 
@@ -34,7 +36,10 @@ public class MainActivity extends AppCompatActivity implements
         BookmarkedStoriesFragment.OnBookmarkedStoriesInteractionListener,
         GetNewStoryFragment.OnGetNewStoryInteractionListener,
         StoryOverviewFragment.OnStoryOverviewInteractionListener,
-        StoryElementFragment.OnStoryElementInteractionListener {
+        StoryElementFragment.OnStoryElementInteractionListener,
+        CreateEditStoriesFragment.OnCreateEditStoriesInteractionListener,
+        CreateNewStoryFragment.OnCreateNewStoryInteractionListener,
+        CreatedStoryOverviewFragment.OnCreatedStoryOverviewInteractionListener {
 
     /**
      * The URL for story element download requests.
@@ -116,7 +121,9 @@ public class MainActivity extends AppCompatActivity implements
         ft.commit();
     }
 
-    // Bookmarked Stories database methods
+    // DATABASE METHODS
+
+    // BookmarkedStoryDB methods
 
     private boolean addBookmarkedStory(StoryHeader storyHeader) {
         BookmarkedStoryDB bookmarkedStoryDB = new BookmarkedStoryDB(this);
@@ -141,6 +148,32 @@ public class MainActivity extends AppCompatActivity implements
         bookmarkedStoryDB.closeDB();
         return list;
     }
+
+    // CreatedStoryHeaderDB methods
+
+    private boolean addCreatedStoryHeader(StoryHeader storyHeader) {
+        CreatedStoryHeaderDB createdStoryHeaderDB = new CreatedStoryHeaderDB(this);
+        boolean wasAdded = createdStoryHeaderDB.insertStory(storyHeader);
+        createdStoryHeaderDB.closeDB();
+        return wasAdded;
+    }
+
+    private boolean deleteCreatedStoryHeader(String author, String storyId) {
+        CreatedStoryHeaderDB createdStoryHeaderDB = new CreatedStoryHeaderDB(this);
+        boolean wasDeleted = createdStoryHeaderDB.deleteStory(author, storyId);
+        createdStoryHeaderDB.closeDB();
+        return wasDeleted;
+    }
+
+    private List<StoryHeader> getCreatedStoryHeaders() {
+        CreatedStoryHeaderDB createdStoryHeaderDB = new CreatedStoryHeaderDB(this);
+        String username = getCurrentUser();
+        List<StoryHeader> list = createdStoryHeaderDB.getStoriesByAuthor(username);
+        createdStoryHeaderDB.closeDB();
+        return list;
+    }
+
+    // FRAGMENT METHODS
 
     // SignInFragment callback methods
 
@@ -266,6 +299,60 @@ public class MainActivity extends AppCompatActivity implements
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.main_fragment_container, new MainMenuFragment())
                 .commit();    }
+
+    // CreateEditStoriesFragment callback methods
+
+    @Override
+    public List<StoryHeader> onCreateEditStoriesGetStories() {
+        return getCreatedStoryHeaders();
+    }
+
+    @Override
+    public void onCreateEditStoriesSelectStory(StoryHeader storyHeader) {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.main_fragment_container,
+                        CreatedStoryOverviewFragment.newInstance(storyHeader))
+                .addToBackStack(null)
+                .commit();
+    }
+
+    @Override
+    public void onCreateEditStoriesAddStory() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.main_fragment_container,
+                        CreateNewStoryFragment.newInstance(getCurrentUser()))
+                .addToBackStack(null)
+                .commit();
+    }
+
+    // CreateNewStoryFragment callback methods
+
+    @Override
+    public void onCreateNewStorySaveLocalCopy(StoryHeader storyHeader) {
+        addCreatedStoryHeader(storyHeader);
+    }
+
+    // CreatedStoryOverviewFragment callback methods
+
+    @Override
+    public void onCreatedStoryOverviewFragmentEditHeader(StoryHeader storyHeader) {
+
+    }
+
+    @Override
+    public void onCreatedStoryOverviewFragmentEditElements(String author, String storyId) {
+
+    }
+
+    @Override
+    public void onCreatedStoryOverviewFragmentPlayStory(String author, String storyId) {
+
+    }
+
+    @Override
+    public boolean onCreatedStoryOverviewFragmentDeleteStory(String author, String storyId) {
+        return false;
+    }
 
     // Shared Async Methods
     /**

@@ -75,5 +75,7 @@
     <string name="story_element_image_description">Image showing current story element</string>
     <string name="story_element_main_menu_button">Main Menu</string>
     <string name="story_element_backtrack_button">Backtrack</string>
+    <string name="action_edit_story_info">Edit story info</string>
+    <string name="action_edit_story_elements">Edit story elements</string>
 
 </resources>
