@@ -73,5 +73,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_main2">Main2Activity</string>
     <string name="story_element_image_description">Image showing current story element</string>
+    <string name="story_element_main_menu_button">Main Menu</string>
+    <string name="story_element_backtrack_button">Backtrack</string>
 
 </resources>

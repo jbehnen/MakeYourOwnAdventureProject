@@ -23,8 +23,8 @@ public class StoryOverviewFragment extends Fragment {
     private OnStoryOverviewInteractionListener mCallback;
 
     public interface OnStoryOverviewInteractionListener {
-        public void playStory(String author, String storyId);
-        public boolean deleteStory(String author, String storyId);
+        public void onStoryOverviewFragmentPlayStory(String author, String storyId);
+        public boolean onStoryOverviewFragmentDeleteStory(String author, String storyId);
     }
 
     public static StoryOverviewFragment newInstance(StoryHeader storyHeader) {
@@ -53,7 +53,7 @@ public class StoryOverviewFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (mCallback != null) {
-                    mCallback.playStory(storyHeader.getAuthor(), storyHeader.getStoryId());
+                    mCallback.onStoryOverviewFragmentPlayStory(storyHeader.getAuthor(), storyHeader.getStoryId());
                 }
             }
         });
@@ -64,13 +64,11 @@ public class StoryOverviewFragment extends Fragment {
             public void onClick(View v) {
                 if (mCallback != null) {
                     boolean deleted =
-                            mCallback.deleteStory(
+                            mCallback.onStoryOverviewFragmentDeleteStory(
                                     storyHeader.getAuthor(), storyHeader.getStoryId());
                     if (deleted) {
-                        Toast.makeText(getActivity(), "Deleted", Toast.LENGTH_SHORT).show();
                         getFragmentManager().popBackStackImmediate();
                     } else {
-                        // TODO: This may be a crash-causing error due to null object reference
                         Toast.makeText(getActivity(), "Deletion failed", Toast.LENGTH_SHORT).show();
                     }
                 }

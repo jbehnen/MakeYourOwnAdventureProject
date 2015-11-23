@@ -1,6 +1,5 @@
 package behnen.julia.makeyourownadventure;
 
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -192,7 +191,7 @@ public class DownloadStoryFragment extends Fragment {
     private void downloadElementSuccess(StoryElement storyElement) {
         if (storyElement != null) {
 
-            new DownloadImageTask().execute(SHARED_IMAGES_URL + storyElement.getImageUrl());
+//            new DownloadImageTask().execute(SHARED_IMAGES_URL + storyElement.getImageUrl());
 
             mDownloadedElementAuthor.setText(storyElement.getAuthor());
             mDownloadedElementStoryId.setText(storyElement.getStoryId());
@@ -315,14 +314,14 @@ public class DownloadStoryFragment extends Fragment {
         }
     }
 
-    /**
-     * An asynchronous task for downloading a story element image.
-     */
-    private class DownloadImageTask extends AbstractDownloadImageTask {
-        @Override
-        protected void onPostExecute(Bitmap bitmap) {
-            mDownloadedElementImage.setImageBitmap(bitmap);
-        }
-    }
+//    /**
+//     * An asynchronous task for downloading a story element image.
+//     */
+//    private class DownloadImageTask extends AbstractDownloadImageTask {
+//        @Override
+//        protected void onPostExecute(Bitmap bitmap) {
+//            mDownloadedElementImage.setImageBitmap(bitmap);
+//        }
+//    }
 
 }

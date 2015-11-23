@@ -5,10 +5,14 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.List;
 
 import behnen.julia.makeyourownadventure.data.BookmarkedStoryDB;
@@ -29,7 +33,15 @@ public class MainActivity extends AppCompatActivity implements
         MainMenuFragment.MainMenuInteractionListener,
         BookmarkedStoriesFragment.OnBookmarkedStoriesInteractionListener,
         GetNewStoryFragment.OnGetNewStoryInteractionListener,
-        StoryOverviewFragment.OnStoryOverviewInteractionListener {
+        StoryOverviewFragment.OnStoryOverviewInteractionListener,
+        StoryElementFragment.OnStoryElementInteractionListener {
+
+    /**
+     * The URL for story element download requests.
+     */
+    private static final String GET_STORY_ELEMENT_URL =
+            "http://cssgate.insttech.washington.edu/~jbehnen/myoa/php/getStoryElement.php";
+    private static final String TAG = "MainActivity";
 
     private SharedPreferences mSharedPreferences;
 
@@ -92,20 +104,16 @@ public class MainActivity extends AppCompatActivity implements
         return mSharedPreferences.getString(getString(R.string.USERNAME), null);
     }
 
-    private void downloadStoryElement(String author, String storyId, int elementId) {
-
-    }
-
-    private void displayStoryElement(StoryElement storyElement) {
-//        if (storyElement.isEnding()) {
-//            getSupportFragmentManager().beginTransaction()
-//                    .replace(R.id.main_fragment_container, new EndingFragment())
-//                    .commit();
-//        } else {
-//            getSupportFragmentManager().beginTransaction()
-//                    .replace(R.id.main_fragment_container, new ChoiceFragment())
-//                    .commit();
-//        }
+    private void launchStoryElement(StoryElement storyElement, boolean eraseLast) {
+        // TODO: check for local vs online
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.main_fragment_container,
+                        StoryElementFragment.newInstance(storyElement));
+        if (eraseLast) {
+            getSupportFragmentManager().popBackStack();
+        }
+        ft.addToBackStack(null);
+        ft.commit();
     }
 
     // Bookmarked Stories database methods
@@ -155,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onMainMenuContinueStoryAction() {
-
+        // todo make sure proper backstack transaction name
     }
 
     @Override
@@ -167,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements
     public void onMainMenuBookmarkedStoriesAction() {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.main_fragment_container, new BookmarkedStoriesFragment())
-                .addToBackStack(null)
+                .addToBackStack(getClass().getName())
                 .commit();
     }
 
@@ -175,7 +183,7 @@ public class MainActivity extends AppCompatActivity implements
     public void onMainMenuCreateEditStoriesAction() {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.main_fragment_container, new CreateEditStoriesFragment())
-                .addToBackStack(null)
+                .addToBackStack(getClass().getName())
                 .commit();
     }
 
@@ -229,12 +237,96 @@ public class MainActivity extends AppCompatActivity implements
     // StoryOverviewFragment callback methods
 
     @Override
-    public void playStory(String author, String storyId) {
-        Toast.makeText(this, "Play story", Toast.LENGTH_SHORT).show();
+    public void onStoryOverviewFragmentPlayStory(String author, String storyId) {
+        new StoryGetElementTask(false)
+                .execute(author, storyId, Integer.toString(StoryElement.START_ID));
     }
 
     @Override
-    public boolean deleteStory(String author, String storyId) {
+    public boolean onStoryOverviewFragmentDeleteStory(String author, String storyId) {
         return deleteBookmarkedStory(author, storyId);
+    }
+
+    // StoryElementFragment callback methods
+
+    @Override
+    public void onStoryElementChoiceAction(String author, String storyId, int elementId) {
+        new StoryGetElementTask(true)
+                .execute(author, storyId, Integer.toString(elementId));
+    }
+
+    @Override
+    public void onStoryElementBacktrackAction() {
+        // TODO: replace
+        Toast.makeText(this, "Will eventually backtrack", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onStoryElementMainMenuAction() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.main_fragment_container, new MainMenuFragment())
+                .commit();    }
+
+    // Shared Async Methods
+    /**
+     * Downloads a StoryElement from the online database.
+     */
+    public class StoryGetElementTask extends AbstractPostAsyncTask<String, Void, String> {
+
+        private boolean mAddToBackstack;
+
+        public StoryGetElementTask(boolean addToBackstack) {
+            super();
+            mAddToBackstack = addToBackstack;
+        }
+
+        /**
+         * Starts the story header retrieval process.
+         * @param params The story header author, story ID, and element ID, in that order.
+         * @return A string holding the result of the request.
+         */
+        @Override
+        protected String doInBackground(String...params) {
+            String author = params[0];
+            String storyId = params[1];
+            String elementId = params[2];
+
+            String urlParameters = "author=" + author
+                    + "&story_id=" + storyId
+                    + "&element_id=" + elementId;
+            try {
+                return downloadUrl(GET_STORY_ELEMENT_URL, urlParameters, TAG);
+            } catch (IOException e) {
+                return "Unable to retrieve web page. URL may be invalid";
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            // Parse JSON
+            try {
+                JSONObject jsonObject = new JSONObject(s);
+                String status = jsonObject.getString("result");
+                if (status.equalsIgnoreCase("success")) {
+                    String elementString = jsonObject.getString("storyElement");
+                    StoryElement element = StoryElement.parseJson(elementString);
+                    Toast.makeText(MainActivity.this, "Success",
+                            Toast.LENGTH_SHORT).show();
+                    launchStoryElement(element, mAddToBackstack);
+
+                } else {
+                    String reason = jsonObject.getString("error");
+                    Toast.makeText(MainActivity.this, "Failed: " + reason,
+                            Toast.LENGTH_SHORT).show();
+                }
+            } catch (Exception e) {
+                Log.d(TAG, "Parsing JSON Exception: " + e.getMessage());
+                e.printStackTrace();
+                Toast.makeText(MainActivity.this, "Parsing JSON exception",
+                        Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }
