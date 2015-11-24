@@ -17,6 +17,7 @@ import java.util.List;
 
 import behnen.julia.makeyourownadventure.asyncs.AbstractPostAsyncTask;
 import behnen.julia.makeyourownadventure.data.BookmarkedStoryDB;
+import behnen.julia.makeyourownadventure.data.CreatedStoryElementDB;
 import behnen.julia.makeyourownadventure.data.CreatedStoryHeaderDB;
 import behnen.julia.makeyourownadventure.model.StoryElement;
 import behnen.julia.makeyourownadventure.model.StoryHeader;
@@ -170,6 +171,30 @@ public class MainActivity extends AppCompatActivity implements
         String username = getCurrentUser();
         List<StoryHeader> list = createdStoryHeaderDB.getStoriesByAuthor(username);
         createdStoryHeaderDB.closeDB();
+        return list;
+    }
+
+    // CreatedStoryElementDB methods
+
+    private boolean addCreatedStoryElement(StoryElement storyElement) {
+        CreatedStoryElementDB createdStoryElementDB = new CreatedStoryElementDB(this);
+        boolean wasAdded = createdStoryElementDB.insertStoryElement(storyElement);
+        createdStoryElementDB.closeDB();
+        return wasAdded;
+    }
+
+    private boolean deleteCreatedStoryElement(String author, String storyId, int elementId) {
+        CreatedStoryElementDB createdStoryElementDB = new CreatedStoryElementDB(this);
+        boolean wasDeleted = createdStoryElementDB.deleteStoryElement(author, storyId, elementId);
+        createdStoryElementDB.closeDB();
+        return wasDeleted;
+    }
+
+    private List<StoryElement> getCreatedStoryElementsByStory(String storyId) {
+        CreatedStoryElementDB createdStoryElementDB = new CreatedStoryElementDB(this);
+        String username = getCurrentUser();
+        List<StoryElement> list = createdStoryElementDB.getStoryElementsByStory(username, storyId);
+        createdStoryElementDB.closeDB();
         return list;
     }
 

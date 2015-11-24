@@ -154,6 +154,7 @@ public class CreatedStoryOverviewFragment extends Fragment {
         // full upload does not work the first time
         //List<StoryElement> storyElements = getStoryElements(author, storyId);
 
+        // todo: upload story elements
 //        for (StoryElement element: storyElements) {
 //            new StoryElementUploadTask().execute(author, storyId,
 //                    Integer.toString(element.getElementId()),
