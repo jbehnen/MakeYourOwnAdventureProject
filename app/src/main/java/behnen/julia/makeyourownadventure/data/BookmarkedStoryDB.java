@@ -88,8 +88,7 @@ public class BookmarkedStoryDB {
         private static final String CREATE_STORY_PROGRESS_SQL =
                 "CREATE TABLE IF NOT EXISTS BookmarkedStory " +
                         "(username TEXT, author TEXT, storyId TEXT, storyTitle TEXT, " +
-                        "storyDescription TEXT, progress TEXT, " +
-                        "PRIMARY KEY (username, author, storyId))";
+                        "storyDescription TEXT, PRIMARY KEY (username, author, storyId))";
 
         private static final String DROP_BOOKMARKED_STORY_SQL =
                 "DROP TABLE IF EXISTS BookmarkedStory";
