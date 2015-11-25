@@ -39,6 +39,7 @@ public class CreatedStoryHeaderDB {
         contentValues.put("storyId", storyHeader.getStoryId());
         contentValues.put("storyTitle", storyHeader.getTitle());
         contentValues.put("storyDescription", storyHeader.getDescription());
+        contentValues.put("isFinal", false);
 
         long rowId = mSQLiteDatabase.insert(TABLE_NAME, null, contentValues);
         return rowId != -1;
@@ -51,6 +52,37 @@ public class CreatedStoryHeaderDB {
                 new String[]{author, storyId}
         );
         return rowsAffected == 1;
+    }
+
+    public boolean setStoryFinal(String author, String storyId, boolean isFinal) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("isFinal", isFinal);
+
+        long rowId = mSQLiteDatabase.update(
+                TABLE_NAME,
+                contentValues,
+                "author = ? AND storyId = ?",
+                new String[]{author, storyId});
+        return rowId != -1;
+    }
+
+    public boolean isStoryFinal(String author, String storyId) {
+        String[] columns = {
+                "isFinal"
+        };
+
+        Cursor c = mSQLiteDatabase.query(
+                TABLE_NAME,
+                columns,
+                "author = ? AND storyId = ?",
+                new String[]{author, storyId},
+                null,
+                null,
+                null
+        );
+
+        c.moveToFirst();
+        return (c.getInt(0) == 1);
     }
 
     public List<StoryHeader> getStoriesByAuthor(String author) {
@@ -86,9 +118,9 @@ public class CreatedStoryHeaderDB {
         private static final String CREATE_CREATED_STORY_HEADER_SQL =
                 "CREATE TABLE IF NOT EXISTS CreatedStoryHeader " +
                         "(author TEXT, storyId TEXT, storyTitle TEXT, storyDescription TEXT, " +
-                        "PRIMARY KEY (author, storyId))";
+                        "isFinal BOOLEAN, PRIMARY KEY (author, storyId))";
 
-        private static final String DROP_REATED_STORY_HEADER_SQL =
+        private static final String DROP_CREATED_STORY_HEADER_SQL =
                 "DROP TABLE IF EXISTS CreatedStoryHeader";
 
         public CreatedStoryHeaderDBHelper(Context context, String name,
@@ -103,7 +135,7 @@ public class CreatedStoryHeaderDB {
 
         @Override
         public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int il) {
-            sqLiteDatabase.execSQL(DROP_REATED_STORY_HEADER_SQL);
+            sqLiteDatabase.execSQL(DROP_CREATED_STORY_HEADER_SQL);
             onCreate(sqLiteDatabase);
         }
     }

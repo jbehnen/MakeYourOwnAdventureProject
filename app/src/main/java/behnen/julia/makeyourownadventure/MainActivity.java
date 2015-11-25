@@ -110,16 +110,23 @@ public class MainActivity extends AppCompatActivity implements
         return mSharedPreferences.getString(getString(R.string.USERNAME), null);
     }
 
-    private void launchStoryElement(StoryElement storyElement, boolean eraseLast) {
+    private void launchStoryElement(StoryElement storyElement, boolean eraseLast,
+                                    boolean isOnline) {
         // TODO: check for local vs online
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.main_fragment_container,
-                        StoryElementFragment.newInstance(storyElement));
+                        StoryElementFragment.newInstance(storyElement, isOnline));
         if (eraseLast) {
             getSupportFragmentManager().popBackStack();
         }
         ft.addToBackStack(null);
         ft.commit();
+    }
+
+    private void launchLocalStoryElement(String author, String storyId, int elementId,
+                                         boolean eraseLast, boolean isOnline) {
+        StoryElement storyElement = getCreatedStoryElement(author, storyId, elementId);
+        launchStoryElement(storyElement, eraseLast, isOnline);
     }
 
     // DATABASE METHODS
@@ -166,9 +173,8 @@ public class MainActivity extends AppCompatActivity implements
         return wasDeleted;
     }
 
-    private List<StoryHeader> getCreatedStoryHeaders() {
+    private List<StoryHeader> getCreatedStoryHeaders(String username) {
         CreatedStoryHeaderDB createdStoryHeaderDB = new CreatedStoryHeaderDB(this);
-        String username = getCurrentUser();
         List<StoryHeader> list = createdStoryHeaderDB.getStoriesByAuthor(username);
         createdStoryHeaderDB.closeDB();
         return list;
@@ -180,6 +186,7 @@ public class MainActivity extends AppCompatActivity implements
         CreatedStoryElementDB createdStoryElementDB = new CreatedStoryElementDB(this);
         boolean wasAdded = createdStoryElementDB.insertStoryElement(storyElement);
         createdStoryElementDB.closeDB();
+        Log.d(TAG, "was added " + wasAdded);
         return wasAdded;
     }
 
@@ -190,10 +197,17 @@ public class MainActivity extends AppCompatActivity implements
         return wasDeleted;
     }
 
-    private List<StoryElement> getCreatedStoryElementsByStory(String storyId) {
+    private StoryElement getCreatedStoryElement(String author, String storyId, int elementId) {
         CreatedStoryElementDB createdStoryElementDB = new CreatedStoryElementDB(this);
-        String username = getCurrentUser();
-        List<StoryElement> list = createdStoryElementDB.getStoryElementsByStory(username, storyId);
+        StoryElement storyElement =
+                createdStoryElementDB.getStoryElement(author, storyId, elementId);
+        createdStoryElementDB.closeDB();
+        return storyElement;
+    }
+
+    private List<StoryElement> getCreatedStoryElementsByStory(String author, String storyId) {
+        CreatedStoryElementDB createdStoryElementDB = new CreatedStoryElementDB(this);
+        List<StoryElement> list = createdStoryElementDB.getStoryElementsByStory(author, storyId);
         createdStoryElementDB.closeDB();
         return list;
     }
@@ -308,9 +322,14 @@ public class MainActivity extends AppCompatActivity implements
     // StoryElementFragment callback methods
 
     @Override
-    public void onStoryElementChoiceAction(String author, String storyId, int elementId) {
-        new StoryGetElementTask(true)
-                .execute(author, storyId, Integer.toString(elementId));
+    public void onStoryElementChoiceAction(
+            String author, String storyId, int elementId, boolean isOnline) {
+        if (isOnline) {
+            new StoryGetElementTask(true)
+                    .execute(author, storyId, Integer.toString(elementId));
+        } else {
+            launchLocalStoryElement(author, storyId, elementId, true, isOnline);
+        }
     }
 
     @Override
@@ -329,7 +348,8 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public List<StoryHeader> onCreateEditStoriesGetStories() {
-        return getCreatedStoryHeaders();
+        String username = getCurrentUser();
+        return getCreatedStoryHeaders(username);
     }
 
     @Override
@@ -355,6 +375,8 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onCreateNewStorySaveLocalCopy(StoryHeader storyHeader) {
         addCreatedStoryHeader(storyHeader);
+        addCreatedStoryElement(new StoryElement(storyHeader.getAuthor(), storyHeader.getStoryId(),
+                StoryElement.START_ID, "", "", ""));
     }
 
     // CreatedStoryOverviewFragment callback methods
@@ -371,12 +393,21 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onCreatedStoryOverviewFragmentPlayStory(String author, String storyId) {
-
+        launchLocalStoryElement(author, storyId, StoryElement.START_ID, false, false);
     }
 
     @Override
     public boolean onCreatedStoryOverviewFragmentDeleteStory(String author, String storyId) {
-        return false;
+        // TODO check at all points for errors
+        boolean success = true;
+        List<StoryElement> storyElements = getCreatedStoryElementsByStory(author, storyId);
+        for (StoryElement element : storyElements) {
+            success = deleteCreatedStoryElement(element.getAuthor(),
+                    element.getStoryId(), element.getElementId());
+            if (!success) return false;
+        }
+        success = deleteCreatedStoryHeader(author, storyId);
+        return success;
     }
 
     // Shared Async Methods
@@ -385,7 +416,7 @@ public class MainActivity extends AppCompatActivity implements
      */
     public class StoryGetElementTask extends AbstractPostAsyncTask<String, Void, String> {
 
-        private boolean mAddToBackstack;
+        private final boolean mAddToBackstack;
 
         public StoryGetElementTask(boolean addToBackstack) {
             super();
@@ -426,7 +457,7 @@ public class MainActivity extends AppCompatActivity implements
                     StoryElement element = StoryElement.parseJson(elementString);
                     Toast.makeText(MainActivity.this, "Success",
                             Toast.LENGTH_SHORT).show();
-                    launchStoryElement(element, mAddToBackstack);
+                    launchStoryElement(element, mAddToBackstack, true);
 
                 } else {
                     String reason = jsonObject.getString("error");

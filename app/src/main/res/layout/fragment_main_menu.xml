@@ -37,12 +37,6 @@
                 android:text="@string/action_continue_story"/>
 
             <Button
-                android:id="@+id/main_menu_the_story_so_far_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/action_the_story_so_far"/>
-
-            <Button
                 android:id="@+id/main_menu_bookmarked_stories_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

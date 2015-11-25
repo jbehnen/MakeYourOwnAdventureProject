@@ -74,8 +74,8 @@ public class MainMenuFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_main_menu, container, false);
 
         Button continueStoryButton = (Button) v.findViewById(R.id.main_menu_continue_story_button);
-        Button storySoFarButton = (Button) v.findViewById(R.id.main_menu_the_story_so_far_button);
-        Button downloadedStoriesButton = (Button) v.findViewById(R.id.main_menu_bookmarked_stories_button);
+        Button downloadedStoriesButton =
+                (Button) v.findViewById(R.id.main_menu_bookmarked_stories_button);
         Button myStoriesButton = (Button) v.findViewById(R.id.main_menu_create_edit_stories_button);
         Button aboutButton = (Button) v.findViewById(R.id.main_menu_about_button);
         Button signOutButton = (Button) v.findViewById(R.id.main_menu_sign_out_button);
@@ -85,15 +85,6 @@ public class MainMenuFragment extends Fragment {
             public void onClick(View v) {
                 if (mCallback != null) {
                     mCallback.onMainMenuContinueStoryAction();
-                }
-            }
-        });
-
-        storySoFarButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mCallback != null) {
-                    mCallback.onMainMenuStorySoFarAction();
                 }
             }
         });

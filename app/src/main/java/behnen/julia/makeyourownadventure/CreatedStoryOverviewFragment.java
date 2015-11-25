@@ -16,6 +16,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 import behnen.julia.makeyourownadventure.asyncs.AbstractPostAsyncTask;
+import behnen.julia.makeyourownadventure.dialogs.EditStoryHeaderDialogFragment;
 import behnen.julia.makeyourownadventure.model.StoryHeader;
 
 /**
@@ -25,7 +26,9 @@ public class CreatedStoryOverviewFragment extends Fragment {
 
     private static final String TAG = "CreatedStoryOverview";
 
-    private static final String ARG_STORY_HEADER = "story_header";
+    private static final String ARG_STORY_HEADER = "storyHeader";
+
+    public static final int REQUEST_HEADER = 0;
 
     /**
      * The URL for story header upload requests.
@@ -70,6 +73,18 @@ public class CreatedStoryOverviewFragment extends Fragment {
 
         displayStoryInfo(view);
 
+        final Button editStoryHeaderButton =
+                (Button) view.findViewById(R.id.created_story_overview_edit_story_info_button);
+        editStoryHeaderButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EditStoryHeaderDialogFragment fragment = EditStoryHeaderDialogFragment.newInstance(
+                        mStoryHeader.getTitle(), mStoryHeader.getDescription());
+                fragment.setTargetFragment(CreatedStoryOverviewFragment.this, REQUEST_HEADER);
+                fragment.show(getFragmentManager(), "editStoryHeader");
+            }
+        });
+
         Button playButton = (Button) view.findViewById(R.id.created_story_overview_play_button);
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,6 +100,7 @@ public class CreatedStoryOverviewFragment extends Fragment {
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // TODO also delete from online database
                 if (mCallback != null) {
                     boolean deleted =
                             mCallback.onCreatedStoryOverviewFragmentDeleteStory(
@@ -111,7 +127,7 @@ public class CreatedStoryOverviewFragment extends Fragment {
         return view;
     }
 
-    private final void displayStoryInfo(View view) {
+    private void displayStoryInfo(View view) {
         if (mStoryHeader != null) {
             TextView author = (TextView) view.findViewById(R.id.created_story_overview_author);
             TextView storyId = (TextView) view.findViewById(R.id.created_story_overview_story_id);

@@ -29,6 +29,7 @@ public class StoryElementFragment extends Fragment {
     private static final String TAG = "StoryElementFragment";
 
     private static final String STORY_ELEMENT = "storyElement";
+    private static final String IS_ONLINE = "isOnline";
 
     /**
      * The URL for story element download requests from the shared image directory.
@@ -37,18 +38,21 @@ public class StoryElementFragment extends Fragment {
             "http://cssgate.insttech.washington.edu/~jbehnen/myoa/images/shared/";
 
     private ImageView mImage;
+    private boolean mIsOnline;
 
     private OnStoryElementInteractionListener mCallback;
 
     public interface OnStoryElementInteractionListener {
-        void onStoryElementChoiceAction(String author, String storyId, int elementId);
+        void onStoryElementChoiceAction(
+                String author, String storyId, int elementId, boolean isOnline);
         void onStoryElementBacktrackAction();
         void onStoryElementMainMenuAction();
     }
 
-    public static StoryElementFragment newInstance(StoryElement storyElement) {
+    public static StoryElementFragment newInstance(StoryElement storyElement, boolean isOnline) {
         Bundle args = new Bundle();
         args.putString(STORY_ELEMENT, storyElement.toString());
+        args.putBoolean(IS_ONLINE, isOnline);
 
         StoryElementFragment fragment = new StoryElementFragment();
         fragment.setArguments(args);
@@ -82,6 +86,8 @@ public class StoryElementFragment extends Fragment {
 
         // TODO: test for bundle arguments existing/not null
         StoryElement storyElement = StoryElement.parseJson(getArguments().getString(STORY_ELEMENT));
+        mIsOnline = getArguments().getBoolean(IS_ONLINE);
+
         displayStoryElement(v, storyElement);
 
         return v;
@@ -146,7 +152,7 @@ public class StoryElementFragment extends Fragment {
             public void onClick(View v) {
                 if (mCallback != null) {
                     mCallback.onStoryElementChoiceAction(storyElement.getAuthor(),
-                            storyElement.getStoryId(), storyElement.getChoice1Id());
+                            storyElement.getStoryId(), storyElement.getChoice1Id(), mIsOnline);
                 }
             }
         });
@@ -158,7 +164,7 @@ public class StoryElementFragment extends Fragment {
             public void onClick(View v) {
                 if (mCallback != null) {
                     mCallback.onStoryElementChoiceAction(storyElement.getAuthor(),
-                            storyElement.getStoryId(), storyElement.getChoice2Id());
+                            storyElement.getStoryId(), storyElement.getChoice2Id(), mIsOnline);
                 }
             }
         });

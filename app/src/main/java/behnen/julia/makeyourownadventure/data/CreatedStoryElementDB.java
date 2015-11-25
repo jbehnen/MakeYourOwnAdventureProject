@@ -17,8 +17,8 @@ import behnen.julia.makeyourownadventure.model.StoryElement;
 public class CreatedStoryElementDB {
 
     public static final int DB_VERSION = 1;
-    public static final String DB_NAME = "CreatedStoryHeader.db";
-    private static final String TABLE_NAME = "CreatedStoryHeader";
+    public static final String DB_NAME = "CreatedStoryElement.db";
+    private static final String TABLE_NAME = "CreatedStoryElement";
 
     private CreatedStoryElementDBHelper mCreatedStoryElementDBHelper;
     private SQLiteDatabase mSQLiteDatabase;
@@ -58,6 +58,45 @@ public class CreatedStoryElementDB {
                 new String[]{author, storyId, Integer.toString(elementId)}
         );
         return rowsAffected == 1;
+    }
+
+    public StoryElement getStoryElement(String author, String storyId, int elementId) {
+        String[] columns = {
+                "elementTitle", "imageUrl", "elementDescription", "isEnding",
+                "choice1Id", "choice2Id", "choice1Text", "choice2Text"
+        };
+
+        Cursor c = mSQLiteDatabase.query(
+                TABLE_NAME,
+                columns,
+                "author = ? AND storyId = ? AND elementId = ?",
+                new String[]{author, storyId, Integer.toBinaryString(elementId)},
+                null,
+                null,
+                null
+        );
+
+        c.moveToFirst();
+
+        String title = c.getString(0);
+        String imageUrl = c.getString(1);
+        String description = c.getString(2);
+        boolean isEnding = (c.getInt(3) == 1);
+        int choice1Id = c.getInt(4);
+        int choice2Id = c.getInt(5);
+        String choice1Text = c.getString(6);
+        String choice2Text = c.getString(7);
+
+        StoryElement storyElement;
+        if (isEnding) {
+            storyElement = new StoryElement(author, storyId, elementId, title,
+                    imageUrl, description, choice1Id, choice2Id, choice1Text, choice2Text);
+        } else {
+            storyElement = new StoryElement(author, storyId, elementId, title,
+                    imageUrl, description);
+        }
+
+        return storyElement;
     }
 
     public List<StoryElement> getStoryElementsByStory(String author, String storyId) {
@@ -107,10 +146,12 @@ public class CreatedStoryElementDB {
 
         private static final String CREATE_CREATED_STORY_ELEMENT_SQL =
                 "CREATE TABLE IF NOT EXISTS CreatedStoryElement " +
-                        "(author TEXT, storyId TEXT, storyTitle TEXT, storyDescription TEXT, " +
-                        "PRIMARY KEY (author, storyId))";
+                        "(author TEXT, storyId TEXT, elementId INT, elementTitle TEXT, " +
+                        "imageUrl TEXT, elementDescription TEXT, isEnding BOOL, " +
+                        "choice1Id INT, choice2Id INT, choice1Text TEXT, choice2Text TEXT, " +
+                        "PRIMARY KEY (author, storyId, elementId))";
 
-        private static final String DROP_REATED_STORY_ELEMENT_SQL =
+        private static final String DROP_CREATED_STORY_ELEMENT_SQL =
                 "DROP TABLE IF EXISTS CreatedStoryElement";
 
         public CreatedStoryElementDBHelper(Context context, String name,
@@ -125,7 +166,7 @@ public class CreatedStoryElementDB {
 
         @Override
         public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int il) {
-            sqLiteDatabase.execSQL(DROP_REATED_STORY_ELEMENT_SQL);
+            sqLiteDatabase.execSQL(DROP_CREATED_STORY_ELEMENT_SQL);
             onCreate(sqLiteDatabase);
         }
     }

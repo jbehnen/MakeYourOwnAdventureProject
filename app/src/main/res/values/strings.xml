@@ -77,5 +77,7 @@
     <string name="story_element_backtrack_button">Backtrack</string>
     <string name="action_edit_story_info">Edit story info</string>
     <string name="action_edit_story_elements">Edit story elements</string>
+    <string name="save_action">Save</string>
+    <string name="cancel_action">Cancel</string>
 
 </resources>
