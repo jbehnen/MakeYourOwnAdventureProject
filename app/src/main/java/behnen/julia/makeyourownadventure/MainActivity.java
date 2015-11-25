@@ -110,9 +110,18 @@ public class MainActivity extends AppCompatActivity implements
         return mSharedPreferences.getString(getString(R.string.USERNAME), null);
     }
 
+    private void nextStoryElement(String author, String storyId, int elementId,
+                                  boolean eraseLast, boolean isOnline) {
+        if (isOnline) {
+            new StoryGetElementTask(true)
+                    .execute(author, storyId, Integer.toString(elementId));
+        } else {
+            launchLocalStoryElement(author, storyId, elementId, eraseLast, isOnline);
+        }
+    }
+
     private void launchStoryElement(StoryElement storyElement, boolean eraseLast,
                                     boolean isOnline) {
-        // TODO: check for local vs online
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.main_fragment_container,
                         StoryElementFragment.newInstance(storyElement, isOnline));
@@ -324,18 +333,12 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onStoryElementChoiceAction(
             String author, String storyId, int elementId, boolean isOnline) {
-        if (isOnline) {
-            new StoryGetElementTask(true)
-                    .execute(author, storyId, Integer.toString(elementId));
-        } else {
-            launchLocalStoryElement(author, storyId, elementId, true, isOnline);
-        }
+        nextStoryElement(author, storyId, elementId, true, isOnline);
     }
 
     @Override
-    public void onStoryElementBacktrackAction() {
-        // TODO: replace
-        Toast.makeText(this, "Will eventually backtrack", Toast.LENGTH_SHORT).show();
+    public void onStoryElementRestartAction(String author, String storyId, boolean isOnline) {
+        nextStoryElement(author, storyId, StoryElement.START_ID, true, isOnline);
     }
 
     @Override

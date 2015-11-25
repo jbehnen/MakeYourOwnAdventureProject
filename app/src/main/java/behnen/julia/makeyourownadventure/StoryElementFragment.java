@@ -3,8 +3,6 @@ package behnen.julia.makeyourownadventure;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -14,10 +12,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.BufferedInputStream;
-import java.io.InputStream;
-import java.net.URL;
-
+import behnen.julia.makeyourownadventure.asyncs.AbstractDownloadImageTask;
 import behnen.julia.makeyourownadventure.model.StoryElement;
 
 
@@ -45,7 +40,7 @@ public class StoryElementFragment extends Fragment {
     public interface OnStoryElementInteractionListener {
         void onStoryElementChoiceAction(
                 String author, String storyId, int elementId, boolean isOnline);
-        void onStoryElementBacktrackAction();
+        void onStoryElementRestartAction(String author, String storyId, boolean isOnline);
         void onStoryElementMainMenuAction();
     }
 
@@ -106,20 +101,21 @@ public class StoryElementFragment extends Fragment {
                 .setText(storyElement.getDescription());
 
         if (storyElement.isEnding()) {
-            displayEndingButtons(v);
+            displayEndingButtons(v, storyElement);
         } else {
             displayChoiceButtons(v, storyElement);
         }
     }
 
-    private void displayEndingButtons(View v) {
+    private void displayEndingButtons(View v, final StoryElement storyElement) {
         Button backtrackButton = (Button) v.findViewById(R.id.story_element_button1);
-        backtrackButton.setText(R.string.story_element_backtrack_button);
+        backtrackButton.setText(R.string.story_element_restart_button);
         backtrackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mCallback != null) {
-                    mCallback.onStoryElementBacktrackAction();
+                    mCallback.onStoryElementRestartAction(
+                            storyElement.getAuthor(), storyElement.getStoryId(), mIsOnline);
                 }
             }
         });
@@ -134,14 +130,6 @@ public class StoryElementFragment extends Fragment {
                 }
             }
         });
-
-
-        // TODO: wire up button
-        ((Button) v.findViewById(R.id.story_element_button1))
-                .setText(R.string.story_element_backtrack_button);
-        // TODO: wire up button
-        ((Button) v.findViewById(R.id.story_element_button2))
-                .setText(R.string.story_element_main_menu_button);
     }
 
     private void displayChoiceButtons(View v, final StoryElement storyElement) {
@@ -173,35 +161,7 @@ public class StoryElementFragment extends Fragment {
     /**
      * An asynchronous task for downloading a story element image.
      */
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        /**
-         * Starts the image download process.
-         * @param urls The URL of the image.
-         * @return A string holding the result of the request.
-         */
-        @Override
-        protected Bitmap doInBackground(String... urls) {
-            Bitmap bitmap = null;
-            for (String url : urls) {
-                try {
-                    URL urlObject = new URL(url);
-                    InputStream is = new BufferedInputStream(urlObject.openStream());
-                    bitmap = BitmapFactory.decodeStream(is);
-
-                } catch (Exception e) {
-//                Toast.makeText(getActivity(), "Unable to download the image, Reason: "
-//                        + e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            }
-            return bitmap;
-        }
-
+    private class DownloadImageTask extends AbstractDownloadImageTask {
         @Override
         protected void onPostExecute(Bitmap bitmap) {
             mImage.setImageBitmap(bitmap);

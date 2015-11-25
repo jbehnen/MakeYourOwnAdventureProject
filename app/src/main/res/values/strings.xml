@@ -69,14 +69,16 @@
     <string name="prompt_title">Title</string>
     <string name="prompt_description">Description (optional)</string>
 
-<!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_main2">Main2Activity</string>
+    <!--Strings related to displaying a story element-->
     <string name="story_element_image_description">Image showing current story element</string>
     <string name="story_element_main_menu_button">Main Menu</string>
-    <string name="story_element_backtrack_button">Backtrack</string>
+    <string name="story_element_restart_button">Restart</string>
+
+    <!--Strings related to the created story overview-->
     <string name="action_edit_story_info">Edit story info</string>
     <string name="action_edit_story_elements">Edit story elements</string>
+
+    <!--Strings related to saving changes-->
     <string name="save_action">Save</string>
     <string name="cancel_action">Cancel</string>
 
