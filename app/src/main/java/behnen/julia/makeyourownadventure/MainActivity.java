@@ -40,7 +40,8 @@ public class MainActivity extends AppCompatActivity implements
         StoryElementFragment.OnStoryElementInteractionListener,
         CreateEditStoriesFragment.OnCreateEditStoriesInteractionListener,
         CreateNewStoryFragment.OnCreateNewStoryInteractionListener,
-        CreatedStoryOverviewFragment.OnCreatedStoryOverviewInteractionListener {
+        CreatedStoryOverviewFragment.OnCreatedStoryOverviewInteractionListener,
+        CreatedStoryElementsFragment.OnCreatedStoryElementsInteractionListener {
 
     /**
      * The URL for story element download requests.
@@ -195,7 +196,7 @@ public class MainActivity extends AppCompatActivity implements
         CreatedStoryElementDB createdStoryElementDB = new CreatedStoryElementDB(this);
         boolean wasAdded = createdStoryElementDB.insertStoryElement(storyElement);
         createdStoryElementDB.closeDB();
-        Log.d(TAG, "was added " + wasAdded);
+        Log.d(TAG, "element was added " + wasAdded);
         return wasAdded;
     }
 
@@ -391,7 +392,11 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onCreatedStoryOverviewFragmentEditElements(String author, String storyId) {
-
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.main_fragment_container,
+                        CreatedStoryElementsFragment.newInstance(author, storyId))
+                .addToBackStack(null)
+                .commit();
     }
 
     @Override
@@ -411,6 +416,28 @@ public class MainActivity extends AppCompatActivity implements
         }
         success = deleteCreatedStoryHeader(author, storyId);
         return success;
+    }
+
+    // CreatedStoryElements callback methods
+
+    @Override
+    public List<StoryElement> onCreatedStoryElementsGetElements(String author, String storyId) {
+        List<StoryElement> list = getCreatedStoryElementsByStory(author, storyId);
+        return list;
+    }
+
+    @Override
+    public void onCreatedStoryElementsSelectElement(StoryElement storyElement) {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.main_fragment_container,
+                        EditStoryElementFragment.newInstance(storyElement))
+                .addToBackStack(null)
+                .commit();
+    }
+
+    @Override
+    public void onCreatedStoryElementsAddElement() {
+
     }
 
     // Shared Async Methods

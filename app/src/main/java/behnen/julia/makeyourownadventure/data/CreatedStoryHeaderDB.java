@@ -81,8 +81,10 @@ public class CreatedStoryHeaderDB {
                 null
         );
 
-        c.moveToFirst();
-        return (c.getInt(0) == 1);
+        boolean isFinal = (c.getInt(0) == 1);
+
+        c.close();
+        return isFinal;
     }
 
     public List<StoryHeader> getStoriesByAuthor(String author) {

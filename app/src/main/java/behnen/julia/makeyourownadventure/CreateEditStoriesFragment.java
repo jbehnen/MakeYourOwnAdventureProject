@@ -32,10 +32,6 @@ public class CreateEditStoriesFragment extends Fragment {
         void onCreateEditStoriesAddStory();
     }
 
-    public CreateEditStoriesFragment() {
-        // Required empty public constructor
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

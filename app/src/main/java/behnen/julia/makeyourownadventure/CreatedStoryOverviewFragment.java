@@ -85,6 +85,18 @@ public class CreatedStoryOverviewFragment extends Fragment {
             }
         });
 
+        final Button editStoryElementsButton =
+                (Button) view.findViewById(R.id.created_story_overview_edit_story_elements_button);
+        editStoryElementsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mCallback != null) {
+                    mCallback.onCreatedStoryOverviewFragmentEditElements(
+                            mStoryHeader.getAuthor(), mStoryHeader.getStoryId());
+                }
+            }
+        });
+
         Button playButton = (Button) view.findViewById(R.id.created_story_overview_play_button);
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override

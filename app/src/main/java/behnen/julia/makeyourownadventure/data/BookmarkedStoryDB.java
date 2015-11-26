@@ -80,6 +80,7 @@ public class BookmarkedStoryDB {
             list.add(storyHeader);
             c.moveToNext();
         }
+        c.close();
         return list;
     }
     

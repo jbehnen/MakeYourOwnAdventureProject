@@ -87,6 +87,8 @@ public class CreatedStoryElementDB {
         String choice1Text = c.getString(6);
         String choice2Text = c.getString(7);
 
+        c.close();
+
         StoryElement storyElement;
         if (isEnding) {
             storyElement = new StoryElement(author, storyId, elementId, title,
@@ -139,6 +141,7 @@ public class CreatedStoryElementDB {
             list.add(storyElement);
             c.moveToNext();
         }
+        c.close();
         return list;
     }
 

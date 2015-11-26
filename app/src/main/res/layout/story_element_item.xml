@@ -7,11 +7,16 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/story_header_item_title"/>
+        android:id="@+id/story_element_item_title"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/story_header_item_author"/>
+        android:id="@+id/story_element_item_description"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/story_element_item_choice_ending"/>
 
 </LinearLayout>
