@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import behnen.julia.makeyourownadventure.model.StoryElement;
 
@@ -16,6 +17,12 @@ public class CreatedStoryElementOverviewFragment extends AbstractCreatedStoryEle
 
     public static final String STORY_ELEMENT = "StoryElement";
 
+    private OnCreatedStoryElementOverviewInteractionListener mCallback;
+
+    public interface OnCreatedStoryElementOverviewInteractionListener {
+        void onCreatedStoryElementOverviewEdit(StoryElement storyElement);
+        void onCreatedStoryElementOverviewDelete(StoryElement storyElement);
+    }
 
     public static CreatedStoryElementOverviewFragment newInstance(StoryElement storyElement) {
         Bundle args = new Bundle();
@@ -33,8 +40,32 @@ public class CreatedStoryElementOverviewFragment extends AbstractCreatedStoryEle
         // Inflate the layout for this fragment
         View view = super.onCreateView(inflater, container, savedInstanceState);
 
+        Button editButton = (Button) view.findViewById(R.id.created_story_element_button_1);
+        editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mCallback != null) {
+                    mCallback.onCreatedStoryElementOverviewEdit(getStoryElement());
+                }
+            }
+        });
+
+        Button deleteButton = (Button) view.findViewById(R.id.created_story_element_button_2);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mCallback != null) {
+                    mCallback.onCreatedStoryElementOverviewDelete(getStoryElement());
+                }
+            }
+        });
+
+        Button button3 = (Button) view.findViewById(R.id.created_story_element_button_3);
+        button3.setVisibility(View.INVISIBLE);
 
         return view;
     }
+
+
 
 }

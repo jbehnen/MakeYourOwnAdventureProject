@@ -19,6 +19,21 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/prompt_title"/>
             </android.support.design.widget.TextInputLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingRight="4dp"
+                android:paddingLeft="4dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/prompt_image"
+                    android:textSize="18sp"/>
+                <android.support.v7.widget.AppCompatSpinner
+                    android:id="@+id/created_story_element_image_spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+            </LinearLayout>
 
             <ImageView
                 android:id="@+id/story_element_image"
@@ -37,62 +52,71 @@
             </android.support.design.widget.TextInputLayout>
 
             <LinearLayout
-                android:id="@+id/created_story_element_choice_only"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-
+                android:paddingRight="4dp"
+                android:paddingLeft="4dp">
                 <TextView
                     android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/prompt_choice_ending"
+                    android:textSize="18sp"/>
+                <android.support.v7.widget.AppCompatSpinner
+                    android:id="@+id/created_story_element_choice_ending_spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+            </LinearLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:id="@+id/created_story_element_choice1Text"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="@string/prompt_choice1"/>
+                    android:hint="@string/prompt_choice1Text"/>
+            </android.support.design.widget.TextInputLayout>
 
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <EditText
-                        android:id="@+id/created_story_element_choice1Text"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/prompt_text"/>
-                </android.support.design.widget.TextInputLayout>
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <EditText
-                        android:id="@+id/created_story_element_choice1Target"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/prompt_target"/>
-                </android.support.design.widget.TextInputLayout>
-
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingRight="4dp"
+                android:paddingLeft="4dp">
                 <TextView
                     android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/prompt_choice1Id"
+                    android:textSize="18sp"/>
+                <android.support.v7.widget.AppCompatSpinner
+                    android:id="@+id/created_story_element_choice1Id_spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+            </LinearLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:id="@+id/created_story_element_choice2Text"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="@string/prompt_choice2"/>
+                    android:hint="@string/prompt_choice2Text"/>
+            </android.support.design.widget.TextInputLayout>
 
-                <android.support.design.widget.TextInputLayout
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingRight="4dp"
+                android:paddingLeft="4dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/prompt_choice2Id"
+                    android:textSize="18sp"/>
+                <android.support.v7.widget.AppCompatSpinner
+                    android:id="@+id/edit_story_element_choice2Id_spinner"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <EditText
-                        android:id="@+id/created_story_element_choice2Text"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/prompt_text"/>
-                </android.support.design.widget.TextInputLayout>
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <EditText
-                        android:id="@+id/created_story_element_choice2Target"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/prompt_target"/>
-                </android.support.design.widget.TextInputLayout>
+                    android:layout_height="match_parent"/>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
@@ -116,10 +140,6 @@
             android:layout_height="match_parent"/>
         <Button
             android:id="@+id/created_story_element_button_3"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"/>
-        <Button
-            android:id="@+id/created_story_element_button_4"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"/>
     </LinearLayout>
