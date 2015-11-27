@@ -94,8 +94,7 @@
     <string name="prompt_choice2Id">Choice 2 Target:</string>
     <string name="prompt_choice1Id">Choice 1 Target:</string>
     <string name="prompt_choice_ending">Choice or Ending</string>
-    <string name="prompt_choice">Choice</string>
-    <string name="prompt_ending">Ending</string>
+
     <string name="prompt_element_description">Description</string>
     <string name="prompt_edit">Edit</string>
     <string name="prompt_delete">Delete</string>
@@ -103,11 +102,18 @@
     <string name="prompt_choice2Target">Choice 2 Target</string>
     <string name="prompt_choice1Target">Choice 1 Target</string>
     <string name="prompt_target">Target</string>
-    <string name="prompt_text">text</string>
+    <string name="prompt_text">Text</string>
     <string name="prompt_choice1">Choice 1</string>
     <string name="prompt_choice2">Choice 2</string>
     <string name="prompt_save">Save</string>
     <string name="prompt_cancel">Cancel</string>
     <string name="prompt_reset">reset</string>
+    <string name="label_choice1">Choice 1</string>
+    <string name="label_choice2">Choice 2</string>
+
+    <string-array name="choice_ending_array">
+        <item name="prompt_choice">Choice</item>
+        <item name="prompt_ending">Ending</item>
+    </string-array>
 
 </resources>

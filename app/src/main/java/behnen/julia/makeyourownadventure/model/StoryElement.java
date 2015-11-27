@@ -144,8 +144,8 @@ public final class StoryElement {
      */
     public StoryElement(String author, String storyId, int elementId, String title,
                         String imageUrl, String description) {
-        this(author, storyId, elementId, title, imageUrl, description, true, NO_NEXT_ELEMENT_ID,
-                NO_NEXT_ELEMENT_ID, "", "");
+        this(author, storyId, elementId, title, imageUrl, description, true, elementId,
+                elementId, "", "");
     }
 
     /**
@@ -292,5 +292,9 @@ public final class StoryElement {
             e.printStackTrace();
         }
         return storyElement;
+    }
+
+    public String toTargetDescriptionString() {
+        return mElementId + ": " + mTitle;
     }
 }

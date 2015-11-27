@@ -41,7 +41,8 @@ public class MainActivity extends AppCompatActivity implements
         CreateEditStoriesFragment.OnCreateEditStoriesInteractionListener,
         CreateNewStoryFragment.OnCreateNewStoryInteractionListener,
         CreatedStoryOverviewFragment.OnCreatedStoryOverviewInteractionListener,
-        CreatedStoryElementsFragment.OnCreatedStoryElementsInteractionListener {
+        CreatedStoryElementsFragment.OnCreatedStoryElementsInteractionListener,
+        EditStoryElementFragment.OnEditStoryElementInteractionListener {
 
     /**
      * The URL for story element download requests.
@@ -380,7 +381,7 @@ public class MainActivity extends AppCompatActivity implements
     public void onCreateNewStorySaveLocalCopy(StoryHeader storyHeader) {
         addCreatedStoryHeader(storyHeader);
         addCreatedStoryElement(new StoryElement(storyHeader.getAuthor(), storyHeader.getStoryId(),
-                StoryElement.START_ID, "", "", ""));
+                StoryElement.START_ID, "[Default title]", "", "[Default description]"));
     }
 
     // CreatedStoryOverviewFragment callback methods
@@ -418,7 +419,7 @@ public class MainActivity extends AppCompatActivity implements
         return success;
     }
 
-    // CreatedStoryElements callback methods
+    // CreatedStoryElementsFragment callback methods
 
     @Override
     public List<StoryElement> onCreatedStoryElementsGetElements(String author, String storyId) {
@@ -438,6 +439,29 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onCreatedStoryElementsAddElement() {
 
+    }
+
+    // EditStoryElementFragment callback methods
+
+    @Override
+    public void onEditStoryElementPreview(StoryElement storyElement) {
+
+    }
+
+    @Override
+    public void onEditStoryElementSave(StoryElement storyElement) {
+
+    }
+
+    @Override
+    public void onEditStoryElementDelete(StoryElement storyElement) {
+
+    }
+
+    @Override
+    public List<StoryElement> onEditStoryElementGetAllElements(String author, String storyId) {
+        List<StoryElement> list = getCreatedStoryElementsByStory(author, storyId);
+        return list;
     }
 
     // Shared Async Methods

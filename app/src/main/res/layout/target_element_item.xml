@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--A customizable version of support_simple_spinner_dropdown item-->
+    <!--https://chromium.googlesource.com/android_tools/+/master/sdk/extras/android/support/v7/-->
+    <!--appcompat/res/layout/support_simple_spinner_dropdown_item.xml-->
+
+<TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/target_element_item_text"
+    style="?attr/spinnerDropDownItemStyle"
+    android:singleLine="true"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/dropdownListPreferredItemHeight"
+    android:ellipsize="marquee"/>
