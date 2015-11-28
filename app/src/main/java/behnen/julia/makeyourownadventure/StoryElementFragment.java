@@ -25,6 +25,7 @@ public class StoryElementFragment extends Fragment {
 
     private static final String STORY_ELEMENT = "storyElement";
     private static final String IS_ONLINE = "isOnline";
+    private static final String IS_ACTIVE = "isActive";
 
     /**
      * The URL for story element download requests from the shared image directory.
@@ -34,6 +35,7 @@ public class StoryElementFragment extends Fragment {
 
     private ImageView mImage;
     private boolean mIsOnline;
+    private boolean mIsActive;
 
     private OnStoryElementInteractionListener mCallback;
 
@@ -44,10 +46,12 @@ public class StoryElementFragment extends Fragment {
         void onStoryElementMainMenuAction();
     }
 
-    public static StoryElementFragment newInstance(StoryElement storyElement, boolean isOnline) {
+    public static StoryElementFragment newInstance(StoryElement storyElement, boolean isOnline,
+                                                   boolean isActive) {
         Bundle args = new Bundle();
         args.putString(STORY_ELEMENT, storyElement.toString());
         args.putBoolean(IS_ONLINE, isOnline);
+        args.putBoolean(IS_ACTIVE, isActive);
 
         StoryElementFragment fragment = new StoryElementFragment();
         fragment.setArguments(args);
@@ -110,52 +114,58 @@ public class StoryElementFragment extends Fragment {
     private void displayEndingButtons(View v, final StoryElement storyElement) {
         Button backtrackButton = (Button) v.findViewById(R.id.story_element_button1);
         backtrackButton.setText(R.string.story_element_restart_button);
-        backtrackButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mCallback != null) {
-                    mCallback.onStoryElementRestartAction(
-                            storyElement.getAuthor(), storyElement.getStoryId(), mIsOnline);
-                }
-            }
-        });
 
         Button mainMenuButton = (Button) v.findViewById(R.id.story_element_button2);
         mainMenuButton.setText(R.string.story_element_main_menu_button);
-        mainMenuButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mCallback != null) {
-                    mCallback.onStoryElementMainMenuAction();
+
+        if (mIsActive) {
+            backtrackButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mCallback != null) {
+                        mCallback.onStoryElementRestartAction(
+                                storyElement.getAuthor(), storyElement.getStoryId(), mIsOnline);
+                    }
                 }
-            }
-        });
+            });
+            mainMenuButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mCallback != null) {
+                        mCallback.onStoryElementMainMenuAction();
+                    }
+                }
+            });
+        }
     }
 
     private void displayChoiceButtons(View v, final StoryElement storyElement) {
         Button choice1 = (Button) v.findViewById(R.id.story_element_button1);
         choice1.setText(storyElement.getChoice1Text());
-        choice1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mCallback != null) {
-                    mCallback.onStoryElementChoiceAction(storyElement.getAuthor(),
-                            storyElement.getStoryId(), storyElement.getChoice1Id(), mIsOnline);
-                }
-            }
-        });
 
         Button choice2 = (Button) v.findViewById(R.id.story_element_button2);
         choice2.setText(storyElement.getChoice2Text());
-        choice2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mCallback != null) {
-                    mCallback.onStoryElementChoiceAction(storyElement.getAuthor(),
-                            storyElement.getStoryId(), storyElement.getChoice2Id(), mIsOnline);
+
+        if (mIsActive) {
+            choice1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mCallback != null) {
+                        mCallback.onStoryElementChoiceAction(storyElement.getAuthor(),
+                                storyElement.getStoryId(), storyElement.getChoice1Id(), mIsOnline);
+                    }
                 }
-            }
-        });
+            });
+            choice2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mCallback != null) {
+                        mCallback.onStoryElementChoiceAction(storyElement.getAuthor(),
+                                storyElement.getStoryId(), storyElement.getChoice2Id(), mIsOnline);
+                    }
+                }
+            });
+        }
     }
 
     /**

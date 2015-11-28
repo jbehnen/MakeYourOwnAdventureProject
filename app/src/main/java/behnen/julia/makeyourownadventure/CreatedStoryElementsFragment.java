@@ -31,7 +31,7 @@ public class CreatedStoryElementsFragment extends Fragment {
     public interface OnCreatedStoryElementsInteractionListener {
         List<StoryElement> onCreatedStoryElementsGetElements(String author, String storyId);
         void onCreatedStoryElementsSelectElement(StoryElement storyElement);
-        void onCreatedStoryElementsAddElement();
+        void onCreatedStoryElementsAddElement(String author, String storyId);
     }
 
     public static CreatedStoryElementsFragment newInstance(String author, String storyId) {
@@ -53,8 +53,8 @@ public class CreatedStoryElementsFragment extends Fragment {
                 (FloatingActionButton) view.findViewById(R.id.created_story_elements_add_element_action);
 
         // TODO: check for valid arguments
-        String author = getArguments().getString(AUTHOR);
-        String storyId = getArguments().getString(STORY_ID);
+        final String author = getArguments().getString(AUTHOR);
+        final String storyId = getArguments().getString(STORY_ID);
 
         bookmarkedStories.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -70,7 +70,7 @@ public class CreatedStoryElementsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (mCallback != null) {
-                    mCallback.onCreatedStoryElementsAddElement();
+                    mCallback.onCreatedStoryElementsAddElement(author, storyId);
                 }
             }
         });

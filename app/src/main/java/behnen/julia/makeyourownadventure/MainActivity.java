@@ -123,10 +123,10 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void launchStoryElement(StoryElement storyElement, boolean eraseLast,
-                                    boolean isOnline) {
+                                    boolean isOnline, boolean isActive) {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.main_fragment_container,
-                        StoryElementFragment.newInstance(storyElement, isOnline));
+                        StoryElementFragment.newInstance(storyElement, isOnline, isActive));
         if (eraseLast) {
             getSupportFragmentManager().popBackStack();
         }
@@ -137,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements
     private void launchLocalStoryElement(String author, String storyId, int elementId,
                                          boolean eraseLast, boolean isOnline) {
         StoryElement storyElement = getCreatedStoryElement(author, storyId, elementId);
-        launchStoryElement(storyElement, eraseLast, isOnline);
+        launchStoryElement(storyElement, eraseLast, isOnline, true);
     }
 
     // DATABASE METHODS
@@ -221,6 +221,20 @@ public class MainActivity extends AppCompatActivity implements
         List<StoryElement> list = createdStoryElementDB.getStoryElementsByStory(author, storyId);
         createdStoryElementDB.closeDB();
         return list;
+    }
+
+    private boolean updateCreatedStoryElement(StoryElement storyElement) {
+        CreatedStoryElementDB createdStoryElementDB = new CreatedStoryElementDB(this);
+        boolean wasDeleted = createdStoryElementDB.updateStoryElement(storyElement);
+        createdStoryElementDB.closeDB();
+        return wasDeleted;
+    }
+
+    private int getNextCreatedStoryElementId(String author, String storyId) {
+        CreatedStoryElementDB createdStoryElementDB = new CreatedStoryElementDB(this);
+        int nextId = createdStoryElementDB.getNextElementId(author, storyId);
+        createdStoryElementDB.closeDB();
+        return nextId;
     }
 
     // FRAGMENT METHODS
@@ -381,7 +395,7 @@ public class MainActivity extends AppCompatActivity implements
     public void onCreateNewStorySaveLocalCopy(StoryHeader storyHeader) {
         addCreatedStoryHeader(storyHeader);
         addCreatedStoryElement(new StoryElement(storyHeader.getAuthor(), storyHeader.getStoryId(),
-                StoryElement.START_ID, "[Default title]", "", "[Default description]"));
+                StoryElement.START_ID));
     }
 
     // CreatedStoryOverviewFragment callback methods
@@ -437,25 +451,29 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onCreatedStoryElementsAddElement() {
-
+    public void onCreatedStoryElementsAddElement(String author, String storyId) {
+        StoryElement storyElement = new StoryElement(author, storyId,
+                getNextCreatedStoryElementId(author, storyId));
+        addCreatedStoryElement(storyElement);
+        onCreatedStoryElementsSelectElement(storyElement);
     }
 
     // EditStoryElementFragment callback methods
 
     @Override
     public void onEditStoryElementPreview(StoryElement storyElement) {
-
+        launchStoryElement(storyElement, false, false, false);
     }
 
     @Override
-    public void onEditStoryElementSave(StoryElement storyElement) {
-
+    public boolean onEditStoryElementSave(StoryElement storyElement) {
+        return updateCreatedStoryElement(storyElement);
     }
 
     @Override
-    public void onEditStoryElementDelete(StoryElement storyElement) {
-
+    public boolean onEditStoryElementDelete(StoryElement storyElement) {
+        return deleteCreatedStoryElement(storyElement.getAuthor(), storyElement.getStoryId(),
+                storyElement.getElementId());
     }
 
     @Override
@@ -511,7 +529,7 @@ public class MainActivity extends AppCompatActivity implements
                     StoryElement element = StoryElement.parseJson(elementString);
                     Toast.makeText(MainActivity.this, "Success",
                             Toast.LENGTH_SHORT).show();
-                    launchStoryElement(element, mAddToBackstack, true);
+                    launchStoryElement(element, mAddToBackstack, true, true);
 
                 } else {
                     String reason = jsonObject.getString("error");

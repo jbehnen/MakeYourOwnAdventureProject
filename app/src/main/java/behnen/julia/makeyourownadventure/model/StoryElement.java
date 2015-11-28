@@ -21,10 +21,10 @@ public final class StoryElement {
      * The element ID of the StoryElement that starts the story with the same author and story ID.
      */
     public static final int START_ID = 0;
-    /**
-     * The element ID used to indicate a non-existent element.
-     */
-    public static final int NO_NEXT_ELEMENT_ID = -1;
+
+    public static final String DEFAULT_TITLE = "[Default Title]";
+    public static final String DEFAULT_DESCRIPTION = "[Default Description]";
+    public static final String DEFAULT_IMAGE_URL = "trees_1.jpg";
 
     /**
      * The author of the story that this StoryElement is associated with.
@@ -71,6 +71,8 @@ public final class StoryElement {
      */
     private final String mChoice2Text;
 
+    // TODO: reorganize constructors
+
     /**
      * StoryElement constructor.
      *
@@ -86,7 +88,7 @@ public final class StoryElement {
      * @param choice1Text The text description of the first choice.
      * @param choice2Text The text description of the second choice.
      */
-    private StoryElement(String author, String storyId, int elementId, String title, String imageUrl,
+    public StoryElement(String author, String storyId, int elementId, String title, String imageUrl,
                         String description, boolean isEnding, int choice1Id, int choice2Id,
                          String choice1Text, String choice2Text) {
         mAuthor = author;
@@ -96,10 +98,17 @@ public final class StoryElement {
         mImageUrl = imageUrl;
         mDescription = description;
         mIsEnding = isEnding;
-        mChoice1Id = choice1Id;
-        mChoice2Id = choice2Id;
-        mChoice1Text = choice1Text;
-        mChoice2Text = choice2Text;
+        if (isEnding) {
+            mChoice1Id = elementId;
+            mChoice2Id = elementId;
+            mChoice1Text = "";
+            mChoice2Text = "";
+        } else {
+            mChoice1Id = choice1Id;
+            mChoice2Id = choice2Id;
+            mChoice1Text = choice1Text;
+            mChoice2Text = choice2Text;
+        }
     }
 
     /**
@@ -146,6 +155,11 @@ public final class StoryElement {
                         String imageUrl, String description) {
         this(author, storyId, elementId, title, imageUrl, description, true, elementId,
                 elementId, "", "");
+    }
+
+    public StoryElement(String author, String storyId, int elementId) {
+        this(author, storyId, elementId, DEFAULT_TITLE, DEFAULT_IMAGE_URL, DEFAULT_DESCRIPTION,
+                elementId, elementId, "", "");
     }
 
     /**

@@ -35,7 +35,8 @@
                 <Spinner
                     android:id="@+id/edit_story_element_image_spinner"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
+                    android:layout_height="match_parent"
+                    android:spinnerMode="dialog"/>
             </LinearLayout>
 
             <ImageView

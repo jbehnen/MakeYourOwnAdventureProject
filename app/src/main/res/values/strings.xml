@@ -116,4 +116,10 @@
         <item name="prompt_ending">Ending</item>
     </string-array>
 
+    <string-array name="shared_image_names_array">
+        <item>sky_blue_clouds_1.jpg</item>
+        <item>sky_grey_clouds_1.jpg</item>
+        <item>trees_1.jpg</item>
+    </string-array>
+
 </resources>

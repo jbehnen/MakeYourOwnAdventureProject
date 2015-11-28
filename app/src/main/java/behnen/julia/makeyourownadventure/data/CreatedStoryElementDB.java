@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -143,6 +144,36 @@ public class CreatedStoryElementDB {
         }
         c.close();
         return list;
+    }
+
+    public boolean updateStoryElement(StoryElement storyElement) {
+        ContentValues contentValues = new ContentValues();
+        Log.d("TAGTAG", storyElement.toString());
+        contentValues.put("elementTitle", storyElement.getTitle());
+        contentValues.put("imageUrl", storyElement.getImageUrl());
+        contentValues.put("elementDescription", storyElement.getDescription());
+        contentValues.put("isEnding", storyElement.isEnding());
+        contentValues.put("choice1Id", storyElement.getChoice1Id());
+        contentValues.put("choice2Id", storyElement.getChoice2Id());
+        contentValues.put("choice1Text", storyElement.getChoice1Text());
+        contentValues.put("choice2Text", storyElement.getChoice2Text());
+
+        long rowId = mSQLiteDatabase.update(
+                TABLE_NAME,
+                contentValues,
+                "author = ? AND storyId = ? AND elementId = ?",
+                new String[]{storyElement.getAuthor(), storyElement.getStoryId(),
+                        Integer.toString(storyElement.getElementId())});
+        return rowId != -1;
+    }
+
+    public int getNextElementId(String author, String storyId) {
+        Cursor c = mSQLiteDatabase.rawQuery("SELECT MAX(elementId) FROM CreatedStoryElement " +
+                "WHERE author = ? AND storyId = ?", new String[]{author, storyId});
+        c.moveToFirst();
+        int max = c.getInt(0);
+        c.close();
+        return max + 1;
     }
 
     private class CreatedStoryElementDBHelper extends SQLiteOpenHelper {
