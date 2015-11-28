@@ -37,12 +37,12 @@
                 android:layout_height="wrap_content"/>
 
             <Button
-                android:id="@+id/story_element_button2"
+                android:id="@+id/story_element_button1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
             <Button
-                android:id="@+id/story_element_button1"
+                android:id="@+id/story_element_button2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 

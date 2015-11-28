@@ -202,7 +202,7 @@ public class EditStoryElementFragment extends Fragment {
     public StoryElement getCurrentStoryElement() {
         String title = mTitle.getText().toString();
         String imageUrl = mImageUrl.getSelectedItem().toString();
-        String description = mTitle.getText().toString();
+        String description = mDescription.getText().toString();
 
         String endingString = mChoiceEnding.getSelectedItem().toString();
         // TODO: ensure consistency using strings.xml

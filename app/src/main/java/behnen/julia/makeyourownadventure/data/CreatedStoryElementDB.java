@@ -91,13 +91,8 @@ public class CreatedStoryElementDB {
         c.close();
 
         StoryElement storyElement;
-        if (isEnding) {
-            storyElement = new StoryElement(author, storyId, elementId, title,
-                    imageUrl, description, choice1Id, choice2Id, choice1Text, choice2Text);
-        } else {
-            storyElement = new StoryElement(author, storyId, elementId, title,
-                    imageUrl, description);
-        }
+        storyElement = new StoryElement(author, storyId, elementId, title, imageUrl,
+                description, isEnding, choice1Id, choice2Id, choice1Text, choice2Text);
 
         return storyElement;
     }
@@ -132,13 +127,8 @@ public class CreatedStoryElementDB {
             String choice2Text = c.getString(8);
 
             StoryElement storyElement;
-            if (isEnding) {
-                storyElement = new StoryElement(author, storyId, elementId, title,
-                        imageUrl, description, choice1Id, choice2Id, choice1Text, choice2Text);
-            } else {
-                storyElement = new StoryElement(author, storyId, elementId, title,
-                        imageUrl, description);
-            }
+            storyElement = new StoryElement(author, storyId, elementId, title, imageUrl,
+                    description, isEnding, choice1Id, choice2Id, choice1Text, choice2Text);
             list.add(storyElement);
             c.moveToNext();
         }

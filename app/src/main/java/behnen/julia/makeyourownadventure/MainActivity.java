@@ -437,8 +437,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public List<StoryElement> onCreatedStoryElementsGetElements(String author, String storyId) {
-        List<StoryElement> list = getCreatedStoryElementsByStory(author, storyId);
-        return list;
+        return getCreatedStoryElementsByStory(author, storyId);
     }
 
     @Override
