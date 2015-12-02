@@ -145,7 +145,7 @@ public class RegisterFragment extends Fragment {
             focusView.requestFocus();
             Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
         } else {
-            new UserRegisterTask().execute(username, Helper.encryptPassword(password), email);
+            new UserRegisterTask().execute(username, Helper.encryptString(password), email);
         }
     }
 

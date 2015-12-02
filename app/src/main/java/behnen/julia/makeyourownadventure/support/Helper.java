@@ -11,12 +11,12 @@ public class Helper {
     /**
      * Encrypts and returns a string.
      *
-     * The string is encrypted the same way each time and uses UTF-8 encoding.
+     * The string is encrypted the same way each time.
      *
      * @param string The string to be encrypted.
      * @return The encrypted string.
      */
-    public static String encryptPassword(String string) {
+    public static String encryptString(String string) {
         final int multiplier = 37;
         final int mod = 128;
 

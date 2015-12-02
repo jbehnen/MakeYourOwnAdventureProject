@@ -126,7 +126,7 @@ public class SignInFragment extends Fragment {
         String username = mUsernameEditText.getText().toString();
         String password = mPasswordEditText.getText().toString();
 
-        new UserSignInTask().execute(username, Helper.encryptPassword(password));
+        new UserSignInTask().execute(username, Helper.encryptString(password));
     }
 
     private void updateSharedPreferences(String username) {

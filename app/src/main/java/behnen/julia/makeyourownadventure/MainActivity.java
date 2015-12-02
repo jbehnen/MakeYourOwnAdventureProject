@@ -3,6 +3,7 @@ package behnen.julia.makeyourownadventure;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -72,12 +73,12 @@ public class MainActivity extends AppCompatActivity implements
                     getSupportFragmentManager().beginTransaction();
             if (!loggedIn) {
                 Fragment loginFragment = new SignInFragment();
-                fragmentTransaction.add(R.id.main_fragment_container, loginFragment)
+                fragmentTransaction.replace(R.id.main_fragment_container, loginFragment)
                         .commit();
             }
             else {
                 Fragment menuFragment = new MainMenuFragment();
-                fragmentTransaction.add(R.id.main_fragment_container, menuFragment)
+                fragmentTransaction.replace(R.id.main_fragment_container, menuFragment)
                         .commit();
             }
         }
@@ -243,9 +244,11 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onSignInSignInAction() {
-        getSupportFragmentManager().beginTransaction()
+        FragmentManager fm = getSupportFragmentManager();
+        fm.beginTransaction()
                 .replace(R.id.main_fragment_container, new MainMenuFragment())
                 .commit();
+        fm.executePendingTransactions();
     }
 
     @Override
@@ -412,6 +415,7 @@ public class MainActivity extends AppCompatActivity implements
                         CreatedStoryElementsFragment.newInstance(author, storyId))
                 .addToBackStack(null)
                 .commit();
+        getSupportFragmentManager().executePendingTransactions();
     }
 
     @Override
