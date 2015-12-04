@@ -45,6 +45,8 @@ public class MainActivity extends AppCompatActivity implements
         CreatedStoryElementsFragment.OnCreatedStoryElementsInteractionListener,
         EditStoryElementFragment.OnEditStoryElementInteractionListener {
 
+    // TODO: fix lifecycle on fragments with editable fields/spinners
+
     /**
      * The URL for story element download requests.
      */
@@ -59,22 +61,23 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mSharedPreferences = getSharedPreferences(
-                getString(R.string.SHARED_PREFS), MODE_PRIVATE);
-        boolean loggedIn = mSharedPreferences.getBoolean(
-                getString(R.string.LOGGEDIN), false);
-        if (findViewById(R.id.main_fragment_container) != null) {
-            FragmentTransaction fragmentTransaction =
-                    getSupportFragmentManager().beginTransaction();
-            if (!loggedIn) {
-                Fragment loginFragment = new SignInFragment();
-                fragmentTransaction.replace(R.id.main_fragment_container, loginFragment)
-                        .commit();
-            }
-            else {
-                Fragment menuFragment = new MainMenuFragment();
-                fragmentTransaction.replace(R.id.main_fragment_container, menuFragment)
-                        .commit();
+        if (savedInstanceState ==  null) {
+            mSharedPreferences = getSharedPreferences(
+                    getString(R.string.SHARED_PREFS), MODE_PRIVATE);
+            boolean loggedIn = mSharedPreferences.getBoolean(
+                    getString(R.string.LOGGEDIN), false);
+            if (findViewById(R.id.main_fragment_container) != null) {
+                FragmentTransaction fragmentTransaction =
+                        getSupportFragmentManager().beginTransaction();
+                if (!loggedIn) {
+                    Fragment loginFragment = new SignInFragment();
+                    fragmentTransaction.replace(R.id.main_fragment_container, loginFragment)
+                            .commit();
+                } else {
+                    Fragment menuFragment = new MainMenuFragment();
+                    fragmentTransaction.replace(R.id.main_fragment_container, menuFragment)
+                            .commit();
+                }
             }
         }
     }
