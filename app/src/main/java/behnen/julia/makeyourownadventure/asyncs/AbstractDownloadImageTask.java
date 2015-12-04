@@ -13,6 +13,12 @@ import java.net.URL;
  */
 public abstract class AbstractDownloadImageTask extends AsyncTask<String, Void, Bitmap> {
 
+    /**
+     * The URL for story element download requests from the shared image directory.
+     */
+    private static final String SHARED_IMAGES_URL =
+            "http://cssgate.insttech.washington.edu/~jbehnen/myoa/images/shared/";
+
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
@@ -28,7 +34,7 @@ public abstract class AbstractDownloadImageTask extends AsyncTask<String, Void, 
         Bitmap bitmap = null;
         for (String url : urls) {
             try {
-                URL urlObject = new URL(url);
+                URL urlObject = new URL(SHARED_IMAGES_URL + url);
                 InputStream is = new BufferedInputStream(urlObject.openStream());
                 bitmap = BitmapFactory.decodeStream(is);
 

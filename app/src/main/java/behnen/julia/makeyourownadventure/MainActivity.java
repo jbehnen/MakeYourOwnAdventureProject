@@ -58,11 +58,6 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
 
         mSharedPreferences = getSharedPreferences(
                 getString(R.string.SHARED_PREFS), MODE_PRIVATE);
@@ -82,7 +77,11 @@ public class MainActivity extends AppCompatActivity implements
                         .commit();
             }
         }
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override
@@ -115,16 +114,18 @@ public class MainActivity extends AppCompatActivity implements
 
     private void nextStoryElement(String author, String storyId, int elementId,
                                   boolean eraseLast, boolean isOnline) {
+        Log.d(TAG, "nextStoryElement");
         if (isOnline) {
             new StoryGetElementTask(true)
                     .execute(author, storyId, Integer.toString(elementId));
         } else {
-            launchLocalStoryElement(author, storyId, elementId, eraseLast, isOnline);
+            launchLocalStoryElement(author, storyId, elementId, eraseLast);
         }
     }
 
     private void launchStoryElement(StoryElement storyElement, boolean eraseLast,
                                     boolean isOnline, boolean isActive) {
+        Log.d(TAG, "launchStoryElement: " + storyElement);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.main_fragment_container,
                         StoryElementFragment.newInstance(storyElement, isOnline, isActive));
@@ -136,9 +137,10 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void launchLocalStoryElement(String author, String storyId, int elementId,
-                                         boolean eraseLast, boolean isOnline) {
+                                         boolean eraseLast) {
+        Log.d(TAG, "launchLocalStoryElement");
         StoryElement storyElement = getCreatedStoryElement(author, storyId, elementId);
-        launchStoryElement(storyElement, eraseLast, isOnline, true);
+        launchStoryElement(storyElement, eraseLast, false, true);
     }
 
     // DATABASE METHODS
@@ -352,6 +354,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onStoryElementChoiceAction(
             String author, String storyId, int elementId, boolean isOnline) {
+        Log.d(TAG, "onStoryElementChoiceAction");
         nextStoryElement(author, storyId, elementId, true, isOnline);
     }
 
@@ -420,7 +423,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onCreatedStoryOverviewFragmentPlayStory(String author, String storyId) {
-        launchLocalStoryElement(author, storyId, StoryElement.START_ID, false, false);
+        launchLocalStoryElement(author, storyId, StoryElement.START_ID, false);
     }
 
     @Override

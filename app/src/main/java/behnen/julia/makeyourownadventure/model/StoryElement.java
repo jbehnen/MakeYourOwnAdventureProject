@@ -25,6 +25,8 @@ public final class StoryElement {
     public static final String DEFAULT_TITLE = "[Default Title]";
     public static final String DEFAULT_DESCRIPTION = "[Default Description]";
     public static final String DEFAULT_IMAGE_URL = "trees_1.jpg";
+    public static final String DEFAULT_CHOICE1_TEXT = "Choice 1";
+    public static final String DEFAULT_CHOICE2_TEXT = "Choice 2";
 
     /**
      * The author of the story that this StoryElement is associated with.
@@ -159,7 +161,7 @@ public final class StoryElement {
 
     public StoryElement(String author, String storyId, int elementId) {
         this(author, storyId, elementId, DEFAULT_TITLE, DEFAULT_IMAGE_URL, DEFAULT_DESCRIPTION,
-                elementId, elementId, "", "");
+                elementId, elementId, DEFAULT_CHOICE1_TEXT, DEFAULT_CHOICE2_TEXT);
     }
 
     /**

@@ -21,6 +21,8 @@ public class CreatedStoryElementDB {
     public static final String DB_NAME = "CreatedStoryElement.db";
     private static final String TABLE_NAME = "CreatedStoryElement";
 
+    private static final String TAG = "CreatedStoryElementDB";
+
     private CreatedStoryElementDBHelper mCreatedStoryElementDBHelper;
     private SQLiteDatabase mSQLiteDatabase;
 
@@ -71,7 +73,7 @@ public class CreatedStoryElementDB {
                 TABLE_NAME,
                 columns,
                 "author = ? AND storyId = ? AND elementId = ?",
-                new String[]{author, storyId, Integer.toBinaryString(elementId)},
+                new String[]{author, storyId, Integer.toString(elementId)},
                 null,
                 null,
                 null
@@ -138,7 +140,7 @@ public class CreatedStoryElementDB {
 
     public boolean updateStoryElement(StoryElement storyElement) {
         ContentValues contentValues = new ContentValues();
-        Log.d("TAGTAG", storyElement.toString());
+        Log.d(TAG, storyElement.toString());
         contentValues.put("elementTitle", storyElement.getTitle());
         contentValues.put("imageUrl", storyElement.getImageUrl());
         contentValues.put("elementDescription", storyElement.getDescription());

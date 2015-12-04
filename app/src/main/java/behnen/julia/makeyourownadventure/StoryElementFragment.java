@@ -27,12 +27,6 @@ public class StoryElementFragment extends Fragment {
     private static final String IS_ONLINE = "isOnline";
     private static final String IS_ACTIVE = "isActive";
 
-    /**
-     * The URL for story element download requests from the shared image directory.
-     */
-    private static final String SHARED_IMAGES_URL =
-            "http://cssgate.insttech.washington.edu/~jbehnen/myoa/images/shared/";
-
     private ImageView mImage;
     private boolean mIsOnline;
     private boolean mIsActive;
@@ -86,6 +80,7 @@ public class StoryElementFragment extends Fragment {
         // TODO: test for bundle arguments existing/not null
         StoryElement storyElement = StoryElement.parseJson(getArguments().getString(STORY_ELEMENT));
         mIsOnline = getArguments().getBoolean(IS_ONLINE);
+        mIsActive = getArguments().getBoolean(IS_ACTIVE);
 
         displayStoryElement(v, storyElement);
 
@@ -93,7 +88,7 @@ public class StoryElementFragment extends Fragment {
     }
 
     private void displayStoryElement(View v, StoryElement storyElement) {
-        new DownloadImageTask().execute(SHARED_IMAGES_URL + storyElement.getImageUrl());
+        new DownloadImageTask().execute(storyElement.getImageUrl());
 
         // TODO get title from shared prefs
         String title = "Temporary Title";

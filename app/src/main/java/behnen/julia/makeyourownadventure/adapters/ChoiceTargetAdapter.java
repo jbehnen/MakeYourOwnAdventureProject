@@ -13,8 +13,6 @@ import behnen.julia.makeyourownadventure.model.StoryElement;
  */
 public class ChoiceTargetAdapter extends ArrayAdapter<String> {
 
-    private List<StoryElement> mStoryElements;
-
     private ChoiceTargetAdapter(Context context, List<String> objects) {
         super(context, android.R.layout.simple_spinner_item, objects);
     }
@@ -29,10 +27,4 @@ public class ChoiceTargetAdapter extends ArrayAdapter<String> {
 
         return adapter;
     }
-
-    @Override
-    public String getItem(int position) {
-        return super.getItem(position);
-    }
-
 }

@@ -110,6 +110,7 @@
     <string name="prompt_reset">reset</string>
     <string name="label_choice1">Choice 1</string>
     <string name="label_choice2">Choice 2</string>
+    <string name="confirm">Okay</string>
 
     <string-array name="choice_ending_array">
         <item name="prompt_choice">Choice</item>

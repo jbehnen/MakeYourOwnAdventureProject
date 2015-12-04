@@ -4,13 +4,17 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -18,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import behnen.julia.makeyourownadventure.adapters.ChoiceTargetAdapter;
+import behnen.julia.makeyourownadventure.asyncs.AbstractDownloadImageTask;
 import behnen.julia.makeyourownadventure.model.StoryElement;
 
 
@@ -34,7 +39,7 @@ public class EditStoryElementFragment extends Fragment {
 
     private List<StoryElement> mStoryElementList;
 
-    private Bitmap mImage;
+    private ImageView mImage;
 
     private EditText mTitle;
     private EditText mDescription;
@@ -75,7 +80,11 @@ public class EditStoryElementFragment extends Fragment {
 
         // TODO check valid arguments
         mStoryElement = StoryElement.parseJson(getArguments().getString(STORY_ELEMENT));
-        Log.d(TAG, "incoming element: " + mStoryElement.toString());
+
+        // Image management
+        // TODO: handle image load failure
+        mImage = (ImageView) view.findViewById(R.id.edit_story_element_image);
+        new DownloadImageTask().execute(mStoryElement.getImageUrl());
 
         // EditText management
         mTitle = (EditText) view.findViewById(R.id.edit_story_element_title);
@@ -88,12 +97,54 @@ public class EditStoryElementFragment extends Fragment {
         mChoice1Text.setText(mStoryElement.getChoice1Text());
         mChoice2Text.setText(mStoryElement.getChoice2Text());
 
-        // Spinner management
+        initializeSpinners(view);
+        initializeButtons(view);
+
+        // TODO: toggle based on choice/not choice
+
+        return view;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            mCallback = (OnEditStoryElementInteractionListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + "must implement RegisterInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallback = null;
+    }
+
+    private void initializeSpinners(final View view) {
         mChoiceEnding = (Spinner) view.findViewById(R.id.edit_story_element_choice_ending_spinner);
         ArrayAdapter<CharSequence> choiceEndingAdapter = ArrayAdapter.createFromResource(getActivity(),
                 R.array.choice_ending_array, android.R.layout.simple_spinner_item);
         choiceEndingAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
         mChoiceEnding.setAdapter(choiceEndingAdapter);
+        int selection = mStoryElement.isEnding() ? 1 : 0;
+        mChoiceEnding.setSelection(selection);
+        mChoiceEnding.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View theView, int position, long id) {
+                LinearLayout choiceElements = (LinearLayout)
+                        view.findViewById(R.id.edit_story_element_choice_elements);
+                if (position == 0) { // choice
+                    choiceElements.setVisibility(View.VISIBLE);
+                } else {  // ending
+                    choiceElements.setVisibility(View.GONE);
+                }
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
 
         mChoice1Target = (Spinner) view.findViewById(R.id.edit_story_element_choice1Id_spinner);
         mChoice2Target = (Spinner) view.findViewById(R.id.edit_story_element_choice2Id_spinner);
@@ -103,21 +154,34 @@ public class EditStoryElementFragment extends Fragment {
                 R.array.shared_image_names_array, android.R.layout.simple_spinner_item);
         imageUrlAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mImageUrl.setAdapter(imageUrlAdapter);
+        String[] urls = getResources().getStringArray(R.array.shared_image_names_array);
+        mImageUrl.setSelection(stringIndex(mStoryElement.getImageUrl(), urls));
+        mImageUrl.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                new DownloadImageTask().execute((String) mImageUrl.getSelectedItem());
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
 
         if (mCallback != null) {
             mStoryElementList = mCallback.onEditStoryElementGetAllElements(
                     mStoryElement.getAuthor(), mStoryElement.getStoryId());
-            List<String> descriptorList = new ArrayList<String>();
-            for (StoryElement element: mStoryElementList) {
-                descriptorList.add(element.toTargetDescriptionString());
-            }
 
-            ArrayAdapter<String> adapter =
+            ArrayAdapter<String> mChoice1Adapter =
                     ChoiceTargetAdapter.newInstance(view.getContext(), mStoryElementList);
-            mChoice1Target.setAdapter(adapter);
-            mChoice2Target.setAdapter(adapter);
-        }
+            ArrayAdapter<String> mChoice2Adapter =
+                    ChoiceTargetAdapter.newInstance(view.getContext(), mStoryElementList);
+            mChoice1Target.setAdapter(mChoice1Adapter);
+            mChoice2Target.setAdapter(mChoice2Adapter);
 
+            mChoice1Target.setSelection(storyElementListPosition(mStoryElement.getChoice1Id()));
+            mChoice2Target.setSelection(storyElementListPosition(mStoryElement.getChoice2Id()));
+        }
+    }
+
+    private void initializeButtons(View view) {
         Button previewButton = (Button) view.findViewById(R.id.edit_story_element_preview_button);
         previewButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -166,40 +230,15 @@ public class EditStoryElementFragment extends Fragment {
                                     Toast.LENGTH_SHORT).show();
                             getFragmentManager().popBackStackImmediate();
                         } else {
-                            String badElements = "";
-                            for (int i : conflictingElements) {
-                                badElements += " " + i;
-                            }
-                            Toast.makeText(getActivity(), "Element cannot be deleted while it" +
-                                            "is referenced in elements" + badElements,
-                                    Toast.LENGTH_LONG).show();
+                            launchConflictingElementsDialog(conflictingElements);
                         }
                     }
                 }
             }
         });
-
-        return view;
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        try {
-            mCallback = (OnEditStoryElementInteractionListener) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString()
-                    + "must implement RegisterInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mCallback = null;
-    }
-
-    public StoryElement getCurrentStoryElement() {
+    private StoryElement getCurrentStoryElement() {
         String title = mTitle.getText().toString();
         String imageUrl = mImageUrl.getSelectedItem().toString();
         String description = mDescription.getText().toString();
@@ -211,8 +250,10 @@ public class EditStoryElementFragment extends Fragment {
         Log.d(TAG, "isEnding: " + isEnding);
 
         // TODO: implement IDs
-        int choice1Id = 0;
-        int choice2Id = 0;
+        int choice1Id = mStoryElementList.get(
+                mChoice1Target.getSelectedItemPosition()).getElementId();
+        int choice2Id = mStoryElementList.get(
+                mChoice2Target.getSelectedItemPosition()).getElementId();;
         String choice1Text = mChoice1Text.getText().toString();
         String choice2Text = mChoice2Text.getText().toString();
 
@@ -241,4 +282,69 @@ public class EditStoryElementFragment extends Fragment {
         return null;
     }
 
+    private int storyElementListPosition(int elementId) {
+        int index = 0;
+        for (int i = 0; i < mStoryElementList.size(); i++) {
+            if (mStoryElementList.get(i).getElementId() == elementId) {
+                index = i;
+                break;
+            }
+        }
+        return index;
+    }
+
+    /**
+     *
+     *
+     * @param elements Must be of nonzero size.
+     */
+    private void launchConflictingElementsDialog(List<Integer> elements) {
+        StringBuilder sb = new StringBuilder("Element cannot be deleted while it " +
+                "is referenced in element(s) " );
+        int listSize = elements.size();
+        sb.append(elements.get(0));
+        for (int i = 1; i < listSize - 1; i++) {
+            sb.append(", " + elements.get(i));
+        }
+        if (listSize == 2) {
+            sb.append(" and " + elements.get(listSize - 1));
+        }
+        if (listSize > 2) {
+            sb.append(", and " + elements.get(listSize - 1));
+        }
+        sb.append(".");
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+        dialogBuilder.setMessage(sb.toString());
+
+        dialogBuilder.create().show();
+    }
+
+    /**
+     * Returns the first index of a string in an array, 0 if no match.
+     *
+     * @param array
+     * @return the first index of a string in an array, 0 if no match.
+     */
+    private int stringIndex(String string, String[] array) {
+        int index = 0;
+
+        for (int i = 0; i < array.length; i++) {
+            if (array[i].equals(string)) {
+                index = i;
+                break;
+            }
+        }
+
+        return index;
+    }
+
+    /**
+     * An asynchronous task for downloading a story element image.
+     */
+    private class DownloadImageTask extends AbstractDownloadImageTask {
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            mImage.setImageBitmap(bitmap);
+        }
+    }
 }
