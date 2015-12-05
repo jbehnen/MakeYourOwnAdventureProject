@@ -1,6 +1,8 @@
 package behnen.julia.makeyourownadventure;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -14,9 +16,11 @@ import android.widget.Toast;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.List;
 
 import behnen.julia.makeyourownadventure.asyncs.AbstractPostAsyncTask;
 import behnen.julia.makeyourownadventure.dialogs.EditStoryHeaderDialogFragment;
+import behnen.julia.makeyourownadventure.model.StoryElement;
 import behnen.julia.makeyourownadventure.model.StoryHeader;
 
 /**
@@ -46,10 +50,17 @@ public class CreatedStoryOverviewFragment extends Fragment {
     private StoryHeader mStoryHeader;
 
     public interface OnCreatedStoryOverviewInteractionListener {
-        void onCreatedStoryOverviewFragmentEditHeader(StoryHeader storyHeader);
-        void onCreatedStoryOverviewFragmentEditElements(String author, String storyId);
-        void onCreatedStoryOverviewFragmentPlayStory(String author, String storyId);
-        boolean onCreatedStoryOverviewFragmentDeleteStory(String author, String storyId);
+        boolean onCreatedStoryOverviewUpdateHeader(StoryHeader storyHeader);
+        void onCreatedStoryOverviewEditElements(String author, String storyId);
+        void onCreatedStoryOverviewPlayStory(String author, String storyId);
+        boolean onCreatedStoryOverviewDeleteLocalStory(String author, String storyId);
+        boolean onCreatedStoryOverviewOnCompletedUpload(StoryHeader storyHeader);
+        boolean onCreatedStoryOverviewDeleteStoryElement(
+                String author, String storyId, int elementId);
+        List<StoryElement> onCreatedStoryOverviewGetStoryElements(String author, String storyId);
+        boolean onCreatedStoryOverviewStoryElementsExist(String author, String storyId);
+        boolean onCreatedStoryIsStoryFinal(String author, String storyId);
+        boolean onCreatedStorySetStoryFinal(String author, String storyId);
     }
 
     public static CreatedStoryOverviewFragment newInstance(StoryHeader storyHeader) {
@@ -85,10 +96,18 @@ public class CreatedStoryOverviewFragment extends Fragment {
         editStoryHeaderButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditStoryHeaderDialogFragment fragment = EditStoryHeaderDialogFragment.newInstance(
-                        mStoryHeader.getTitle(), mStoryHeader.getDescription());
-                fragment.setTargetFragment(CreatedStoryOverviewFragment.this, REQUEST_HEADER);
-                fragment.show(getFragmentManager(), "editStoryHeader");
+                if (mCallback.onCreatedStoryIsStoryFinal(
+                        mStoryHeader.getAuthor(), mStoryHeader.getStoryId())) {
+                    Toast.makeText(getContext(),
+                            "Story is partially uploaded and can no longer be edited.",
+                            Toast.LENGTH_LONG).show();
+                } else {
+                    EditStoryHeaderDialogFragment fragment =
+                            EditStoryHeaderDialogFragment.newInstance(
+                            mStoryHeader.getTitle(), mStoryHeader.getDescription());
+                    fragment.setTargetFragment(CreatedStoryOverviewFragment.this, REQUEST_HEADER);
+                    fragment.show(getFragmentManager(), "editStoryHeader");
+                }
             }
         });
 
@@ -98,8 +117,15 @@ public class CreatedStoryOverviewFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (mCallback != null) {
-                    mCallback.onCreatedStoryOverviewFragmentEditElements(
-                            mStoryHeader.getAuthor(), mStoryHeader.getStoryId());
+                    if (mCallback.onCreatedStoryIsStoryFinal(
+                            mStoryHeader.getAuthor(), mStoryHeader.getStoryId())) {
+                        Toast.makeText(getContext(),
+                                "Story is partially uploaded and can no longer be edited.",
+                                Toast.LENGTH_LONG).show();
+                    } else {
+                        mCallback.onCreatedStoryOverviewEditElements(
+                                mStoryHeader.getAuthor(), mStoryHeader.getStoryId());
+                    }
                 }
             }
         });
@@ -109,8 +135,15 @@ public class CreatedStoryOverviewFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (mCallback != null) {
-                    mCallback.onCreatedStoryOverviewFragmentPlayStory(mStoryHeader.getAuthor(),
-                            mStoryHeader.getStoryId());
+                    if (mCallback.onCreatedStoryIsStoryFinal(
+                            mStoryHeader.getAuthor(), mStoryHeader.getStoryId())) {
+                        Toast.makeText(getContext(),
+                                "Story is partially uploaded and can no longer be play-tested.",
+                                Toast.LENGTH_LONG).show();
+                    } else {
+                        mCallback.onCreatedStoryOverviewPlayStory(mStoryHeader.getAuthor(),
+                                mStoryHeader.getStoryId());
+                    }
                 }
             }
         });
@@ -121,13 +154,20 @@ public class CreatedStoryOverviewFragment extends Fragment {
             public void onClick(View v) {
                 // TODO also delete from online database
                 if (mCallback != null) {
-                    boolean deleted =
-                            mCallback.onCreatedStoryOverviewFragmentDeleteStory(
-                                    mStoryHeader.getAuthor(), mStoryHeader.getStoryId());
-                    if (deleted) {
-                        getFragmentManager().popBackStackImmediate();
+                    if (mCallback.onCreatedStoryIsStoryFinal(
+                            mStoryHeader.getAuthor(), mStoryHeader.getStoryId())) {
+                        Toast.makeText(getContext(),
+                                "Story is partially uploaded and can no longer be deleted.",
+                                Toast.LENGTH_LONG).show();
                     } else {
-                        Toast.makeText(getActivity(), "Deletion failed", Toast.LENGTH_SHORT).show();
+                        boolean deleted =
+                                mCallback.onCreatedStoryOverviewDeleteLocalStory(
+                                        mStoryHeader.getAuthor(), mStoryHeader.getStoryId());
+                        if (deleted) {
+                            getFragmentManager().popBackStackImmediate();
+                        } else {
+                            Toast.makeText(getActivity(), "Deletion failed", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
             }
@@ -179,30 +219,78 @@ public class CreatedStoryOverviewFragment extends Fragment {
         mCallback = null;
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != Activity.RESULT_OK) {
+            Log.d(TAG, "result ok: " + resultCode);
+            return;
+        }
+        Log.d(TAG, "before second  if: " + requestCode);
+        if (requestCode == REQUEST_HEADER) {
+            Log.d(TAG, "request code: " + requestCode);
+            String author = mStoryHeader.getAuthor();
+            String storyId = mStoryHeader.getStoryId();
+            String title = (String) data.getSerializableExtra(
+                 EditStoryHeaderDialogFragment.EXTRA_TITLE);
+            String description = (String) data.getSerializableExtra(
+                 EditStoryHeaderDialogFragment.EXTRA_DESCRIPTION);
+            if (mCallback != null) {
+                Log.d(TAG, "mCallback" + author + storyId + title + description);
+                mStoryHeader = new StoryHeader(author, storyId, title, description);
+                mCallback.onCreatedStoryOverviewUpdateHeader(mStoryHeader);
+                View view = getView();
+                displayStoryInfo(view);
+            }
+        }
+    }
+
     /**
      * Attempts to upload a story: both the story header and the story elements. The
      * story elements are uploaded first. If all of the story elements are uploaded
      * successfully, then the story header is uploaded.
      */
     private void attemptStoryUpload() {
-        // todo: mark story as "final" (no longer editable) in database in case
-        // full upload does not work the first time
-        //List<StoryElement> storyElements = getStoryElements(author, storyId);
+        if (mCallback != null) {
 
-        // todo: upload story elements
-//        for (StoryElement element: storyElements) {
-//            new StoryElementUploadTask().execute(author, storyId,
-//                    Integer.toString(element.getElementId()),
-//                    element.getTitle(), element.getImageUrl(), element.getDescription(),
-//                    Boolean.toString(element.isEnding()), Integer.toString(element.getChoice1Id()),
-//                    Integer.toString(element.getChoice2Id()),
-//                    element.getChoice1Text(), element.getChoice2Text());
-//        }
+            // Set story final so that can no longer be edited if initial upload fails.
+            mCallback.onCreatedStorySetStoryFinal(
+                    mStoryHeader.getAuthor(), mStoryHeader.getStoryId());
 
-        //TODO: if all story elements deleted from local database (proxy for "uploaded"),
-        // THEN and ONLY upload the story header. Then delete the story from create/edit list.
-        new StoryHeaderUploadTask().execute(mStoryHeader.getAuthor(), mStoryHeader.getStoryId(),
-                mStoryHeader.getTitle(), mStoryHeader.getDescription());
+            List<StoryElement> storyElements = mCallback.onCreatedStoryOverviewGetStoryElements(
+                    mStoryHeader.getAuthor(), mStoryHeader.getStoryId());
+
+            for (StoryElement element: storyElements) {
+                new StoryElementUploadTask().execute(element.getAuthor(),
+                        element.getStoryId(), Integer.toString(element.getElementId()),
+                        element.getTitle(), element.getImageUrl(), element.getDescription(),
+                        Boolean.toString(element.isEnding()),
+                        Integer.toString(element.getChoice1Id()),
+                        Integer.toString(element.getChoice2Id()),
+                        element.getChoice1Text(), element.getChoice2Text());
+            }
+        }
+    }
+
+    private void afterStoryElementUpload(String author, String storyId, int elementId) {
+        if (mCallback != null) {
+            mCallback.onCreatedStoryOverviewDeleteStoryElement(
+                    author, storyId, elementId);
+            if (!mCallback.onCreatedStoryOverviewStoryElementsExist(
+                    author, storyId)) {
+                new StoryHeaderUploadTask().execute(
+                        mStoryHeader.getAuthor(), mStoryHeader.getStoryId(),
+                        mStoryHeader.getTitle(), mStoryHeader.getDescription());
+            }
+        }
+    }
+
+    private void afterStoryHeaderUpload() {
+        if (mCallback != null) {
+            mCallback.onCreatedStoryOverviewOnCompletedUpload(mStoryHeader);
+            Toast.makeText(getActivity(), "Story uploaded and added to bookmarked stories",
+                    Toast.LENGTH_SHORT).show();
+            getFragmentManager().popBackStackImmediate();
+        }
     }
 
     /**
@@ -241,8 +329,7 @@ public class CreatedStoryOverviewFragment extends Fragment {
                 JSONObject jsonObject = new JSONObject(s);
                 String status = jsonObject.getString("result");
                 if (status.equalsIgnoreCase("success")) {
-                    Toast.makeText(getActivity(), "Story header uploaded",
-                            Toast.LENGTH_SHORT).show();
+                    afterStoryHeaderUpload();
                 } else {
                     String reason = jsonObject.getString("error");
                     Toast.makeText(getActivity(), "Failed: " + reason,
@@ -263,6 +350,10 @@ public class CreatedStoryOverviewFragment extends Fragment {
      */
     public class StoryElementUploadTask extends AbstractPostAsyncTask<String, Void, String> {
 
+        String mAuthor;
+        String mStoryId;
+        int mElementId;
+
         /**
          * Starts the story element upload process.
          * @param params The story element author, story ID, element ID title, image URL,
@@ -272,6 +363,10 @@ public class CreatedStoryOverviewFragment extends Fragment {
          */
         @Override
         protected String doInBackground(String...params) {
+
+            mAuthor = params[0];
+            mStoryId = params[1];
+            mElementId = Integer.parseInt(params[2]);
 
             String urlParameters = "author=" + params[0]
                     + "&story_id=" + params[1]
@@ -300,13 +395,7 @@ public class CreatedStoryOverviewFragment extends Fragment {
                 JSONObject jsonObject = new JSONObject(s);
                 String status = jsonObject.getString("result");
                 if (status.equalsIgnoreCase("success")) {
-                    Toast.makeText(getActivity(), "Story element uploaded",
-                            Toast.LENGTH_SHORT).show();
-                    // TODO: delete element from local database after successful upload. Then,
-                    // once all of the uploads have been attempted (or a set period of time),
-                    // check the database and see if any elements are remaining. If none are
-                    // left, delete the story header from local storage (give user a head's up
-                    // first, let them move it to bookmarked stories).
+                    afterStoryElementUpload(mAuthor, mStoryId, mElementId);
                 } else {
                     String reason = jsonObject.getString("error");
                     Toast.makeText(getActivity(), "Failed: " + reason,

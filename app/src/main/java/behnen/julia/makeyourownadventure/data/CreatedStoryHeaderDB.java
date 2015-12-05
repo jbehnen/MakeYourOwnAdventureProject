@@ -45,6 +45,19 @@ public class CreatedStoryHeaderDB {
         return rowId != -1;
     }
 
+    public boolean updateStoryHeader(StoryHeader storyHeader) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("storyTitle", storyHeader.getTitle());
+        contentValues.put("storyDescription", storyHeader.getDescription());
+
+        long rowId = mSQLiteDatabase.update(
+                TABLE_NAME,
+                contentValues,
+                "author = ? AND storyId = ?",
+                new String[]{storyHeader.getAuthor(), storyHeader.getStoryId()});
+        return rowId != -1;
+    }
+
     public boolean deleteStory(String author, String storyId) {
         long rowsAffected = mSQLiteDatabase.delete(
                 TABLE_NAME,
@@ -81,6 +94,7 @@ public class CreatedStoryHeaderDB {
                 null
         );
 
+        c.moveToFirst();
         boolean isFinal = (c.getInt(0) == 1);
 
         c.close();
@@ -112,7 +126,30 @@ public class CreatedStoryHeaderDB {
             list.add(storyHeader);
             c.moveToNext();
         }
+
+        c.close();
         return list;
+    }
+
+    public boolean storyExists(String author, String storyId) {
+        String[] columns = {
+                "storyId"
+        };
+
+        Cursor c = mSQLiteDatabase.query(
+                TABLE_NAME,
+                columns,
+                "author = ?",
+                new String[]{author},
+                null,
+                null,
+                null
+        );
+
+        c.moveToFirst();
+        boolean exists = c.getCount() > 0;
+        c.close();
+        return exists;
     }
 
     private class CreatedStoryHeaderDBHelper extends SQLiteOpenHelper {

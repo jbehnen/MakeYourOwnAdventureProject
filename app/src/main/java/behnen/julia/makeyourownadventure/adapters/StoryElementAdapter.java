@@ -31,8 +31,8 @@ public class StoryElementAdapter extends ArrayAdapter<StoryElement> {
 
         // Check if an existing view is being reused, otherwise inflate the view
         if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.story_element_item
-                    , parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.story_element_item,
+                    parent, false);
         }
         // Lookup view for data population
         TextView title = (TextView) convertView.findViewById(R.id.story_element_item_title);

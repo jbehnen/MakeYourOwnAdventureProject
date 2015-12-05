@@ -1,5 +1,6 @@
 package behnen.julia.makeyourownadventure;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,13 +14,13 @@ import android.widget.Toast;
 
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.List;
 
-import behnen.julia.makeyourownadventure.asyncs.AbstractPostAsyncTask;
+import behnen.julia.makeyourownadventure.asyncs.AbstractDownloadStoryElementTask;
 import behnen.julia.makeyourownadventure.data.BookmarkedStoryDB;
 import behnen.julia.makeyourownadventure.data.CreatedStoryElementDB;
 import behnen.julia.makeyourownadventure.data.CreatedStoryHeaderDB;
+import behnen.julia.makeyourownadventure.data.UserPreferencesDB;
 import behnen.julia.makeyourownadventure.model.StoryElement;
 import behnen.julia.makeyourownadventure.model.StoryHeader;
 
@@ -47,11 +48,6 @@ public class MainActivity extends AppCompatActivity implements
 
     // TODO: fix lifecycle on fragments with editable fields/spinners
 
-    /**
-     * The URL for story element download requests.
-     */
-    private static final String GET_STORY_ELEMENT_URL =
-            "http://cssgate.insttech.washington.edu/~jbehnen/myoa/php/getStoryElement.php";
     private static final String TAG = "MainActivity";
 
     private SharedPreferences mSharedPreferences;
@@ -80,11 +76,6 @@ public class MainActivity extends AppCompatActivity implements
                 }
             }
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
     }
 
     @Override
@@ -129,6 +120,10 @@ public class MainActivity extends AppCompatActivity implements
     private void launchStoryElement(StoryElement storyElement, boolean eraseLast,
                                     boolean isOnline, boolean isActive) {
         Log.d(TAG, "launchStoryElement: " + storyElement);
+        if (isOnline && isActive) {
+            updateCurrentStoryElement(storyElement.getAuthor(), storyElement.getStoryId(),
+                    storyElement.getElementId());
+        }
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.main_fragment_container,
                         StoryElementFragment.newInstance(storyElement, isOnline, isActive));
@@ -147,6 +142,41 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     // DATABASE METHODS
+
+    // UserPreferencesDB methods
+
+    private boolean addUserPreferences() {
+        UserPreferencesDB userPreferencesDB = new UserPreferencesDB(this);
+        String username = getCurrentUser();
+        boolean wasAdded = userPreferencesDB.insertUserPreferences(username);
+        userPreferencesDB.closeDB();
+        return wasAdded;
+    }
+
+    private boolean updateCurrentStoryElement(String author, String storyId, int elementId) {
+        UserPreferencesDB userPreferencesDB = new UserPreferencesDB(this);
+        String username = getCurrentUser();
+        boolean wasUpdated =
+                userPreferencesDB.updateUserPreferences(username, author, storyId, elementId);
+        userPreferencesDB.closeDB();
+        return wasUpdated;
+    }
+
+    private boolean clearCurrentStoryElement() {
+        UserPreferencesDB userPreferencesDB = new UserPreferencesDB(this);
+        String username = getCurrentUser();
+        boolean wasCleared = userPreferencesDB.clearUserPreferences(username);
+        userPreferencesDB.closeDB();
+        return wasCleared;
+    }
+
+    private String[] getCurrentStoryElement() {
+        UserPreferencesDB userPreferencesDB = new UserPreferencesDB(this);
+        String username = getCurrentUser();
+        String[] preferences = userPreferencesDB.getUserPreferences(username);
+        userPreferencesDB.closeDB();
+        return preferences;
+    }
 
     // BookmarkedStoryDB methods
 
@@ -183,6 +213,13 @@ public class MainActivity extends AppCompatActivity implements
         return wasAdded;
     }
 
+    private boolean updateCreatedStoryHeader(StoryHeader storyHeader) {
+        CreatedStoryHeaderDB createdStoryHeaderDB = new CreatedStoryHeaderDB(this);
+        boolean wasAdded = createdStoryHeaderDB.updateStoryHeader(storyHeader);
+        createdStoryHeaderDB.closeDB();
+        return wasAdded;
+    }
+
     private boolean deleteCreatedStoryHeader(String author, String storyId) {
         CreatedStoryHeaderDB createdStoryHeaderDB = new CreatedStoryHeaderDB(this);
         boolean wasDeleted = createdStoryHeaderDB.deleteStory(author, storyId);
@@ -197,13 +234,33 @@ public class MainActivity extends AppCompatActivity implements
         return list;
     }
 
+    private boolean isCreatedStoryFinal(String author, String storyId) {
+        CreatedStoryHeaderDB createdStoryHeaderDB = new CreatedStoryHeaderDB(this);
+        boolean isFinal = createdStoryHeaderDB.isStoryFinal(author, storyId);
+        createdStoryHeaderDB.closeDB();
+        return isFinal;
+    }
+
+    private boolean setCreatedStoryFinal(String author, String storyId, boolean isFinal) {
+        CreatedStoryHeaderDB createdStoryHeaderDB = new CreatedStoryHeaderDB(this);
+        boolean success = createdStoryHeaderDB.setStoryFinal(author, storyId, isFinal);
+        createdStoryHeaderDB.closeDB();
+        return success;
+    }
+
+    private boolean createdStoryExists(String author, String storyId) {
+        CreatedStoryHeaderDB createdStoryHeaderDB = new CreatedStoryHeaderDB(this);
+        boolean exists = createdStoryHeaderDB.storyExists(author, storyId);
+        createdStoryHeaderDB.closeDB();
+        return exists;
+    }
+
     // CreatedStoryElementDB methods
 
     private boolean addCreatedStoryElement(StoryElement storyElement) {
         CreatedStoryElementDB createdStoryElementDB = new CreatedStoryElementDB(this);
         boolean wasAdded = createdStoryElementDB.insertStoryElement(storyElement);
         createdStoryElementDB.closeDB();
-        Log.d(TAG, "element was added " + wasAdded);
         return wasAdded;
     }
 
@@ -243,17 +300,33 @@ public class MainActivity extends AppCompatActivity implements
         return nextId;
     }
 
+    private boolean hasStoryElements(String author, String storyId) {
+        CreatedStoryElementDB createdStoryElementDB = new CreatedStoryElementDB(this);
+        boolean wasDeleted = createdStoryElementDB.hasStoryElements(author, storyId);
+        createdStoryElementDB.closeDB();
+        return wasDeleted;
+    }
+
     // FRAGMENT METHODS
 
     // SignInFragment callback methods
 
     @Override
-    public void onSignInSignInAction() {
+    public void onSignInSignInAction(String username) {
+        mSharedPreferences = getSharedPreferences(
+                getString(R.string.SHARED_PREFS), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.putString(getString(R.string.USERNAME), username);
+        editor.putBoolean(getString(R.string.LOGGEDIN), true);
+        editor.commit();
+
+        addUserPreferences();
+        // TODO: make sure that sign-in/insert doesn't crash app
+
         FragmentManager fm = getSupportFragmentManager();
         fm.beginTransaction()
                 .replace(R.id.main_fragment_container, new MainMenuFragment())
                 .commit();
-        fm.executePendingTransactions();
     }
 
     @Override
@@ -267,13 +340,15 @@ public class MainActivity extends AppCompatActivity implements
     // MainMenuFragment callback methods
 
     @Override
-    public void onMainMenuContinueStoryAction() {
-        // todo make sure proper backstack transaction name
+    public String[] onMainMenuResume() {
+        return getCurrentStoryElement();
     }
 
     @Override
-    public void onMainMenuStorySoFarAction() {
-
+    public void onMainMenuContinueStoryAction(StoryElement storyElement) {
+        String[] element = getCurrentStoryElement();
+        new StoryGetElementTask(true)
+                .execute(element[0], element[1], element[2]);
     }
 
     @Override
@@ -294,7 +369,10 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onMainMenuAboutAction() {
-
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.main_fragment_container, new AboutFragment())
+                .addToBackStack(getClass().getName())
+                .commit();
     }
 
     @Override
@@ -349,6 +427,12 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public boolean onStoryOverviewFragmentDeleteStory(String author, String storyId) {
+        String[] currentStory = getCurrentStoryElement();
+        // if active story is being deleted, clear it from user preferences
+        if (currentStory[0].equals(author) && currentStory[1].equals(storyId)) {
+            clearCurrentStoryElement();
+        }
+
         return deleteBookmarkedStory(author, storyId);
     }
 
@@ -370,7 +454,8 @@ public class MainActivity extends AppCompatActivity implements
     public void onStoryElementMainMenuAction() {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.main_fragment_container, new MainMenuFragment())
-                .commit();    }
+                .commit();
+    }
 
     // CreateEditStoriesFragment callback methods
 
@@ -410,37 +495,69 @@ public class MainActivity extends AppCompatActivity implements
     // CreatedStoryOverviewFragment callback methods
 
     @Override
-    public void onCreatedStoryOverviewFragmentEditHeader(StoryHeader storyHeader) {
-
+    public boolean onCreatedStoryOverviewUpdateHeader(StoryHeader storyHeader) {
+        return updateCreatedStoryHeader(storyHeader);
     }
 
     @Override
-    public void onCreatedStoryOverviewFragmentEditElements(String author, String storyId) {
+    public void onCreatedStoryOverviewEditElements(String author, String storyId) {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.main_fragment_container,
                         CreatedStoryElementsFragment.newInstance(author, storyId))
                 .addToBackStack(null)
                 .commit();
-        getSupportFragmentManager().executePendingTransactions();
     }
 
     @Override
-    public void onCreatedStoryOverviewFragmentPlayStory(String author, String storyId) {
+    public void onCreatedStoryOverviewPlayStory(String author, String storyId) {
         launchLocalStoryElement(author, storyId, StoryElement.START_ID, false);
     }
 
     @Override
-    public boolean onCreatedStoryOverviewFragmentDeleteStory(String author, String storyId) {
-        // TODO check at all points for errors
-        boolean success = true;
-        List<StoryElement> storyElements = getCreatedStoryElementsByStory(author, storyId);
-        for (StoryElement element : storyElements) {
-            success = deleteCreatedStoryElement(element.getAuthor(),
-                    element.getStoryId(), element.getElementId());
-            if (!success) return false;
+    public boolean onCreatedStoryOverviewDeleteLocalStory(String author, String storyId) {
+        boolean deleted = true;
+        List<StoryElement> elements = getCreatedStoryElementsByStory(author, storyId);
+        for (StoryElement elem: elements) {
+            deleted &= deleteCreatedStoryElement(author, storyId, elem.getElementId());
         }
-        success = deleteCreatedStoryHeader(author, storyId);
-        return success;
+        if (deleted) {
+            deleted &= deleteCreatedStoryHeader(author, storyId);
+        }
+        return deleted;
+    }
+
+    @Override
+    public boolean onCreatedStoryOverviewOnCompletedUpload(StoryHeader storyHeader) {
+        addBookmarkedStory(storyHeader);
+        return deleteCreatedStoryHeader(storyHeader.getAuthor(), storyHeader.getStoryId());
+    }
+
+    @Override
+    public boolean onCreatedStoryOverviewDeleteStoryElement(
+            String author, String storyId, int elementId) {
+        return deleteCreatedStoryElement(author, storyId, elementId);
+    }
+
+    @Override
+    public List<StoryElement> onCreatedStoryOverviewGetStoryElements(
+            String author, String storyId) {
+        return getCreatedStoryElementsByStory(author, storyId);
+    }
+
+    @Override
+    public boolean onCreatedStoryOverviewStoryElementsExist(String author, String storyId) {
+        return hasStoryElements(author, storyId);
+    }
+
+
+    @Override
+    public boolean onCreatedStoryIsStoryFinal(String author, String storyId) {
+        return isCreatedStoryFinal(author, storyId);
+    }
+
+    @Override
+    public boolean onCreatedStorySetStoryFinal(String author, String storyId) {
+        return setCreatedStoryFinal(author, storyId, true);
     }
 
     // CreatedStoryElementsFragment callback methods
@@ -492,37 +609,14 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     // Shared Async Methods
-    /**
-     * Downloads a StoryElement from the online database.
-     */
-    public class StoryGetElementTask extends AbstractPostAsyncTask<String, Void, String> {
+
+    private class StoryGetElementTask extends AbstractDownloadStoryElementTask {
 
         private final boolean mAddToBackstack;
 
         public StoryGetElementTask(boolean addToBackstack) {
             super();
             mAddToBackstack = addToBackstack;
-        }
-
-        /**
-         * Starts the story header retrieval process.
-         * @param params The story header author, story ID, and element ID, in that order.
-         * @return A string holding the result of the request.
-         */
-        @Override
-        protected String doInBackground(String...params) {
-            String author = params[0];
-            String storyId = params[1];
-            String elementId = params[2];
-
-            String urlParameters = "author=" + author
-                    + "&story_id=" + storyId
-                    + "&element_id=" + elementId;
-            try {
-                return downloadUrl(GET_STORY_ELEMENT_URL, urlParameters, TAG);
-            } catch (IOException e) {
-                return "Unable to retrieve web page. URL may be invalid";
-            }
         }
 
         @Override

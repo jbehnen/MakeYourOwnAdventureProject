@@ -54,7 +54,7 @@ public class SignInFragment extends Fragment {
      * activity.
      */
     public interface OnSignInInteractionListener {
-        void onSignInSignInAction();
+        void onSignInSignInAction(String username);
         void onSignInRegisterAction();
     }
 
@@ -136,15 +136,6 @@ public class SignInFragment extends Fragment {
         new UserSignInTask().execute(username, Helper.encryptString(password));
     }
 
-    private void updateSharedPreferences(String username) {
-        mSharedPreferences = getActivity().getSharedPreferences(
-                getString(R.string.SHARED_PREFS), Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = mSharedPreferences.edit();
-        editor.putString(getString(R.string.USERNAME), username);
-        editor.putBoolean(getString(R.string.LOGGEDIN), true);
-        editor.commit();
-    }
-
     /**
      * Represents an asynchronous login task used to authenticate the user.
      */
@@ -177,10 +168,9 @@ public class SignInFragment extends Fragment {
                 if (status.equalsIgnoreCase("success")) {
                     Toast.makeText(getActivity(), "Success",
                             Toast.LENGTH_SHORT).show();
-                    updateSharedPreferences(mUsernameEditText.getText().toString());
                     enableButtons(true);
                     if (mCallback != null) {
-                        mCallback.onSignInSignInAction();
+                        mCallback.onSignInSignInAction(mUsernameEditText.getText().toString());
                     }
                 } else {
                     enableButtons(true);
@@ -191,8 +181,8 @@ public class SignInFragment extends Fragment {
             } catch (Exception e) {
                 enableButtons(true);
                 Log.d(TAG, "Parsing JSON Exception" + e.getMessage());
-                Toast.makeText(getActivity(), "Parsing JSON exception: " + s,
-                        Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(), "Parsing JSON exception: " + s,
+//                        Toast.LENGTH_SHORT).show();
             }
         }
     }

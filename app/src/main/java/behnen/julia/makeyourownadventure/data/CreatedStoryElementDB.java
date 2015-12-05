@@ -79,23 +79,27 @@ public class CreatedStoryElementDB {
                 null
         );
 
-        c.moveToFirst();
+        StoryElement storyElement;
+        if (c.getCount() > 0) {
+            c.moveToFirst();
 
-        String title = c.getString(0);
-        String imageUrl = c.getString(1);
-        String description = c.getString(2);
-        boolean isEnding = (c.getInt(3) == 1);
-        int choice1Id = c.getInt(4);
-        int choice2Id = c.getInt(5);
-        String choice1Text = c.getString(6);
-        String choice2Text = c.getString(7);
+            String title = c.getString(0);
+            String imageUrl = c.getString(1);
+            String description = c.getString(2);
+            boolean isEnding = (c.getInt(3) == 1);
+            int choice1Id = c.getInt(4);
+            int choice2Id = c.getInt(5);
+            String choice1Text = c.getString(6);
+            String choice2Text = c.getString(7);
+
+
+            storyElement = new StoryElement(author, storyId, elementId, title, imageUrl,
+                    description, isEnding, choice1Id, choice2Id, choice1Text, choice2Text);
+        } else {
+            storyElement = null;
+        }
 
         c.close();
-
-        StoryElement storyElement;
-        storyElement = new StoryElement(author, storyId, elementId, title, imageUrl,
-                description, isEnding, choice1Id, choice2Id, choice1Text, choice2Text);
-
         return storyElement;
     }
 
@@ -166,6 +170,26 @@ public class CreatedStoryElementDB {
         int max = c.getInt(0);
         c.close();
         return max + 1;
+    }
+
+    public boolean hasStoryElements(String author, String storyId) {
+        String[] columns = {
+                "elementId",
+        };
+
+        Cursor c = mSQLiteDatabase.query(
+                TABLE_NAME,
+                columns,
+                "author = ? AND storyId = ?",
+                new String[]{author, storyId},
+                null,
+                null,
+                null
+        );
+
+        boolean areElements = c.getCount() > 0;
+        c.close();
+        return areElements;
     }
 
     private class CreatedStoryElementDBHelper extends SQLiteOpenHelper {

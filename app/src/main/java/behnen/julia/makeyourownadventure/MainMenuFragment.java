@@ -1,12 +1,24 @@
 package behnen.julia.makeyourownadventure;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import org.json.JSONObject;
+
+import behnen.julia.makeyourownadventure.asyncs.AbstractDownloadImageTask;
+import behnen.julia.makeyourownadventure.asyncs.AbstractDownloadStoryElementTask;
+import behnen.julia.makeyourownadventure.model.StoryElement;
 
 /**
  * A fragment that provides the central navigation of the app in the form of a menu.
@@ -15,6 +27,14 @@ import android.widget.Button;
  * @version November 4, 2015
  */
 public class MainMenuFragment extends Fragment {
+
+    private static final String TAG = "MainMenuFragment";
+
+    private StoryElement mStoryElement;
+
+    private TextView mElementTitle;
+    private ImageView mImage;
+    private Button mContinueStoryButton;
 
     /**
      * The context which implements the interface methods.
@@ -29,17 +49,13 @@ public class MainMenuFragment extends Fragment {
      */
     public interface MainMenuInteractionListener {
 
+        String[] onMainMenuResume();
+
         /**
          * Callback triggered when the user has pressed the "Continue Story" button
          * in MainMenuFragment.
          */
-        void onMainMenuContinueStoryAction();
-
-        /**
-         * Callback triggered when the user has pressed the "The Story So Far" button
-         * in MainMenuFragment.
-         */
-        void onMainMenuStorySoFarAction();
+        void onMainMenuContinueStoryAction(StoryElement storyElement);
 
         /**
          * Callback triggered when the user has pressed the "Bookmarked Stories" button
@@ -74,24 +90,42 @@ public class MainMenuFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        mContinueStoryButton.setEnabled(false);
+        mImage.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.logo));
+        if (mCallback != null) {
+            String[] preferences = mCallback.onMainMenuResume();
+            if (preferences[1] != null) {
+                new StoryGetElementTask().execute(preferences[0], preferences[1], preferences[2]);
+            } else {
+                Toast.makeText(getActivity(), "No current story", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_main_menu, container, false);
 
-        Button continueStoryButton = (Button) v.findViewById(R.id.main_menu_continue_story_button);
+        mElementTitle = (TextView) v.findViewById(R.id.main_menu_element_title);
+        mImage = (ImageView) v.findViewById(R.id.main_menu_image);
+
+        mContinueStoryButton = (Button) v.findViewById(R.id.main_menu_continue_story_button);
         Button downloadedStoriesButton =
                 (Button) v.findViewById(R.id.main_menu_bookmarked_stories_button);
         Button myStoriesButton = (Button) v.findViewById(R.id.main_menu_create_edit_stories_button);
         Button aboutButton = (Button) v.findViewById(R.id.main_menu_about_button);
         Button signOutButton = (Button) v.findViewById(R.id.main_menu_sign_out_button);
 
-        continueStoryButton.setOnClickListener(new View.OnClickListener() {
+        mContinueStoryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mCallback != null) {
-                    mCallback.onMainMenuContinueStoryAction();
+                    mCallback.onMainMenuContinueStoryAction(mStoryElement);
                 }
             }
         });
@@ -150,6 +184,52 @@ public class MainMenuFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mCallback = null;
+    }
+
+    public void setStoryElement(StoryElement element) {
+        mStoryElement = element;
+        new DownloadImageTask().execute(mStoryElement.getImageUrl());
+        mContinueStoryButton.setEnabled(true);
+        mElementTitle.setText(mStoryElement.getTitle());
+    }
+
+    private class StoryGetElementTask extends AbstractDownloadStoryElementTask {
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            // Parse JSON
+            try {
+                JSONObject jsonObject = new JSONObject(s);
+                String status = jsonObject.getString("result");
+                if (status.equalsIgnoreCase("success")) {
+                    String elementString = jsonObject.getString("storyElement");
+                    StoryElement element = StoryElement.parseJson(elementString);
+                    setStoryElement(element);
+
+                } else {
+                    String reason = jsonObject.getString("error");
+                    Toast.makeText(getContext(), "Current story element download failed: " + reason,
+                            Toast.LENGTH_SHORT).show();
+                }
+            } catch (Exception e) {
+                Log.d(TAG, "Parsing JSON Exception: " + e.getMessage());
+                e.printStackTrace();
+                Toast.makeText(getContext(), "Unable to load story",
+                        Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    /**
+     * An asynchronous task for downloading a story element image.
+     */
+    private class DownloadImageTask extends AbstractDownloadImageTask {
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            mImage.setImageBitmap(bitmap);
+        }
     }
 
 }
