@@ -115,6 +115,7 @@
     <string name="about_text">Created by Julia Behnen for TCSS 450.\nVersion: 1.0.</string>
     <string name="contentSharingDialogText">Story uploaded and added to bookmarked stories. Would you like to share it?</string>
     <string name="share_action">Share</string>
+    <string name="send_to">Send To</string>
 
     <string-array name="choice_ending_array">
         <item name="prompt_choice">Choice</item>

@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.List;
 
 import behnen.julia.makeyourownadventure.asyncs.AbstractPostAsyncTask;
+import behnen.julia.makeyourownadventure.dialogs.ContentSharingDialogFragment;
 import behnen.julia.makeyourownadventure.dialogs.EditStoryHeaderDialogFragment;
 import behnen.julia.makeyourownadventure.model.StoryElement;
 import behnen.julia.makeyourownadventure.model.StoryHeader;
@@ -32,7 +33,14 @@ public class CreatedStoryOverviewFragment extends Fragment {
 
     private static final String ARG_STORY_HEADER = "storyHeader";
 
-    public static final int REQUEST_HEADER = 0;
+    /**
+     * The URL for story registration requests.
+     */
+    private static final String DELETE_STORY_URL =
+            "http://cssgate.insttech.washington.edu/~jbehnen/myoa/php/deleteStoryHeader.php";
+
+    private static final int REQUEST_HEADER = 0;
+    private static final int REQUEST_CONTENT_SHARING = 1;
 
     /**
      * The URL for story header upload requests.
@@ -44,6 +52,12 @@ public class CreatedStoryOverviewFragment extends Fragment {
      */
     private static final String UPLOAD_STORY_ELEMENT_URL =
             "http://cssgate.insttech.washington.edu/~jbehnen/myoa/php/uploadStoryElement.php";
+
+    private Button mEditStoryHeaderButton;
+    private Button mEditStoryElementsButton;
+    private Button mPlayButton;
+    private Button mDeleteButton;
+    private Button mUploadButton;
 
     private OnCreatedStoryOverviewInteractionListener mCallback;
 
@@ -91,9 +105,9 @@ public class CreatedStoryOverviewFragment extends Fragment {
 
         displayStoryInfo(view);
 
-        final Button editStoryHeaderButton =
+        mEditStoryHeaderButton =
                 (Button) view.findViewById(R.id.created_story_overview_edit_story_info_button);
-        editStoryHeaderButton.setOnClickListener(new View.OnClickListener() {
+        mEditStoryHeaderButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mCallback.onCreatedStoryIsStoryFinal(
@@ -111,9 +125,9 @@ public class CreatedStoryOverviewFragment extends Fragment {
             }
         });
 
-        final Button editStoryElementsButton =
+        mEditStoryElementsButton =
                 (Button) view.findViewById(R.id.created_story_overview_edit_story_elements_button);
-        editStoryElementsButton.setOnClickListener(new View.OnClickListener() {
+        mEditStoryElementsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mCallback != null) {
@@ -130,8 +144,8 @@ public class CreatedStoryOverviewFragment extends Fragment {
             }
         });
 
-        Button playButton = (Button) view.findViewById(R.id.created_story_overview_play_button);
-        playButton.setOnClickListener(new View.OnClickListener() {
+        mPlayButton = (Button) view.findViewById(R.id.created_story_overview_play_button);
+        mPlayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mCallback != null) {
@@ -148,22 +162,23 @@ public class CreatedStoryOverviewFragment extends Fragment {
             }
         });
 
-        Button deleteButton = (Button) view.findViewById(R.id.created_story_overview_delete_button);
-        deleteButton.setOnClickListener(new View.OnClickListener() {
+        mDeleteButton = (Button) view.findViewById(R.id.created_story_overview_delete_button);
+        mDeleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO also delete from online database
                 if (mCallback != null) {
-                    if (mCallback.onCreatedStoryIsStoryFinal(
-                            mStoryHeader.getAuthor(), mStoryHeader.getStoryId())) {
+                    String author = mStoryHeader.getAuthor();
+                    String storyId = mStoryHeader.getStoryId();
+                    if (mCallback.onCreatedStoryIsStoryFinal(author, storyId)) {
                         Toast.makeText(getContext(),
                                 "Story is partially uploaded and can no longer be deleted.",
                                 Toast.LENGTH_LONG).show();
                     } else {
                         boolean deleted =
-                                mCallback.onCreatedStoryOverviewDeleteLocalStory(
-                                        mStoryHeader.getAuthor(), mStoryHeader.getStoryId());
+                                mCallback.onCreatedStoryOverviewDeleteLocalStory(author, storyId);
                         if (deleted) {
+                            // Delete story online
+                            new StoryDeleteTask().execute(author, storyId);
                             getFragmentManager().popBackStackImmediate();
                         } else {
                             Toast.makeText(
@@ -174,8 +189,8 @@ public class CreatedStoryOverviewFragment extends Fragment {
             }
         });
 
-        Button uploadButton = (Button) view.findViewById(R.id.created_story_overview_upload_button);
-        uploadButton.setOnClickListener(new View.OnClickListener() {
+        mUploadButton = (Button) view.findViewById(R.id.created_story_overview_upload_button);
+        mUploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mCallback != null) {
@@ -222,12 +237,7 @@ public class CreatedStoryOverviewFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != Activity.RESULT_OK) {
-            Log.d(TAG, "result ok: " + resultCode);
-            return;
-        }
-        Log.d(TAG, "before second  if: " + requestCode);
-        if (requestCode == REQUEST_HEADER) {
+        if (requestCode == REQUEST_HEADER && resultCode == Activity.RESULT_OK) {
             Log.d(TAG, "request code: " + requestCode);
             String author = mStoryHeader.getAuthor();
             String storyId = mStoryHeader.getStoryId();
@@ -242,6 +252,18 @@ public class CreatedStoryOverviewFragment extends Fragment {
                 View view = getView();
                 displayStoryInfo(view);
             }
+        } else if (requestCode == REQUEST_CONTENT_SHARING) {
+            if (resultCode == Activity.RESULT_OK) {
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, "I just uploaded a new story on " +
+                        "Make Your Own Adventure. Check it out! Author: " +
+                        mStoryHeader.getAuthor() + ", Story ID: " + mStoryHeader.getStoryId());
+                sendIntent.setType("text/plain");
+                startActivity(Intent.createChooser(
+                        sendIntent, getResources().getText(R.string.send_to)));
+            }
+            getFragmentManager().popBackStackImmediate();
         }
     }
 
@@ -252,6 +274,13 @@ public class CreatedStoryOverviewFragment extends Fragment {
      */
     private void attemptStoryUpload() {
         if (mCallback != null) {
+
+            // Disable all buttons once story upload starting.
+            mEditStoryHeaderButton.setEnabled(false);
+            mEditStoryElementsButton.setEnabled(false);
+            mPlayButton.setEnabled(false);
+            mDeleteButton.setEnabled(false);
+            mUploadButton.setEnabled(false);
 
             // Set story final so that can no longer be edited if initial upload fails.
             mCallback.onCreatedStorySetStoryFinal(
@@ -288,9 +317,9 @@ public class CreatedStoryOverviewFragment extends Fragment {
     private void afterStoryHeaderUpload() {
         if (mCallback != null) {
             mCallback.onCreatedStoryOverviewOnCompletedUpload(mStoryHeader);
-            Toast.makeText(getActivity(), "Story uploaded and added to bookmarked stories",
-                    Toast.LENGTH_SHORT).show();
-            getFragmentManager().popBackStackImmediate();
+            ContentSharingDialogFragment fragment = new ContentSharingDialogFragment();
+            fragment.setTargetFragment(CreatedStoryOverviewFragment.this, REQUEST_CONTENT_SHARING);
+            fragment.show(getFragmentManager(), "editStoryHeader");
         }
     }
 
@@ -330,7 +359,7 @@ public class CreatedStoryOverviewFragment extends Fragment {
                 JSONObject jsonObject = new JSONObject(s);
                 String status = jsonObject.getString("result");
                 if (status.equalsIgnoreCase("success")) {
-                    mCallback.onCreatedStoryOverviewOnCompletedUpload(mStoryHeader);
+                    afterStoryHeaderUpload();
                 } else {
                     String reason = jsonObject.getString("error");
                     Toast.makeText(getActivity(), "Failed: " + reason,
@@ -408,6 +437,28 @@ public class CreatedStoryOverviewFragment extends Fragment {
                         Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    public class StoryDeleteTask extends AbstractPostAsyncTask<String, Void, String> {
+
+        /**
+         * Starts the registration process.
+         * @param params The story author and story ID, in that order.
+         * @return A string holding the result of the request.
+         */
+        @Override
+        protected String doInBackground(String...params) {
+            String urlParameters = "author=" + params[0]
+                    + "&story_id=" + params[1];
+            try {
+                return downloadUrl(DELETE_STORY_URL, urlParameters, TAG);
+            } catch (IOException e) {
+                return "Unable to retrieve web page. URL may be invalid";
+            }
+        }
+
+        // No post execute: if the delete doesn't work, the user simply loses access
+        // to that storyId.
     }
 
 }
