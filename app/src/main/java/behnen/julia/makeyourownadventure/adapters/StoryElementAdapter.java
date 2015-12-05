@@ -16,6 +16,11 @@ import behnen.julia.makeyourownadventure.model.StoryElement;
  * Created by Julia on 11/25/2015.
  */
 public class StoryElementAdapter extends ArrayAdapter<StoryElement> {
+
+    private static final String ELEMENT_ID_PREFIX = "ID: ";
+    private static final String CHOICE1_ID_PREFIX = "Choice 1: ";
+    private static final String CHOICE2_ID_PREFIX = "Choice 2: ";
+
     public StoryElementAdapter(Context context, List<StoryElement> objects) {
         super(context, 0, objects);
     }
@@ -36,17 +41,22 @@ public class StoryElementAdapter extends ArrayAdapter<StoryElement> {
         }
         // Lookup view for data population
         TextView title = (TextView) convertView.findViewById(R.id.story_element_item_title);
-        TextView author = (TextView) convertView.findViewById(R.id.story_element_item_description);
-        TextView choiceEnding =
-                (TextView) convertView.findViewById(R.id.story_element_item_choice_ending);
+        TextView elementId =
+                (TextView) convertView.findViewById(R.id.story_element_item_element_id);
+        TextView choice1Id =
+                (TextView) convertView.findViewById(R.id.story_element_item_choice1_id);
+        TextView choice2Id =
+                (TextView) convertView.findViewById(R.id.story_element_item_choice2_id);
 
         // Populate the data into the template view using the data object
         title.setText(storyElement.getTitle());
-        author.setText(storyElement.getAuthor());
+        elementId.setText(ELEMENT_ID_PREFIX + Integer.toString(storyElement.getElementId()));
         if (storyElement.isEnding()) {
-            choiceEnding.setText(R.string.ending);
+            choice1Id.setVisibility(View.GONE);
+            choice2Id.setVisibility(View.GONE);
         } else {
-            choiceEnding.setText(R.string.choice);
+            choice1Id.setText(CHOICE1_ID_PREFIX + Integer.toString(storyElement.getChoice1Id()));
+            choice2Id.setText(CHOICE2_ID_PREFIX + Integer.toString(storyElement.getChoice2Id()));
         }
 
         // Return the completed view to render on screen

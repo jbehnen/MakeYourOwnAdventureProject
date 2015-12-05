@@ -110,18 +110,7 @@ public class CreatedStoryOverviewFragment extends Fragment {
         mEditStoryHeaderButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mCallback.onCreatedStoryIsStoryFinal(
-                        mStoryHeader.getAuthor(), mStoryHeader.getStoryId())) {
-                    Toast.makeText(getContext(),
-                            "Story is partially uploaded and can no longer be edited.",
-                            Toast.LENGTH_LONG).show();
-                } else {
-                    EditStoryHeaderDialogFragment fragment =
-                            EditStoryHeaderDialogFragment.newInstance(
-                            mStoryHeader.getTitle(), mStoryHeader.getDescription());
-                    fragment.setTargetFragment(CreatedStoryOverviewFragment.this, REQUEST_HEADER);
-                    fragment.show(getFragmentManager(), "editStoryHeader");
-                }
+                editStoryHeader();
             }
         });
 
@@ -130,17 +119,7 @@ public class CreatedStoryOverviewFragment extends Fragment {
         mEditStoryElementsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mCallback != null) {
-                    if (mCallback.onCreatedStoryIsStoryFinal(
-                            mStoryHeader.getAuthor(), mStoryHeader.getStoryId())) {
-                        Toast.makeText(getContext(),
-                                "Story is partially uploaded and can no longer be edited.",
-                                Toast.LENGTH_LONG).show();
-                    } else {
-                        mCallback.onCreatedStoryOverviewEditElements(
-                                mStoryHeader.getAuthor(), mStoryHeader.getStoryId());
-                    }
-                }
+                editStoryElements();
             }
         });
 
@@ -148,17 +127,7 @@ public class CreatedStoryOverviewFragment extends Fragment {
         mPlayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mCallback != null) {
-                    if (mCallback.onCreatedStoryIsStoryFinal(
-                            mStoryHeader.getAuthor(), mStoryHeader.getStoryId())) {
-                        Toast.makeText(getContext(),
-                                "Story is partially uploaded and can no longer be play-tested.",
-                                Toast.LENGTH_LONG).show();
-                    } else {
-                        mCallback.onCreatedStoryOverviewPlayStory(mStoryHeader.getAuthor(),
-                                mStoryHeader.getStoryId());
-                    }
-                }
+                playStory();
             }
         });
 
@@ -166,26 +135,7 @@ public class CreatedStoryOverviewFragment extends Fragment {
         mDeleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mCallback != null) {
-                    String author = mStoryHeader.getAuthor();
-                    String storyId = mStoryHeader.getStoryId();
-                    if (mCallback.onCreatedStoryIsStoryFinal(author, storyId)) {
-                        Toast.makeText(getContext(),
-                                "Story is partially uploaded and can no longer be deleted.",
-                                Toast.LENGTH_LONG).show();
-                    } else {
-                        boolean deleted =
-                                mCallback.onCreatedStoryOverviewDeleteLocalStory(author, storyId);
-                        if (deleted) {
-                            // Delete story online
-                            new StoryDeleteTask().execute(author, storyId);
-                            getFragmentManager().popBackStackImmediate();
-                        } else {
-                            Toast.makeText(
-                                    getActivity(), "Deletion failed", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                }
+                deleteStory();
             }
         });
 
@@ -193,9 +143,7 @@ public class CreatedStoryOverviewFragment extends Fragment {
         mUploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mCallback != null) {
-                    attemptStoryUpload();
-                }
+                storyUpload();
             }
         });
 
@@ -242,9 +190,9 @@ public class CreatedStoryOverviewFragment extends Fragment {
             String author = mStoryHeader.getAuthor();
             String storyId = mStoryHeader.getStoryId();
             String title = (String) data.getSerializableExtra(
-                 EditStoryHeaderDialogFragment.EXTRA_TITLE);
+                    EditStoryHeaderDialogFragment.EXTRA_TITLE);
             String description = (String) data.getSerializableExtra(
-                 EditStoryHeaderDialogFragment.EXTRA_DESCRIPTION);
+                    EditStoryHeaderDialogFragment.EXTRA_DESCRIPTION);
             if (mCallback != null) {
                 Log.d(TAG, "mCallback" + author + storyId + title + description);
                 mStoryHeader = new StoryHeader(author, storyId, title, description);
@@ -267,12 +215,78 @@ public class CreatedStoryOverviewFragment extends Fragment {
         }
     }
 
+    private void editStoryHeader() {
+        if (mCallback.onCreatedStoryIsStoryFinal(
+                mStoryHeader.getAuthor(), mStoryHeader.getStoryId())) {
+            Toast.makeText(getContext(),
+                    "Story is partially uploaded and can no longer be edited.",
+                    Toast.LENGTH_LONG).show();
+        } else {
+            EditStoryHeaderDialogFragment fragment =
+                    EditStoryHeaderDialogFragment.newInstance(
+                            mStoryHeader.getTitle(), mStoryHeader.getDescription());
+            fragment.setTargetFragment(CreatedStoryOverviewFragment.this, REQUEST_HEADER);
+            fragment.show(getFragmentManager(), "editStoryHeader");
+        }
+    }
+
+    private void editStoryElements() {
+        if (mCallback != null) {
+            if (mCallback.onCreatedStoryIsStoryFinal(
+                    mStoryHeader.getAuthor(), mStoryHeader.getStoryId())) {
+                Toast.makeText(getContext(),
+                        "Story is partially uploaded and can no longer be edited.",
+                        Toast.LENGTH_LONG).show();
+            } else {
+                mCallback.onCreatedStoryOverviewEditElements(
+                        mStoryHeader.getAuthor(), mStoryHeader.getStoryId());
+            }
+        }
+    }
+
+    private void playStory() {
+        if (mCallback != null) {
+            if (mCallback.onCreatedStoryIsStoryFinal(
+                    mStoryHeader.getAuthor(), mStoryHeader.getStoryId())) {
+                Toast.makeText(getContext(),
+                        "Story is partially uploaded and can no longer be play-tested.",
+                        Toast.LENGTH_LONG).show();
+            } else {
+                mCallback.onCreatedStoryOverviewPlayStory(mStoryHeader.getAuthor(),
+                        mStoryHeader.getStoryId());
+            }
+        }
+    }
+
+    private void deleteStory() {
+        if (mCallback != null) {
+            String author = mStoryHeader.getAuthor();
+            String storyId = mStoryHeader.getStoryId();
+            if (mCallback.onCreatedStoryIsStoryFinal(author, storyId)) {
+                Toast.makeText(getContext(),
+                        "Story is partially uploaded and can no longer be deleted.",
+                        Toast.LENGTH_LONG).show();
+            } else {
+                boolean deleted =
+                        mCallback.onCreatedStoryOverviewDeleteLocalStory(author, storyId);
+                if (deleted) {
+                    // Delete story online
+                    new StoryDeleteTask().execute(author, storyId);
+                    getFragmentManager().popBackStackImmediate();
+                } else {
+                    Toast.makeText(
+                            getActivity(), "Deletion failed", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
+
     /**
      * Attempts to upload a story: both the story header and the story elements. The
      * story elements are uploaded first. If all of the story elements are uploaded
      * successfully, then the story header is uploaded.
      */
-    private void attemptStoryUpload() {
+    private void storyUpload() {
         if (mCallback != null) {
 
             // Disable all buttons once story upload starting.
