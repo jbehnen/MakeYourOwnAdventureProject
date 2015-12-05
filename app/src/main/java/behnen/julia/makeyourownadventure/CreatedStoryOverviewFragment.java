@@ -54,7 +54,7 @@ public class CreatedStoryOverviewFragment extends Fragment {
         void onCreatedStoryOverviewEditElements(String author, String storyId);
         void onCreatedStoryOverviewPlayStory(String author, String storyId);
         boolean onCreatedStoryOverviewDeleteLocalStory(String author, String storyId);
-        boolean onCreatedStoryOverviewOnCompletedUpload(StoryHeader storyHeader);
+        void onCreatedStoryOverviewOnCompletedUpload(StoryHeader storyHeader);
         boolean onCreatedStoryOverviewDeleteStoryElement(
                 String author, String storyId, int elementId);
         List<StoryElement> onCreatedStoryOverviewGetStoryElements(String author, String storyId);
@@ -166,7 +166,8 @@ public class CreatedStoryOverviewFragment extends Fragment {
                         if (deleted) {
                             getFragmentManager().popBackStackImmediate();
                         } else {
-                            Toast.makeText(getActivity(), "Deletion failed", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(
+                                    getActivity(), "Deletion failed", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }
@@ -329,7 +330,7 @@ public class CreatedStoryOverviewFragment extends Fragment {
                 JSONObject jsonObject = new JSONObject(s);
                 String status = jsonObject.getString("result");
                 if (status.equalsIgnoreCase("success")) {
-                    afterStoryHeaderUpload();
+                    mCallback.onCreatedStoryOverviewOnCompletedUpload(mStoryHeader);
                 } else {
                     String reason = jsonObject.getString("error");
                     Toast.makeText(getActivity(), "Failed: " + reason,

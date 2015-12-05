@@ -527,9 +527,9 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public boolean onCreatedStoryOverviewOnCompletedUpload(StoryHeader storyHeader) {
+    public void onCreatedStoryOverviewOnCompletedUpload(StoryHeader storyHeader) {
         addBookmarkedStory(storyHeader);
-        return deleteCreatedStoryHeader(storyHeader.getAuthor(), storyHeader.getStoryId());
+        deleteCreatedStoryHeader(storyHeader.getAuthor(), storyHeader.getStoryId());
     }
 
     @Override
