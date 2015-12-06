@@ -13,14 +13,18 @@ import behnen.julia.makeyourownadventure.R;
 import behnen.julia.makeyourownadventure.model.StoryElement;
 
 /**
- * Created by Julia on 11/25/2015.
+ * Adapter class for a story element item in a list view.
+ *
+ * @author Julia
+ * @version December 6, 2015
  */
 public class StoryElementAdapter extends ArrayAdapter<StoryElement> {
 
-    private static final String ELEMENT_ID_PREFIX = "ID: ";
-    private static final String CHOICE1_ID_PREFIX = "Choice 1: ";
-    private static final String CHOICE2_ID_PREFIX = "Choice 2: ";
-
+    /**
+     * Constructs a new StoryElementAdapter.
+     * @param context The context for the adapter.
+     * @param objects The story element objects to be used in the adapter.
+     */
     public StoryElementAdapter(Context context, List<StoryElement> objects) {
         super(context, 0, objects);
     }
@@ -50,13 +54,22 @@ public class StoryElementAdapter extends ArrayAdapter<StoryElement> {
 
         // Populate the data into the template view using the data object
         title.setText(storyElement.getTitle());
-        elementId.setText(ELEMENT_ID_PREFIX + Integer.toString(storyElement.getElementId()));
+        String elementIdText = getContext().getResources().getString(R.string.label_element_id) +
+                " " + Integer.toString(storyElement.getElementId());
+        elementId.setText(elementIdText);
+
+        // If it is an ending, hide the layout elements that are used only for choices.
         if (storyElement.isEnding()) {
             choice1Id.setVisibility(View.GONE);
             choice2Id.setVisibility(View.GONE);
         } else {
-            choice1Id.setText(CHOICE1_ID_PREFIX + Integer.toString(storyElement.getChoice1Id()));
-            choice2Id.setText(CHOICE2_ID_PREFIX + Integer.toString(storyElement.getChoice2Id()));
+            // If it is a choice, populate the choice-specific layout elements
+            String choice1Text = getContext().getResources().getString(R.string.label_choice1_id) +
+                    " " + Integer.toString(storyElement.getChoice1Id());
+            String choice2Text = getContext().getResources().getString(R.string.label_choice2_id) +
+                    " " + Integer.toString(storyElement.getChoice2Id());
+            choice1Id.setText(choice1Text);
+            choice2Id.setText(choice2Text);
         }
 
         // Return the completed view to render on screen

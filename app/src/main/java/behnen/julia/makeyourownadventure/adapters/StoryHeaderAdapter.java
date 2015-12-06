@@ -13,10 +13,18 @@ import behnen.julia.makeyourownadventure.R;
 import behnen.julia.makeyourownadventure.model.StoryHeader;
 
 /**
- * Created by Julia on 11/15/2015.
+ * Adapter class for a story header item in a list view.
+ *
+ * @author Julia
+ * @version December 6, 2015
  */
 public class StoryHeaderAdapter extends ArrayAdapter<StoryHeader> {
 
+    /**
+     * Constructs a new StoryHeaderAdapter.
+     * @param context The context for the adapter.
+     * @param objects The story header objects to be used in the adapter.
+     */
     public StoryHeaderAdapter(Context context, List<StoryHeader> objects) {
         super(context, 0, objects);
     }

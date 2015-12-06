@@ -57,13 +57,10 @@
     <string name="label_title">Title: </string>
     <string name="label_description">Description: </string>
 
-    <string name="label_element_id">Element id: </string>
-    <string name="label_image_url">Image url: </string>
-    <string name="label_is_ending">Is ending: </string>
-    <string name="label_choice1_id">Choice 1 element id: </string>
-    <string name="label_choice2_id">Choice 2 element id: </string>
-    <string name="label_choice1_text">Choice 1 text: </string>
-    <string name="label_choice2_text">Choice 2 text: </string>
+    <!--Strings related to story element item list item-->
+    <string name="label_element_id">ID: </string>
+    <string name="label_choice1_id">Choice 1: </string>
+    <string name="label_choice2_id">Choice 2: </string>
 
     <!--Strings related to creating/editing a story-->
     <string name="prompt_title">Title</string>
@@ -88,23 +85,15 @@
     <string name="choice">Choice</string>
     <string name="preview_action">Preview</string>
     <string name="delete_action">Delete</string>
-    <string name="prompt_choice1Text">Choice 1 Text</string>
-    <string name="prompt_choice2Text">Choice 2 Text</string>
     <string name="prompt_image">Image</string>
-    <string name="prompt_choice2Id">Choice 2 Target:</string>
-    <string name="prompt_choice1Id">Choice 1 Target:</string>
     <string name="prompt_choice_ending">Choice or Ending</string>
 
     <string name="prompt_element_description">Description</string>
     <string name="prompt_edit">Edit</string>
     <string name="prompt_delete">Delete</string>
     <string name="prompt_preview">Preview</string>
-    <string name="prompt_choice2Target">Choice 2 Target</string>
-    <string name="prompt_choice1Target">Choice 1 Target</string>
     <string name="prompt_target">Target</string>
     <string name="prompt_text">Text</string>
-    <string name="prompt_choice1">Choice 1</string>
-    <string name="prompt_choice2">Choice 2</string>
     <string name="prompt_save">Save</string>
     <string name="prompt_cancel">Cancel</string>
     <string name="prompt_reset">reset</string>
