@@ -8,7 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 /**
- * A simple {@link Fragment} subclass.
+ * A fragment that displays information about the app.
+ *
+ * @author Julia Behnen
+ * @version December 6, 2015
  */
 public class AboutFragment extends Fragment {
 

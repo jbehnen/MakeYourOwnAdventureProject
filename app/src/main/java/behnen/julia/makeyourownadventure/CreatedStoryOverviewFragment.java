@@ -25,12 +25,22 @@ import behnen.julia.makeyourownadventure.model.StoryElement;
 import behnen.julia.makeyourownadventure.model.StoryHeader;
 
 /**
- * Created by Julia on 11/22/2015.
+ * A fragment that displays an overview of a story that the user has created and
+ * allows the user to test, delete, and edit it.
+ *
+ * @author Julia Behnen
+ * @version December 6, 2015
  */
 public class CreatedStoryOverviewFragment extends Fragment {
 
+    /**
+     * The tag used for logging.
+    */
     private static final String TAG = "CreatedStoryOverview";
 
+    /**
+     * The tag used to identify the story header argument in the bundle.
+     */
     private static final String ARG_STORY_HEADER = "storyHeader";
 
     /**
@@ -39,7 +49,13 @@ public class CreatedStoryOverviewFragment extends Fragment {
     private static final String DELETE_STORY_URL =
             "http://cssgate.insttech.washington.edu/~jbehnen/myoa/php/deleteStoryHeader.php";
 
+    /**
+     * The tag used to identify a header-editing request in dialog interactions.
+     */
     private static final int REQUEST_HEADER = 0;
+    /**
+     * The tag used to identify a content-sharing request in dialog interactions.
+     */
     private static final int REQUEST_CONTENT_SHARING = 1;
 
     /**
@@ -53,27 +69,102 @@ public class CreatedStoryOverviewFragment extends Fragment {
     private static final String UPLOAD_STORY_ELEMENT_URL =
             "http://cssgate.insttech.washington.edu/~jbehnen/myoa/php/uploadStoryElement.php";
 
+    /**
+     * The story header being managed by this fragment.
+     */
+    private StoryHeader mStoryHeader;
+
+    /**
+     * The buttons that control the activity of the fragment.
+     */
     private Button mEditStoryHeaderButton;
     private Button mEditStoryElementsButton;
     private Button mPlayButton;
     private Button mDeleteButton;
     private Button mUploadButton;
 
+    /**
+     * The context which implements the interface methods.
+     */
     private OnCreatedStoryOverviewInteractionListener mCallback;
 
-    private StoryHeader mStoryHeader;
-
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     */
     public interface OnCreatedStoryOverviewInteractionListener {
+        /**
+         * Callback triggered when the story header is updated.
+         * @param storyHeader The new version of the story header.
+         * @return True if the external update is successful, false otherwise.
+         */
         boolean onCreatedStoryOverviewUpdateHeader(StoryHeader storyHeader);
+
+        /**
+         * Callback triggered when the user wants to update the story elements
+         * associated with the story.
+         * @param author The author of the story.
+         * @param storyId The storyId of the story.
+         */
         void onCreatedStoryOverviewEditElements(String author, String storyId);
+
+        /**
+         * Callback triggered when the user wants to playtest the story.
+         * @param author The author of the story.
+         * @param storyId The storyId of the story.
+         * @param storyTitle The title of the story.
+         */
         void onCreatedStoryOverviewPlayStory(String author, String storyId, String storyTitle);
+        /**
+         * Callback triggered when the story is deleted.
+         * @param author The author of the story.
+         * @param storyId The storyId of the story.
+         * @return True if the external delete is successful, false otherwise.
+         */
         boolean onCreatedStoryOverviewDeleteLocalStory(String author, String storyId);
+
+        /**
+         * Callback triggered when the story is uploaded. Should delete the story header.
+         * @param storyHeader The story that was uploaded.
+         */
         void onCreatedStoryOverviewOnCompletedUpload(StoryHeader storyHeader);
+
+        /**
+         * Callback triggered when a story element is deleted as part of the
+         * story upload.
+         * @param author The author of the story.
+         * @param storyId The storyId of the story.
+         * @param elementId The elementId of the story.
+         * @return True if the external delete is successful, false otherwise.
+         */
         boolean onCreatedStoryOverviewDeleteStoryElement(
                 String author, String storyId, int elementId);
+
+        /**
+         * Callback triggered when the fragment needs all story elements belonging
+         * to a given story.
+         * @param author The author of the story.
+         * @param storyId The storyId of the story.
+         * @return All story elements belonging to the given story.
+         */
         List<StoryElement> onCreatedStoryOverviewGetStoryElements(String author, String storyId);
-        boolean onCreatedStoryOverviewStoryElementsExist(String author, String storyId);
+
+        /**
+         * Callback triggered when the fragment needs to know if a story is final.
+         * @param author The author of the story.
+         * @param storyId The storyId of the story.
+         * @return True if the story is final, false otherwise.
+         */
         boolean onCreatedStoryIsStoryFinal(String author, String storyId);
+
+        /**
+         * Callback triggered when the story needs to be set as final.
+         * @param author The author of the story.
+         * @param storyId The storyId of the story.
+         * @return True if the external delete is successful, false otherwise.
+         */
         boolean onCreatedStorySetStoryFinal(String author, String storyId);
     }
 
@@ -84,6 +175,11 @@ public class CreatedStoryOverviewFragment extends Fragment {
 
     }
 
+    /**
+     * Creates a new instance of CreatedStoryOverviewFragment.
+     * @param storyHeader The story header that the fragment overviews.
+     * @return A new instance of CreatedStoryOverviewFragment.
+     */
     public static CreatedStoryOverviewFragment newInstance(StoryHeader storyHeader) {
         if (storyHeader == null) {
             throw new IllegalArgumentException();
@@ -123,11 +219,14 @@ public class CreatedStoryOverviewFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_created_story_overview, container, false);
 
+        // Get bundle data
         mStoryHeader =
                 StoryHeader.parseJson((String) getArguments().getSerializable(ARG_STORY_HEADER));
 
+        // Display info
         displayStoryInfo(view);
 
+        // Initialize buttons
         mEditStoryHeaderButton =
                 (Button) view.findViewById(R.id.created_story_overview_edit_story_info_button);
         mEditStoryHeaderButton.setOnClickListener(new View.OnClickListener() {
@@ -173,6 +272,10 @@ public class CreatedStoryOverviewFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Displays the story header info.
+     * @param view The view being updated.
+     */
     private void displayStoryInfo(View view) {
         if (mStoryHeader != null) {
             TextView author = (TextView) view.findViewById(R.id.created_story_overview_author);
@@ -207,22 +310,26 @@ public class CreatedStoryOverviewFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // If there is a positive result from editing the story header
         if (requestCode == REQUEST_HEADER && resultCode == Activity.RESULT_OK) {
-            Log.d(TAG, "request code: " + requestCode);
+            // Get data
             String author = mStoryHeader.getAuthor();
             String storyId = mStoryHeader.getStoryId();
             String title = (String) data.getSerializableExtra(
                     EditStoryHeaderDialogFragment.EXTRA_TITLE);
             String description = (String) data.getSerializableExtra(
                     EditStoryHeaderDialogFragment.EXTRA_DESCRIPTION);
+            // Update local story header, inform calling activity of change,
+            // and update fragment display.
             if (mCallback != null) {
-                Log.d(TAG, "mCallback" + author + storyId + title + description);
                 mStoryHeader = new StoryHeader(author, storyId, title, description);
                 mCallback.onCreatedStoryOverviewUpdateHeader(mStoryHeader);
                 View view = getView();
                 displayStoryInfo(view);
             }
+        // If the result is from content sharing
         } else if (requestCode == REQUEST_CONTENT_SHARING) {
+            // If positive result, activate content sharing
             if (resultCode == Activity.RESULT_OK) {
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
@@ -234,32 +341,42 @@ public class CreatedStoryOverviewFragment extends Fragment {
                 startActivity(Intent.createChooser(
                         sendIntent, getResources().getText(R.string.send_to)));
             }
+            // Independent of result, pop fragment
             getFragmentManager().popBackStackImmediate();
         }
     }
 
+    /**
+     * Edits the story header
+     */
     private void editStoryHeader() {
-        if (mCallback.onCreatedStoryIsStoryFinal(
-                mStoryHeader.getAuthor(), mStoryHeader.getStoryId())) {
-            Toast.makeText(getContext(),
-                    "Story is partially uploaded and can no longer be edited.",
-                    Toast.LENGTH_LONG).show();
-        } else {
-            EditStoryHeaderDialogFragment fragment =
-                    EditStoryHeaderDialogFragment.newInstance(
-                            mStoryHeader.getTitle(), mStoryHeader.getDescription());
-            fragment.setTargetFragment(CreatedStoryOverviewFragment.this, REQUEST_HEADER);
-            fragment.show(getFragmentManager(), "editStoryHeader");
-        }
-    }
-
-    private void editStoryElements() {
         if (mCallback != null) {
+            // If the story is final, don't allow editing
             if (mCallback.onCreatedStoryIsStoryFinal(
                     mStoryHeader.getAuthor(), mStoryHeader.getStoryId())) {
                 Toast.makeText(getContext(),
                         "Story is partially uploaded and can no longer be edited.",
                         Toast.LENGTH_LONG).show();
+            // If the story is not final, launch the dialog to edit the header
+            } else {
+                EditStoryHeaderDialogFragment fragment =
+                        EditStoryHeaderDialogFragment.newInstance(
+                                mStoryHeader.getTitle(), mStoryHeader.getDescription());
+                fragment.setTargetFragment(CreatedStoryOverviewFragment.this, REQUEST_HEADER);
+                fragment.show(getFragmentManager(), "editStoryHeader");
+            }
+        }
+    }
+
+    private void editStoryElements() {
+        if (mCallback != null) {
+            // If the story is final, don't allow editing
+            if (mCallback.onCreatedStoryIsStoryFinal(
+                    mStoryHeader.getAuthor(), mStoryHeader.getStoryId())) {
+                Toast.makeText(getContext(),
+                        "Story is partially uploaded and can no longer be edited.",
+                        Toast.LENGTH_LONG).show();
+            // If the story is not final, edit the story elements
             } else {
                 mCallback.onCreatedStoryOverviewEditElements(
                         mStoryHeader.getAuthor(), mStoryHeader.getStoryId());
@@ -269,11 +386,13 @@ public class CreatedStoryOverviewFragment extends Fragment {
 
     private void playStory() {
         if (mCallback != null) {
+            // If the story is final, don't allow playtesting
             if (mCallback.onCreatedStoryIsStoryFinal(
                     mStoryHeader.getAuthor(), mStoryHeader.getStoryId())) {
                 Toast.makeText(getContext(),
                         "Story is partially uploaded and can no longer be play-tested.",
                         Toast.LENGTH_LONG).show();
+            // Else, call the playtesting callback
             } else {
                 mCallback.onCreatedStoryOverviewPlayStory(mStoryHeader.getAuthor(),
                         mStoryHeader.getStoryId(), mStoryHeader.getTitle());
@@ -285,10 +404,12 @@ public class CreatedStoryOverviewFragment extends Fragment {
         if (mCallback != null) {
             String author = mStoryHeader.getAuthor();
             String storyId = mStoryHeader.getStoryId();
+            // If the story is final, don't allow editing
             if (mCallback.onCreatedStoryIsStoryFinal(author, storyId)) {
                 Toast.makeText(getContext(),
                         "Story is partially uploaded and can no longer be deleted.",
                         Toast.LENGTH_LONG).show();
+            // Else, delete the story in the callback and online
             } else {
                 boolean deleted =
                         mCallback.onCreatedStoryOverviewDeleteLocalStory(author, storyId);
@@ -326,6 +447,7 @@ public class CreatedStoryOverviewFragment extends Fragment {
             List<StoryElement> storyElements = mCallback.onCreatedStoryOverviewGetStoryElements(
                     mStoryHeader.getAuthor(), mStoryHeader.getStoryId());
 
+            // Upload each story element
             for (StoryElement element: storyElements) {
                 new StoryElementUploadTask().execute(element.getAuthor(),
                         element.getStoryId(), Integer.toString(element.getElementId()),
@@ -338,12 +460,19 @@ public class CreatedStoryOverviewFragment extends Fragment {
         }
     }
 
+    /**
+     * After a story element is successfully uploaded, deletes it locally. If all of
+     * the story elements for the story have been deleted, uploads the story header.
+     * @param author The author of the story.
+     * @param storyId The storyId of the story.
+     * @param elementId The elementId of the story element.
+     */
     private void afterStoryElementUpload(String author, String storyId, int elementId) {
         if (mCallback != null) {
             mCallback.onCreatedStoryOverviewDeleteStoryElement(
                     author, storyId, elementId);
-            if (!mCallback.onCreatedStoryOverviewStoryElementsExist(
-                    author, storyId)) {
+            // if no remaining story elements, upload story header
+            if (mCallback.onCreatedStoryOverviewGetStoryElements(author, storyId).size() == 0) {
                 new StoryHeaderUploadTask().execute(
                         mStoryHeader.getAuthor(), mStoryHeader.getStoryId(),
                         mStoryHeader.getTitle(), mStoryHeader.getDescription());
@@ -351,6 +480,10 @@ public class CreatedStoryOverviewFragment extends Fragment {
         }
     }
 
+    /**
+     * After the story header is uploaded, triggers the upload callback and then activates
+     * the content sharing dialog.
+     */
     private void afterStoryHeaderUpload() {
         if (mCallback != null) {
             mCallback.onCreatedStoryOverviewOnCompletedUpload(mStoryHeader);
@@ -477,10 +610,13 @@ public class CreatedStoryOverviewFragment extends Fragment {
         }
     }
 
+    /**
+     * Deletes a story header from the online database.
+     */
     public class StoryDeleteTask extends AbstractPostAsyncTask<String, Void, String> {
 
         /**
-         * Starts the registration process.
+         * Starts the deletion process.
          * @param params The story author and story ID, in that order.
          * @return A string holding the result of the request.
          */

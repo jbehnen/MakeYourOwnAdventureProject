@@ -19,15 +19,41 @@ import behnen.julia.makeyourownadventure.model.StoryHeader;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * A fragment that displays the stories that the user has downloaded.
+ *
+ * @author Julia Behnen
+ * @version December 6, 2015
  */
 public class BookmarkedStoriesFragment extends Fragment {
 
+    /**
+     * The context which implements the interface methods.
+     */
     private OnBookmarkedStoriesInteractionListener mCallback;
 
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     */
     public interface OnBookmarkedStoriesInteractionListener {
+        /**
+         * Callback triggered when the fragment first loads; returns all stories that the
+         * user has saved.
+         * @return All stories that the user has downloaded.
+         */
         List<StoryHeader> onBookmarkedStoriesGetStories();
+
+        /**
+         * Callback triggered when the user selects a story.
+         * @param storyHeader The story header that the user selects.
+         */
         void onBookmarkedStoriesSelectStory(StoryHeader storyHeader);
+
+        /**
+         * Callback triggered when the user wants to save a new story.
+         */
         void onBookmarkedStoriesAddStory();
     }
 

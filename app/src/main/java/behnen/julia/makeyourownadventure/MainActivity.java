@@ -472,21 +472,6 @@ public class MainActivity extends AppCompatActivity implements
         return nextId;
     }
 
-    /**
-     * Returns true if the created story with the given author and storyId has elements
-     * in the created elements database, false otherwise.
-     * @param author The author of the story.
-     * @param storyId The storyId of the story.
-     * @return True if the created story with the given author and storyId has elements
-     * in the created elements database, false otherwise.
-     */
-    private boolean hasStoryElements(String author, String storyId) {
-        CreatedStoryElementDB createdStoryElementDB = new CreatedStoryElementDB(this);
-        boolean wasDeleted = createdStoryElementDB.hasStoryElements(author, storyId);
-        createdStoryElementDB.closeDB();
-        return wasDeleted;
-    }
-
     // FRAGMENT METHODS
 
     // SignInFragment callback methods
@@ -709,7 +694,7 @@ public class MainActivity extends AppCompatActivity implements
         // Deletes all elements of the story
         deleteAllCreatedStoryElementsOfStory(author, storyId);
         // Deletes the header of the story if all of the elements were successfully deleted.
-        boolean deleted = !hasStoryElements(author, storyId);
+        boolean deleted = getCreatedStoryElementsByStory(author, storyId).size() == 0;
         return deleted && deleteCreatedStoryHeader(author, storyId);
     }
 
@@ -730,12 +715,6 @@ public class MainActivity extends AppCompatActivity implements
             String author, String storyId) {
         return getCreatedStoryElementsByStory(author, storyId);
     }
-
-    @Override
-    public boolean onCreatedStoryOverviewStoryElementsExist(String author, String storyId) {
-        return hasStoryElements(author, storyId);
-    }
-
 
     @Override
     public boolean onCreatedStoryIsStoryFinal(String author, String storyId) {

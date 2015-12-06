@@ -241,34 +241,6 @@ public class CreatedStoryElementDB {
     }
 
     /**
-     * Returns true if the story specified by the given author and storyId has elements in
-     * the database, false otherwise.
-     * @param author The author of the story.
-     * @param storyId The storyId of the story.
-     * @return True if the story specified by the given author and storyId has elements in
-     * the database, false otherwise.
-     */
-    public boolean hasStoryElements(String author, String storyId) {
-        String[] columns = {
-                "elementId",
-        };
-
-        Cursor c = mSQLiteDatabase.query(
-                TABLE_NAME,
-                columns,
-                "author = ? AND storyId = ?",
-                new String[]{author, storyId},
-                null,
-                null,
-                null
-        );
-
-        boolean areElements = c.getCount() > 0;
-        c.close();
-        return areElements;
-    }
-
-    /**
      * The helper class for the writable database.
      */
     private class CreatedStoryElementDBHelper extends SQLiteOpenHelper {

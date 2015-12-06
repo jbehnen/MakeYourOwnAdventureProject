@@ -24,7 +24,7 @@ import behnen.julia.makeyourownadventure.model.StoryElement;
  * A fragment that provides the central navigation of the app in the form of a menu.
  *
  * @author Julia Behnen
- * @version November 4, 2015
+ * @version December 6, 2015
  */
 public class MainMenuFragment extends Fragment {
 

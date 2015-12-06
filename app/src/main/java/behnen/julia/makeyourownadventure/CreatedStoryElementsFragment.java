@@ -19,18 +19,49 @@ import behnen.julia.makeyourownadventure.model.StoryElement;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * A fragment that displays the story elements for a given story
+ * that the user has created.
+ *
+ * @author Julia Behnen
+ * @version December 6, 2015
  */
 public class CreatedStoryElementsFragment extends Fragment {
 
+    /**
+     * The tag used to identify the author argument in the bundle.
+     */
     private static final String AUTHOR = "Author";
+    /**
+     * The tag used to identify the storyId argument in the bundle.
+     */
     private static final String STORY_ID = "StoryId";
 
+    /**
+     * The context which implements the interface methods.
+     */
     private OnCreatedStoryElementsInteractionListener mCallback;
 
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     */
     public interface OnCreatedStoryElementsInteractionListener {
+        /**
+         * Callback triggered when the fragment first loads; returns all story elements that the
+         * user has created for the current story.
+         * @return All story elements that the user has created for the current story
+         */
         List<StoryElement> onCreatedStoryElementsGetElements(String author, String storyId);
+        /**
+         * Callback triggered when the user selects a story element.
+         * @param storyElement The story element that the user selects.
+         */
         void onCreatedStoryElementsSelectElement(StoryElement storyElement);
+        /**
+         * Callback triggered when the user wants to create a new element.
+         */
         void onCreatedStoryElementsAddElement(String author, String storyId);
     }
 
@@ -41,6 +72,12 @@ public class CreatedStoryElementsFragment extends Fragment {
 
     }
 
+    /**
+     * Creates a new instance of CreatedStoryElementsFragment.
+     * @param author The author of the story elements.
+     * @param storyId The storyId of the story elements.
+     * @return A new instance of CreatedStoryElementsFragment.
+     */
     public static CreatedStoryElementsFragment newInstance(String author, String storyId) {
         if (author == null || storyId == null) {
             throw new IllegalArgumentException();
