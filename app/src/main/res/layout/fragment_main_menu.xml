@@ -1,71 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <ScrollView
-        android:id="@+id/main_menu_scroll"
+    <LinearLayout
+        android:id="@+id/main_menu"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        style="@style/FragmentStyle">
 
-        <LinearLayout
-            android:id="@+id/main_menu"
+        <TextView
+            android:id="@+id/main_menu_element_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <ImageView
+            android:id="@+id/main_menu_image"
+            android:layout_width="wrap_content"
+            android:layout_height="150dp"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/logo"
+            android:contentDescription="@string/current_story_image">
+        </ImageView>
+
+        <!--<ImageView-->
+            <!--android:id="@+id/story_image"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:contentDescription="@string/content_description_story_image"/>-->
+
+        <Button
+            android:id="@+id/main_menu_continue_story_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:text="@string/action_continue_story"/>
 
-            <TextView
-                android:id="@+id/main_menu_element_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-            <ImageView
-                android:id="@+id/main_menu_image"
-                android:layout_width="wrap_content"
-                android:layout_height="150dp"
-                android:layout_gravity="center_horizontal"
-                android:src="@drawable/logo"
-                android:contentDescription="@string/current_story_image">
-            </ImageView>
+        <Button
+            android:id="@+id/main_menu_bookmarked_stories_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/action_downloaded_stories"/>
 
-            <!--<ImageView-->
-                <!--android:id="@+id/story_image"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:contentDescription="@string/content_description_story_image"/>-->
+        <Button
+            android:id="@+id/main_menu_create_edit_stories_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/action_my_stories"/>
 
-            <Button
-                android:id="@+id/main_menu_continue_story_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/action_continue_story"/>
+        <Button
+            android:id="@+id/main_menu_about_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/action_about"/>
 
-            <Button
-                android:id="@+id/main_menu_bookmarked_stories_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/action_downloaded_stories"/>
+        <Button
+            android:id="@+id/main_menu_sign_out_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/action_sign_out"/>
 
-            <Button
-                android:id="@+id/main_menu_create_edit_stories_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/action_my_stories"/>
+    </LinearLayout>
 
-            <Button
-                android:id="@+id/main_menu_about_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/action_about"/>
-
-            <Button
-                android:id="@+id/main_menu_sign_out_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/action_sign_out"/>
-
-        </LinearLayout>
-
-    </ScrollView>
-
-</LinearLayout>
+</ScrollView>

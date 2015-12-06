@@ -1,33 +1,41 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             android:orientation="vertical"
              tools:context="behnen.julia.makeyourownadventure.CreateNewStoryFragment">
 
-    <EditText
-        android:id="@+id/create_new_story_story_id"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/prompt_story_id"/>
+        android:orientation="vertical"
+        style="@style/FragmentStyle">
 
-    <EditText
-        android:id="@+id/create_new_story_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/prompt_title"/>
+        <EditText
+            android:id="@+id/create_new_story_story_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/prompt_story_id"/>
 
-    <EditText
-        android:id="@+id/create_new_story_description"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/prompt_header_description"/>
+        <EditText
+            android:id="@+id/create_new_story_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/prompt_title"/>
 
-    <Button
-        android:id="@+id/create_new_story_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/action_create_story"
-        android:textStyle="bold"/>
+        <EditText
+            android:id="@+id/create_new_story_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/prompt_header_description"/>
 
-</LinearLayout>
+        <Button
+            android:id="@+id/create_new_story_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/action_create_story"
+            android:textStyle="bold"/>
+
+    </LinearLayout>
+
+</ScrollView>
+

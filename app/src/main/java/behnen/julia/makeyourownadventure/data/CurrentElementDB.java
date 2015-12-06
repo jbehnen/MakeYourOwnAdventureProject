@@ -35,16 +35,13 @@ public class CurrentElementDB {
         contentValues.putNull("storyId");
         contentValues.putNull("elementId");
 
-        long rowId = mSQLiteDatabase.insert(TABLE_NAME, null, contentValues);
-        return rowId != -1;
-
-//        try {
-//            long rowId = mSQLiteDatabase.insert(TABLE_NAME, null, contentValues);
-//            return rowId != -1;
-//        } catch (SQLDataException e) {
-//            // already in database
-//            return true;
-//        }
+        try {
+            long rowId = mSQLiteDatabase.insert(TABLE_NAME, null, contentValues);
+            return rowId != -1;
+        } catch (Exception e) {
+            // already in database
+            return true;
+        }
     }
 
     public boolean updateCurrentElement(

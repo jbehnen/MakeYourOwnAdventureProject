@@ -10,5 +10,8 @@
     </style>
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+    <style name="FragmentStyle">
+        <item name="android:padding">@dimen/activity_horizontal_margin</item>
+    </style>
 
 </resources>

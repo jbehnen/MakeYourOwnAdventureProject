@@ -68,6 +68,7 @@
     <!--Strings related to creating/editing a story-->
     <string name="prompt_title">Title</string>
     <string name="prompt_header_description">Description (optional)</string>
+    <string name="action_play_test">Play test</string>
 
     <!--Strings related to displaying a story element-->
     <string name="story_element_image_description">Image showing current story element</string>
@@ -139,9 +140,9 @@
     </string-array>
 
     <string-array name="shared_image_names_array">
-        <item>sky_blue_clouds_1.jpg</item>
-        <item>sky_grey_clouds_1.jpg</item>
-        <item>trees_1.jpg</item>
+        <item>Sky_blue_clouds.jpg</item>
+        <item>Sky_grey_clouds.jpg</item>
+        <item>Trees.jpg</item>
     </string-array>
 
 </resources>

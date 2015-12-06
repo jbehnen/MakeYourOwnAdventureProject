@@ -57,9 +57,10 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mSharedPreferences = getSharedPreferences(
+                getString(R.string.SHARED_PREFS), MODE_PRIVATE);
+
         if (savedInstanceState ==  null) {
-            mSharedPreferences = getSharedPreferences(
-                    getString(R.string.SHARED_PREFS), MODE_PRIVATE);
             boolean loggedIn = mSharedPreferences.getBoolean(
                     getString(R.string.LOGGEDIN), false);
             if (findViewById(R.id.main_fragment_container) != null) {
