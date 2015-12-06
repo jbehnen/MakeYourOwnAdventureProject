@@ -15,7 +15,7 @@ import behnen.julia.makeyourownadventure.model.StoryElement;
 /**
  * Adapter class for a story element item in a list view.
  *
- * @author Julia
+ * @author Julia Behnen
  * @version December 6, 2015
  */
 public class StoryElementAdapter extends ArrayAdapter<StoryElement> {

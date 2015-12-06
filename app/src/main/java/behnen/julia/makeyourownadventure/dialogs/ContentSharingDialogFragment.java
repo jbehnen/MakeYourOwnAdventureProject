@@ -11,7 +11,10 @@ import android.support.v7.app.AlertDialog;
 import behnen.julia.makeyourownadventure.R;
 
 /**
- * Created by Julia on 11/24/2015.
+ * A dialog fragment that prompts for content sharing after a story is uploaded.
+ *
+ * C@author Julia Behnen
+ * @version December 6, 2015
  */
 public class ContentSharingDialogFragment extends DialogFragment {
 
@@ -34,6 +37,10 @@ public class ContentSharingDialogFragment extends DialogFragment {
         return builder.create();
     }
 
+    /**
+     * Sends the dialog result back to the calling activity.
+     * @param resultCode The result code from the dialog.
+     */
     private void sendResult(int resultCode) {
         if (getTargetFragment() == null) {
             return;

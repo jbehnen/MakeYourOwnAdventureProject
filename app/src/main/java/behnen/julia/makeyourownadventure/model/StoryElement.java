@@ -13,7 +13,7 @@ import org.json.JSONObject;
  * be permanently stored at any time.
  *
  * @author Julia Behnen
- * @version November 4, 2015
+ * @version December 6, 2015
  */
 public final class StoryElement {
 
@@ -269,6 +269,10 @@ public final class StoryElement {
         return storyElement;
     }
 
+    /**
+     * Returns a string that contains the elementId and the title.
+     * @return A string that contains the elementId and the title.
+     */
     public String toTargetDescriptionString() {
         return mElementId + ": " + mTitle;
     }

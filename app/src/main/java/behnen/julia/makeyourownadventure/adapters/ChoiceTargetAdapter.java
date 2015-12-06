@@ -13,7 +13,7 @@ import behnen.julia.makeyourownadventure.model.StoryElement;
  * It stores and displays strings instead of story elements, in the same
  * order as the story elements that are used to construct it.
  *
- * @author Julia
+ * @author Julia Behnen
  * @version December 6, 2015
  */
 public class ChoiceTargetAdapter extends ArrayAdapter<String> {

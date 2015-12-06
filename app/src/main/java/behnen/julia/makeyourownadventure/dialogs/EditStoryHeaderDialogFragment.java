@@ -14,17 +14,38 @@ import android.widget.EditText;
 import behnen.julia.makeyourownadventure.R;
 
 /**
- * Created by Julia on 11/24/2015.
+ * A dialog fragment that allows story headers to be edited.
+ *
+ * C@author Julia Behnen
+ * @version December 6, 2015
  */
 public class EditStoryHeaderDialogFragment extends DialogFragment {
 
+    /**
+     * The tag used to identify the title string extra in the intent.
+     */
     public static final String EXTRA_TITLE = "behnen.julia.makeyourownadventrue.title";
+    /**
+     * The tag used to identify the description string extra in the intent.
+     */
     public static final String EXTRA_DESCRIPTION = "behnen.julia.makeyourownadventrue.description";
 
+    /**
+     * The tag used to identify the title argument in the bundle.
+     */
     private static final String ARG_TITLE = "title";
+    /**
+     * The tag used to identify the description argument in the bundle.
+     */
     private static final String ARG_DESCRIPTION = "description";
 
-
+    /**
+     * Creates a new instance of EditStoryHeaderDialogFragment.
+     * @param title The title that will be displayed and made available for editing.
+     * @param description The description that will be displayed and made available for editing.
+     * @return A new instance of EditStoryHeaderDialogFragment that displays the given
+     * title and description.
+     */
     public static EditStoryHeaderDialogFragment newInstance(String title, String description) {
         Bundle args = new Bundle();
         args.putString(ARG_TITLE, title);
@@ -42,9 +63,11 @@ public class EditStoryHeaderDialogFragment extends DialogFragment {
         View view = LayoutInflater.from(getActivity())
                 .inflate(R.layout.dialog_edit_story_header, null);
 
+        // Get data from bundle
         String title = getArguments().getString(ARG_TITLE);
         String description = getArguments().getString(ARG_DESCRIPTION);
 
+        // Get views from layout and populate them with the data
         final EditText titleEditText =
                 ((EditText) view.findViewById(R.id.edit_story_header_title_edit_text));
         titleEditText.setText(title);
@@ -72,6 +95,12 @@ public class EditStoryHeaderDialogFragment extends DialogFragment {
         return builder.create();
     }
 
+    /**
+     * Sends the dialog result back to the calling activity.
+     * @param resultCode The result code from the dialog.
+     * @param title The title entered in the dialog.
+     * @param description The description entered in the dialog
+     */
     private void sendResult(int resultCode, String title, String description) {
         if (getTargetFragment() == null) {
             return;

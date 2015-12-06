@@ -15,7 +15,7 @@ import behnen.julia.makeyourownadventure.model.StoryHeader;
 /**
  * Adapter class for a story header item in a list view.
  *
- * @author Julia
+ * @author Julia Behnen
  * @version December 6, 2015
  */
 public class StoryHeaderAdapter extends ArrayAdapter<StoryHeader> {

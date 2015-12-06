@@ -4,7 +4,7 @@ package behnen.julia.makeyourownadventure.support;
  * Static helper methods shared between multiple classes.
  *
  * @author Julia Behnen
- * @version November 3, 2015
+ * @version December 6, 2015
  */
 public class Helper {
 

@@ -11,7 +11,7 @@ import org.json.JSONObject;
  * includes the title and description of the story.
  *
  * @author Julia Behnen
- * @version November 4, 2015
+ * @version December 6, 2015
  */
 public final class StoryHeader {
 
