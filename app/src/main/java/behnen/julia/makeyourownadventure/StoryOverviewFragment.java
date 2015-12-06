@@ -14,16 +14,45 @@ import android.widget.Toast;
 import behnen.julia.makeyourownadventure.model.StoryHeader;
 
 /**
- * A simple {@link Fragment} subclass.
+ * A fragment that displays an overview of a downloaded story and allows the
+ * user to play it or delete it.
+ *
+ * @author Julia Behnen
+ * @version December 6, 2015
  */
 public class StoryOverviewFragment extends Fragment {
 
+    /**
+     * The tag used to identify the story header argument in the bundle.
+     */
     private static final String ARG_STORY_HEADER = "story_header";
 
+    /**
+     * The context which implements the interface methods.
+     */
     private OnStoryOverviewInteractionListener mCallback;
 
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     */
     public interface OnStoryOverviewInteractionListener {
+        /**
+         * Callback triggered when the user wants to play the story.
+         * @param author The author of the story.
+         * @param storyId The storyId of the story.
+         * @param title The title of the story.
+         */
         void onStoryOverviewPlayStory(String author, String storyId, String title);
+
+        /**
+         * Callback triggered when the user wants to delete the story.
+         * @param author The author of the story.
+         * @param storyId The storyId of the story.
+         * @return True if the story is deleted in the callback, false otherwise.
+         */
         boolean onStoryOverviewDeleteStory(String author, String storyId);
     }
 
@@ -34,6 +63,11 @@ public class StoryOverviewFragment extends Fragment {
 
     }
 
+    /**
+     * Creates a new instance of StoryOverviewFragment.
+     * @param storyHeader The story being displayed.
+     * @return A new instance of StoryOverviewFragment.
+     */
     public static StoryOverviewFragment newInstance(StoryHeader storyHeader) {
         if (storyHeader == null) {
             throw new IllegalArgumentException();
@@ -94,8 +128,7 @@ public class StoryOverviewFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (mCallback != null) {
-                    boolean deleted =
-                            mCallback.onStoryOverviewDeleteStory(
+                    boolean deleted = mCallback.onStoryOverviewDeleteStory(
                                     storyHeader.getAuthor(), storyHeader.getStoryId());
                     if (deleted) {
                         getFragmentManager().popBackStackImmediate();
@@ -109,6 +142,11 @@ public class StoryOverviewFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Displays the story header info.
+     * @param view The view being updated.
+     * @param storyHeader The story header being displayed.
+     */
     private final void displayStoryInfo(View view, StoryHeader storyHeader) {
         if (storyHeader != null) {
             TextView author = (TextView) view.findViewById(R.id.story_overview_author);

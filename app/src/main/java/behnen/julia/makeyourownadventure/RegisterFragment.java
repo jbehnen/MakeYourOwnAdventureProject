@@ -22,10 +22,13 @@ import behnen.julia.makeyourownadventure.support.Helper;
  * A fragment that allows a new user to register with the app.
  *
  * @author Julia Behnen
- * @version November 4, 2015
+ * @version December 6, 2015
  */
 public class RegisterFragment extends Fragment {
 
+    /**
+     * The tag used for logging.
+     */
     private static final String TAG = "RegisterFragment";
     /**
      * The URL for user registration requests.

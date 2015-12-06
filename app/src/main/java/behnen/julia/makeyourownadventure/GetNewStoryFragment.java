@@ -21,10 +21,16 @@ import behnen.julia.makeyourownadventure.model.StoryHeader;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * A fragment that allows the user to download a new story.
+ *
+ * @author Julia Behnen
+ * @version December 6, 2015
  */
 public class GetNewStoryFragment extends Fragment {
 
+    /**
+     * A tag used for logging.
+     */
     private static final String TAG = "GetNewStoryFragment";
     /**
      * The URL for story header download requests.
@@ -32,12 +38,30 @@ public class GetNewStoryFragment extends Fragment {
     private static final String GET_STORY_HEADER_URL =
             "http://cssgate.insttech.washington.edu/~jbehnen/myoa/php/getStoryHeader.php";
 
+    /**
+     * The button used to download the story.
+     */
     private Button mGetStoryButton;
 
+    /**
+     * The context which implements the interface methods.
+     */
     private OnGetNewStoryInteractionListener mCallback;
 
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     */
     public interface OnGetNewStoryInteractionListener {
-        public boolean onGetNewStoryAddStory(StoryHeader storyHeader);
+        /**
+         * Callback triggered when a story is downloaded and ready to
+         * be saved.
+         * @param storyHeader The downloaded story header.
+         * @return True if the story is saved, false otherwise.
+         */
+        boolean onGetNewStoryAddStory(StoryHeader storyHeader);
     }
 
     public GetNewStoryFragment() {
@@ -78,14 +102,15 @@ public class GetNewStoryFragment extends Fragment {
 
         mGetStoryButton = (Button) view.findViewById(R.id.get_new_story_action);
         mGetStoryButton.setOnClickListener(new View.OnClickListener() {
-              @Override
-              public void onClick(View v) {
-                  mGetStoryButton.setEnabled(false);
-                  String author = authorEditText.getText().toString();
-                  String storyId = storyIdEditText.getText().toString();
-                  new StoryGetHeaderTask().execute(author, storyId);
-              }
-          }
+                                               @Override
+                                               public void onClick(View v) {
+                                                   // Disable download button
+                                                   mGetStoryButton.setEnabled(false);
+                                                   String author = authorEditText.getText().toString();
+                                                   String storyId = storyIdEditText.getText().toString();
+                                                   new StoryGetHeaderTask().execute(author, storyId);
+                                               }
+                                           }
         );
 
         return view;
@@ -108,6 +133,9 @@ public class GetNewStoryFragment extends Fragment {
         mCallback = null;
     }
 
+    /**
+     * Pops the fragment when there is a successful save.
+     */
     private void onSaveSuccess() {
         getFragmentManager().popBackStackImmediate();
     }
@@ -145,11 +173,14 @@ public class GetNewStoryFragment extends Fragment {
                 JSONObject jsonObject = new JSONObject(s);
                 String status = jsonObject.getString("result");
                 if (status.equalsIgnoreCase("success")) {
+                    // enable button
                     mGetStoryButton.setEnabled(true);
                     if (mCallback != null) {
+                        // If successful, try saving story header in callback.
                         StoryHeader storyHeader =
                                 StoryHeader.parseJson(jsonObject.getString("storyHeader"));
                         boolean added = mCallback.onGetNewStoryAddStory(storyHeader);
+                        // If story successfully saved
                         if (added) {
                             Toast.makeText(getActivity(), "Story saved",
                                     Toast.LENGTH_SHORT).show();
@@ -163,6 +194,7 @@ public class GetNewStoryFragment extends Fragment {
                     String reason = jsonObject.getString("error");
                     Toast.makeText(getActivity(), "Failed: " + reason,
                             Toast.LENGTH_SHORT).show();
+                    // enable button
                     mGetStoryButton.setEnabled(true);
                 }
             } catch (Exception e) {
@@ -170,6 +202,7 @@ public class GetNewStoryFragment extends Fragment {
                 Toast.makeText(getActivity(),
                         getActivity().getResources().getString(R.string.async_error),
                         Toast.LENGTH_SHORT).show();
+                // enable button
                 mGetStoryButton.setEnabled(true);
             }
         }

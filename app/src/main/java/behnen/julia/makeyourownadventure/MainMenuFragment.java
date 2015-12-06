@@ -30,6 +30,9 @@ public class MainMenuFragment extends Fragment {
 
     private static final String TAG = "MainMenuFragment";
 
+    /**
+     * The current story element.
+     */
     private StoryElement mStoryElement;
 
     private TextView mStoryTitle;
@@ -50,6 +53,11 @@ public class MainMenuFragment extends Fragment {
      */
     public interface OnMainMenuInteractionListener {
 
+        /**
+         * Callback triggered when the fragment resumes.
+         * @return An array containing the author, storyId, and elementId of the
+         * current story element in that order.
+         */
         String[] onMainMenuResume();
 
         /**
@@ -93,20 +101,22 @@ public class MainMenuFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        // Set everything related to the current story invisible/disabled until
+        // there is a known current story.
         mStoryTitle.setVisibility(View.GONE);
         mElementTitle.setVisibility(View.GONE);
         mContinueStoryButton.setEnabled(false);
         getActivity().setTitle(R.string.main_menu_title);
+        // Set logo as image until story element image downloaded
         mImage.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.logo));
         if (mCallback != null) {
+            // Get current story element
             String[] elementInfo = mCallback.onMainMenuResume();
+            // If story element exists, download it.
             if (elementInfo[1].length() != 0) {
                 new StoryGetElementTask().execute(elementInfo[0], elementInfo[1], elementInfo[2]);
                 Log.d(TAG, elementInfo[3]);
                 mStoryTitle.setText(elementInfo[3]);
-            } else {
-                mStoryTitle.setVisibility(View.GONE);
-                mElementTitle.setVisibility(View.GONE);
             }
         }
     }
@@ -195,15 +205,26 @@ public class MainMenuFragment extends Fragment {
         mCallback = null;
     }
 
+    /**
+     * Sets the fragment story element to be the downloaded current story element
+     * and displays it.
+     * @param element The current story element.
+     */
     public void setStoryElement(StoryElement element) {
         mStoryElement = element;
+        // download image
         new DownloadImageTask().execute(mStoryElement.getImageUrl());
+        // enable story continue
         mContinueStoryButton.setEnabled(true);
+        // set element info visible
         mElementTitle.setText(mStoryElement.getTitle());
         mStoryTitle.setVisibility(View.VISIBLE);
         mElementTitle.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * Downloads a story element from the online database.
+     */
     private class StoryGetElementTask extends AbstractDownloadStoryElementTask {
 
         @Override

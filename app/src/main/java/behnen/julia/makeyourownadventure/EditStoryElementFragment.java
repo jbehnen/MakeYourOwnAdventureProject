@@ -26,7 +26,10 @@ import behnen.julia.makeyourownadventure.model.StoryElement;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * A fragment that allows the user to edit a story element.
+ *
+ * @author Julia Behnen
+ * @version December 6, 2015
  */
 public class EditStoryElementFragment extends Fragment {
 

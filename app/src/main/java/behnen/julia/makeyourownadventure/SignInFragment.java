@@ -1,7 +1,6 @@
 package behnen.julia.makeyourownadventure;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -23,10 +22,13 @@ import behnen.julia.makeyourownadventure.support.Helper;
  * A fragment that allows a new user to sign in to the app.
  *
  * @author Julia Behnen
- * @version November 4, 2015
+ * @version December 6, 2015
  */
 public class SignInFragment extends Fragment {
 
+    /**
+     * The tag used for logging.
+     */
     private static final String TAG = "SignInFragment";
     /**
      * The URL for login requests.
@@ -38,8 +40,6 @@ public class SignInFragment extends Fragment {
      * The context which implements the interface methods.
      */
     private OnSignInInteractionListener mCallback;
-
-    private SharedPreferences mSharedPreferences;
 
     private EditText mUsernameEditText;
     private EditText mPasswordEditText;
@@ -54,7 +54,15 @@ public class SignInFragment extends Fragment {
      * activity.
      */
     public interface OnSignInInteractionListener {
+        /**
+         * The callback triggered when the user successfully signs in.
+         * @param username The username of the user.
+         */
         void onSignInSignInAction(String username);
+
+        /**
+         * The callback triggered when the user wants to register a new account.
+         */
         void onSignInRegisterAction();
     }
 
@@ -138,11 +146,19 @@ public class SignInFragment extends Fragment {
         mCallback = null;
     }
 
+    /**
+     * Enables or disables the log in and register buttons.
+     * @param areEnabled True if the buttons should be enabled or
+     *                   false if they should be disabled.
+     */
     private void enableButtons(boolean areEnabled) {
         mSignInButton.setEnabled(areEnabled);
         mRegisterButton.setEnabled(areEnabled);
     }
 
+    /**
+     * Attempts to log in the user.
+     */
     public void attemptLogin() {
         String username = mUsernameEditText.getText().toString();
         String password = mPasswordEditText.getText().toString();

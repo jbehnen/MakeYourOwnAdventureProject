@@ -17,29 +17,85 @@ import behnen.julia.makeyourownadventure.model.StoryElement;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * A fragment that displays a story element.
+ *
+ * @author Julia Behnen
+ * @version December 6, 2015
  */
 public class StoryElementFragment extends Fragment {
 
-    private static final String TAG = "StoryElementFragment";
-
+    /**
+     * The tag used to identify the story element argument in the bundle.
+     */
     private static final String STORY_ELEMENT = "storyElement";
+    /**
+     * The tag used to identify the story title argument in the bundle.
+     */
     private static final String STORY_TITLE = "storyTitle";
+    /**
+     * The tag used to identify the isOnline argument in the bundle.
+     */
     private static final String IS_ONLINE = "isOnline";
+    /**
+     * The tag used to identify the isActive argument in the bundle.
+     */
     private static final String IS_ACTIVE = "isActive";
 
+    /**
+     * The title of the overall story.
+     */
     private String mStoryTitle;
-    private ImageView mImage;
+    /**
+     * True if the story element is stored online, false if it is
+     * stored locally.
+     */
     private boolean mIsOnline;
+    /**
+     * True if the story element is stored playable, false if it is
+     * an inactive preview.
+     */
     private boolean mIsActive;
 
+    /**
+     * The image view used to display the story element image.
+     */
+    private ImageView mImage;
+
+    /**
+     * The context which implements the interface methods.
+     */
     private OnStoryElementInteractionListener mCallback;
 
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     */
     public interface OnStoryElementInteractionListener {
+        /**
+         * Callback triggered when the user makes a choice (within the story).
+         * @param storyTitle The title of the overall story.
+         * @param author The author of the story.
+         * @param storyId The storyId of the story.
+         * @param elementId The elementId of the story element.
+         * @param isOnline True if the element is stored online, false if it is stored locally.
+         */
         void onStoryElementChoiceAction(
                 String storyTitle, String author, String storyId, int elementId, boolean isOnline);
+        /**
+         * Callback triggered when the user chocses to restart the story.
+         * @param storyTitle The title of the overall story.
+         * @param author The author of the story.
+         * @param storyId The storyId of the story.
+         * @param isOnline True if the element is stored online, false if it is stored locally.
+         */
         void onStoryElementRestartAction(
-                String storyTitle,String author, String storyId, boolean isOnline);
+                String storyTitle, String author, String storyId, boolean isOnline);
+
+        /**
+         * Callback triggered when the user chooses to return to the main menu.
+         */
         void onStoryElementMainMenuAction();
     }
 
@@ -50,6 +106,14 @@ public class StoryElementFragment extends Fragment {
 
     }
 
+    /**
+     * Creates a new instance of StoryElementFragment.
+     * @param storyTitle The title of the overall story.
+     * @param storyElement The story element being displayed.
+     * @param isOnline True if the element is stored online, false if it is stored locally.
+     * @param isActive True if the element is playable, false if it is an inactive preview.
+     * @return A new instance of StoryElementFragment.
+     */
     public static StoryElementFragment newInstance(StoryElement storyElement, String storyTitle,
                                                    boolean isOnline, boolean isActive) {
         if (storyElement == null || storyTitle == null) {
@@ -126,15 +190,23 @@ public class StoryElementFragment extends Fragment {
         return v;
     }
 
+    /**
+     * Displays the story element.
+     * @param v The view being updated.
+     * @param storyElement The story element being displayed.
+     */
     private void displayStoryElement(View v, StoryElement storyElement) {
+        // Start image download
         new DownloadImageTask().execute(storyElement.getImageUrl());
 
+        // Display text
         ((TextView) v.findViewById(R.id.story_element_story_title)).setText(mStoryTitle);
         ((TextView) v.findViewById(R.id.story_element_element_title))
                 .setText(storyElement.getTitle());
         ((TextView) v.findViewById(R.id.story_element_description))
                 .setText(storyElement.getDescription());
 
+        // Display ending buttons if ending; choice buttons if choice.
         if (storyElement.isEnding()) {
             displayEndingButtons(v, storyElement);
         } else {
@@ -142,6 +214,11 @@ public class StoryElementFragment extends Fragment {
         }
     }
 
+    /**
+     * Display the buttons used for an ending.
+     * @param v The view being updated.
+     * @param storyElement The story element being displayed.
+     */
     private void displayEndingButtons(View v, final StoryElement storyElement) {
         Button backtrackButton = (Button) v.findViewById(R.id.story_element_button1);
         backtrackButton.setText(R.string.story_element_restart_button);
@@ -170,6 +247,11 @@ public class StoryElementFragment extends Fragment {
         }
     }
 
+    /**
+     * Display the buttons used for a choice.
+     * @param v The view being updated.
+     * @param storyElement The story element being displayed.
+     */
     private void displayChoiceButtons(View v, final StoryElement storyElement) {
         Button choice1 = (Button) v.findViewById(R.id.story_element_button1);
         choice1.setText(storyElement.getChoice1Text());
