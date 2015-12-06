@@ -17,18 +17,40 @@ import behnen.julia.makeyourownadventure.adapters.StoryHeaderAdapter;
 import behnen.julia.makeyourownadventure.model.StoryHeader;
 
 /**
- *
+ * A fragment that displays all of the stories that a user has created and allows
+ * them to add a new one.
  *
  * @author Julia Behnen
- * @version November 4, 2015
+ * @version December 6, 2015
  */
 public class CreateEditStoriesFragment extends Fragment {
 
+    /**
+     * The context which implements the interface methods.
+     */
     private OnCreateEditStoriesInteractionListener mCallback;
 
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     */
     public interface OnCreateEditStoriesInteractionListener {
+        /**
+         * Callback triggered when the fragment first loads; returns all stories that the
+         * user has created.
+         * @return All stories that the user has created.
+         */
         List<StoryHeader> onCreateEditStoriesGetStories();
+        /**
+         * Callback triggered when the user selects a story.
+         * @param storyHeader The story header that the user selects.
+         */
         void onCreateEditStoriesSelectStory(StoryHeader storyHeader);
+        /**
+         * Callback triggered when the user wants to create a new story.
+         */
         void onCreateEditStoriesAddStory();
     }
 

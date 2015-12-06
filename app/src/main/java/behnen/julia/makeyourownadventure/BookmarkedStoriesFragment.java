@@ -19,7 +19,8 @@ import behnen.julia.makeyourownadventure.model.StoryHeader;
 
 
 /**
- * A fragment that displays the stories that the user has downloaded.
+ * A fragment that displays the stories that the user has downloaded and allows
+ * them to add a new one.
  *
  * @author Julia Behnen
  * @version December 6, 2015

@@ -663,6 +663,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onCreateNewStorySaveLocalCopy(StoryHeader storyHeader) {
         addCreatedStoryHeader(storyHeader);
+        // Creates the start element for the story
         addCreatedStoryElement(new StoryElement(storyHeader.getAuthor(), storyHeader.getStoryId(),
                 StoryElement.START_ID));
         getSupportFragmentManager().popBackStackImmediate();

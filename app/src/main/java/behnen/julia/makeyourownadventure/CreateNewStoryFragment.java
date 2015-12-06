@@ -26,6 +26,9 @@ import behnen.julia.makeyourownadventure.model.StoryHeader;
  */
 public class CreateNewStoryFragment extends Fragment {
 
+    /**
+     * The tag used for logging.
+     */
     private static final String TAG = "CreateNewStory";
 
     /**
@@ -36,15 +39,34 @@ public class CreateNewStoryFragment extends Fragment {
 
     private static final String AUTHOR = "author";
 
+    /**
+     * The author of the story.
+     */
+    private String mAuthor;
+
+    /**
+     * The EditTexts used for entering information.
+     */
     private EditText mStoryIdEditText;
     private EditText mTitleEditText;
     private EditText mDescriptionEditText;
 
-    private String mAuthor;
-
+    /**
+     * The context which implements the interface methods.
+     */
     private OnCreateNewStoryInteractionListener mCallback;
 
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     */
     public interface OnCreateNewStoryInteractionListener {
+        /**
+         * Callback triggered when the user saves the story.
+         * @param storyHeader The story header being saved.
+         */
         void onCreateNewStorySaveLocalCopy(StoryHeader storyHeader);
     }
 
@@ -55,6 +77,11 @@ public class CreateNewStoryFragment extends Fragment {
 
     }
 
+    /**
+     * Creates a new instance of CreateNewStoryFragment.
+     * @param author The author of the story.
+     * @return A new instance of CreateNewStoryFragment.
+     */
     public static CreateNewStoryFragment newInstance(String author) {
         if (author == null) {
             throw new IllegalArgumentException();
@@ -110,6 +137,9 @@ public class CreateNewStoryFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Attempts to register the story (author and storyId) in the online database.
+     */
     public void attemptRegisterStory() {
         boolean cancel = false;
         View focusView = null;
@@ -131,6 +161,7 @@ public class CreateNewStoryFragment extends Fragment {
             focusView.requestFocus();
             Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
         } else {
+            // Registers the story
             new StoryRegisterTask(storyId, title, description).execute(mAuthor);
         }
     }
@@ -173,7 +204,7 @@ public class CreateNewStoryFragment extends Fragment {
 
         /**
          * Starts the registration process.
-         * @param params The story author.
+         * @param params The story author and storyId in that order.
          * @return A string holding the result of the request.
          */
         @Override
@@ -196,8 +227,6 @@ public class CreateNewStoryFragment extends Fragment {
                 JSONObject jsonObject = new JSONObject(s);
                 String status = jsonObject.getString("result");
                 if (status.equalsIgnoreCase("success")) {
-                    Toast.makeText(getActivity(), "Story registered",
-                            Toast.LENGTH_SHORT).show();
                     if (mCallback != null) {
                         mCallback.onCreateNewStorySaveLocalCopy(new StoryHeader(
                                 mAuthor, mStoryId, mTitle, mDescription));

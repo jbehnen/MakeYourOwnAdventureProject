@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,16 +30,29 @@ import behnen.julia.makeyourownadventure.model.StoryElement;
  */
 public class EditStoryElementFragment extends Fragment {
 
+    /**
+     * The tag used for identifying the story element bundle argument.
+     */
     private static final String STORY_ELEMENT = "StoryElement";
 
-    private static final String TAG = "EditStoryElement";
-
+    /**
+     * The story element being edited.
+     */
     private StoryElement mStoryElement;
 
+    /**
+     * The list of all story elements in the story.
+     */
     private List<StoryElement> mStoryElementList;
 
+    /**
+     * The currently selected story element image.
+     */
     private ImageView mImage;
 
+    /**
+     * The edit texts used for data entry.
+     */
     private EditText mTitle;
     private EditText mDescription;
     private EditText mChoice1Text;
@@ -48,17 +60,47 @@ public class EditStoryElementFragment extends Fragment {
 
     // Spinner code derived from
     // http://developer.android.com/guide/topics/ui/controls/spinner.html
+    /**
+     * The spinners used for data entry.
+     */
     private Spinner mImageUrl;
     private Spinner mChoiceEnding;
     private Spinner mChoice1Target;
     private Spinner mChoice2Target;
 
+    /**
+     * The context which implements the interface methods.
+     */
     OnEditStoryElementInteractionListener mCallback;
 
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     */
     public interface OnEditStoryElementInteractionListener {
+        /**
+         * Callback triggered when the user wants to preview the story element.
+         * @param storyElement The edited story element.
+         */
         void onEditStoryElementPreview(StoryElement storyElement);
+        /**
+         * Callback triggered when the user wants to save the story element.
+         * @param storyElement The edited story element.
+         */
         boolean onEditStoryElementSave(StoryElement storyElement);
+        /**
+         * Callback triggered when the user wants to delete the story element.
+         * @param storyElement The story element being deleted.
+         */
         boolean onEditStoryElementDelete(StoryElement storyElement);
+        /**
+         * Callback triggered to get the list of all story elements in the story.
+         * @param author The author of the story.
+         * @param storyId The storyId of the story.
+         * @return The list of all story elements in the story.
+         */
         List<StoryElement> onEditStoryElementGetAllElements(String author, String storyId);
     }
 
@@ -69,6 +111,11 @@ public class EditStoryElementFragment extends Fragment {
 
     }
 
+    /**
+     * Creates a new instance of EditStoryElementFragment.
+     * @param storyElement The story element being edited.
+     * @return A new instance of EditStoryElementFragment.
+     */
     public static EditStoryElementFragment newInstance(StoryElement storyElement) {
         if (storyElement == null) {
             throw new IllegalArgumentException();
@@ -149,13 +196,19 @@ public class EditStoryElementFragment extends Fragment {
         mCallback = null;
     }
 
+    /**
+     * Initializes the spinners.
+     * @param view The view being updated.
+     */
     private void initializeSpinners(final View view) {
+        // Initializing the choice vs ending spinner
         mChoiceEnding = (Spinner) view.findViewById(R.id.edit_story_element_choice_ending_spinner);
         ArrayAdapter<CharSequence> choiceEndingAdapter = ArrayAdapter.createFromResource(getActivity(),
                 R.array.choice_ending_array, android.R.layout.simple_spinner_item);
         choiceEndingAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         mChoiceEnding.setAdapter(choiceEndingAdapter);
+        // Get selection from initial story element
         int selection = mStoryElement.isEnding() ? 1 : 0;
         mChoiceEnding.setSelection(selection);
         mChoiceEnding.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -173,19 +226,21 @@ public class EditStoryElementFragment extends Fragment {
             public void onNothingSelected(AdapterView<?> parent) {}
         });
 
-        mChoice1Target = (Spinner) view.findViewById(R.id.edit_story_element_choice1Id_spinner);
-        mChoice2Target = (Spinner) view.findViewById(R.id.edit_story_element_choice2Id_spinner);
-
+        // Initialize the image url spinners
         mImageUrl = (Spinner) view.findViewById(R.id.edit_story_element_image_spinner);
         ArrayAdapter<CharSequence> imageUrlAdapter = ArrayAdapter.createFromResource(getActivity(),
                 R.array.shared_image_names_array, android.R.layout.simple_spinner_item);
         imageUrlAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
         mImageUrl.setAdapter(imageUrlAdapter);
+        // Get all possible image URL
         String[] urls = getResources().getStringArray(R.array.shared_image_names_array);
+        // Get selection from initial story element
         mImageUrl.setSelection(stringIndex(mStoryElement.getImageUrl(), urls));
         mImageUrl.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // Updates the displayed image
                 new DownloadImageTask().execute((String) mImageUrl.getSelectedItem());
             }
 
@@ -193,6 +248,10 @@ public class EditStoryElementFragment extends Fragment {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+
+        // Initialize the choice target spinners
+        mChoice1Target = (Spinner) view.findViewById(R.id.edit_story_element_choice1Id_spinner);
+        mChoice2Target = (Spinner) view.findViewById(R.id.edit_story_element_choice2Id_spinner);
 
         if (mCallback != null) {
             mStoryElementList = mCallback.onEditStoryElementGetAllElements(
@@ -205,11 +264,16 @@ public class EditStoryElementFragment extends Fragment {
             mChoice1Target.setAdapter(mChoice1Adapter);
             mChoice2Target.setAdapter(mChoice2Adapter);
 
+            // Set selection for targets form initial story element
             mChoice1Target.setSelection(storyElementListPosition(mStoryElement.getChoice1Id()));
             mChoice2Target.setSelection(storyElementListPosition(mStoryElement.getChoice2Id()));
         }
     }
 
+    /**
+     * Initializes the buttons.
+     * @param view The view being updated.
+     */
     private void initializeButtons(View view) {
         Button previewButton = (Button) view.findViewById(R.id.edit_story_element_preview_button);
         previewButton.setOnClickListener(new View.OnClickListener() {
@@ -230,7 +294,7 @@ public class EditStoryElementFragment extends Fragment {
                     if (success) {
                         getFragmentManager().popBackStackImmediate();
                     } else {
-                        Toast.makeText(getActivity(), "Save failed", Toast.LENGTH_SHORT);
+                        Toast.makeText(getActivity(), "Save failed", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -249,19 +313,24 @@ public class EditStoryElementFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (mCallback != null) {
+                    // Get the elements that have the current element as the target
                     List<Integer> conflictingElements = externalReferencingStoryElements();
                     if (conflictingElements == null) {
                         Toast.makeText(getActivity(), "Deletion error", Toast.LENGTH_SHORT).show();
+
+                        // If the current element is the start element, don't allow deletion
                     } else if (mStoryElement.getElementId() == StoryElement.START_ID) {
                         Toast.makeText(getActivity(), "Cannot delete start element (element ID: " +
                                         StoryElement.START_ID + ")",
                                 Toast.LENGTH_SHORT).show();
                     } else {
+                        // If no conflicting elements, allow deletion
                         if (conflictingElements.size() == 0) {
                             mCallback.onEditStoryElementDelete(getCurrentStoryElement());
                             Toast.makeText(getActivity(), "Element deleted",
                                     Toast.LENGTH_SHORT).show();
                             getFragmentManager().popBackStackImmediate();
+                            // If conflicting elements, notify user and don't delete
                         } else {
                             launchConflictingElementsDialog(conflictingElements);
                         }
@@ -271,6 +340,10 @@ public class EditStoryElementFragment extends Fragment {
         });
     }
 
+    /**
+     * Returns the current, edited version of the story element.
+     * @return The current, edited version of the story element.
+     */
     private StoryElement getCurrentStoryElement() {
         String title = mTitle.getText().toString();
         String imageUrl = mImageUrl.getSelectedItem().toString();
@@ -283,26 +356,34 @@ public class EditStoryElementFragment extends Fragment {
         int choice1Id = mStoryElementList.get(
                 mChoice1Target.getSelectedItemPosition()).getElementId();
         int choice2Id = mStoryElementList.get(
-                mChoice2Target.getSelectedItemPosition()).getElementId();;
+                mChoice2Target.getSelectedItemPosition()).getElementId();
         String choice1Text = mChoice1Text.getText().toString();
         String choice2Text = mChoice2Text.getText().toString();
 
-        StoryElement storyElement = new StoryElement(mStoryElement.getAuthor(), mStoryElement.getStoryId(),
+        return  new StoryElement(mStoryElement.getAuthor(), mStoryElement.getStoryId(),
                 mStoryElement.getElementId(), title, imageUrl, description, isEnding, choice1Id,
                 choice2Id, choice1Text, choice2Text);
-        Log.d(TAG, storyElement.toString());
-        return storyElement;
     }
 
+    /**
+     * Returns all elements in the story that reference this element as a choice
+     * target element.
+     * @return All elements in the story that reference this element as a choice
+     * target element.
+     */
     private List<Integer> externalReferencingStoryElements() {
         if (mCallback != null) {
+            // Get all story elements
             List<StoryElement> elements = mCallback.onEditStoryElementGetAllElements(
                     mStoryElement.getAuthor(), mStoryElement.getStoryId());
             List<Integer> referencingIds = new ArrayList<>();
             int elementId = mStoryElement.getElementId();
             for (StoryElement element: elements) {
+                // If element references current element
                 if (elementId == element.getChoice1Id() || elementId == element.getChoice2Id()) {
+                    // and element is not current element
                     if (elementId != element.getElementId()) {
+                        // This element gets added to the list
                         referencingIds.add(element.getElementId());
                     }
                 }
@@ -312,6 +393,13 @@ public class EditStoryElementFragment extends Fragment {
         return null;
     }
 
+    /**
+     * Returns the element ID of the story element at the given position in the
+     * story element list.
+     * @param elementId The id of the story element.
+     * @return The element ID of the story element at the given position in the
+     * story element list.
+     */
     private int storyElementListPosition(int elementId) {
         int index = 0;
         for (int i = 0; i < mStoryElementList.size(); i++) {
@@ -324,9 +412,10 @@ public class EditStoryElementFragment extends Fragment {
     }
 
     /**
+     * Launches a dialog that shows all of the story elements that have this
+     * element as a target.
      *
-     *
-     * @param elements Must be of nonzero size.
+     * @param elements The conflicting elements: must be of nonzero size.
      */
     private void launchConflictingElementsDialog(List<Integer> elements) {
         StringBuilder sb = new StringBuilder(
@@ -347,7 +436,7 @@ public class EditStoryElementFragment extends Fragment {
     /**
      * Returns the first index of a string in an array, 0 if no match.
      *
-     * @param array
+     * @param array The array being searched.
      * @return the first index of a string in an array, 0 if no match.
      */
     private int stringIndex(String string, String[] array) {
