@@ -45,8 +45,14 @@ public class MainActivity extends AppCompatActivity implements
         CreatedStoryElementsFragment.OnCreatedStoryElementsInteractionListener,
         EditStoryElementFragment.OnEditStoryElementInteractionListener {
 
+    /**
+     * The tag used for logging.
+     */
     private static final String TAG = "MainActivity";
 
+    /**
+     * The shared preferences of the app.
+     */
     private SharedPreferences mSharedPreferences;
 
     @Override
@@ -57,16 +63,20 @@ public class MainActivity extends AppCompatActivity implements
         mSharedPreferences = getSharedPreferences(
                 getString(R.string.SHARED_PREFS), MODE_PRIVATE);
 
+        // If there is no saved instance state, launch the app in one of two starting states.
         if (savedInstanceState ==  null) {
             boolean loggedIn = mSharedPreferences.getBoolean(
                     getString(R.string.LOGGEDIN), false);
             if (findViewById(R.id.main_fragment_container) != null) {
                 FragmentTransaction fragmentTransaction =
                         getSupportFragmentManager().beginTransaction();
+                // If not logged in, go to the log in screen.
                 if (!loggedIn) {
                     Fragment loginFragment = new SignInFragment();
                     fragmentTransaction.replace(R.id.main_fragment_container, loginFragment)
                             .commit();
+
+                // If logged in, go to the main menu.
                 } else {
                     Fragment menuFragment = new MainMenuFragment();
                     fragmentTransaction.replace(R.id.main_fragment_container, menuFragment)
@@ -105,10 +115,11 @@ public class MainActivity extends AppCompatActivity implements
      */
     private void nextStoryElement(String storyTitle, String author, String storyId, int elementId,
                                   boolean eraseLast, boolean isOnline) {
+        // Story element is downloaded
         if (isOnline) {
             new StoryGetElementTask(storyTitle, true)
                     .execute(author, storyId, Integer.toString(elementId));
-        } else {
+        } else { // Story element is local
             launchLocalStoryElement(storyTitle, author, storyId, elementId, eraseLast);
         }
     }
@@ -125,13 +136,17 @@ public class MainActivity extends AppCompatActivity implements
      */
     private void launchStoryElement(StoryElement storyElement, String storyTitle, boolean eraseLast,
                                     boolean isOnline, boolean isActive) {
-        if (isOnline && isActive) {
+        // If the story element is online (is part of a downloaded story), update the saved
+        // current element to be this element.
+        if (isOnline) {
             updateCurrentStoryElement(storyElement.getAuthor(), storyElement.getStoryId(),
                     storyElement.getElementId());
         }
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.main_fragment_container, StoryElementFragment.newInstance(
                                 storyElement, storyTitle, isOnline, isActive));
+        // If the current fragment should be erased for navigational purposes,
+        // pop it from the back stack.
         if (eraseLast) {
             getSupportFragmentManager().popBackStack();
         }
@@ -270,6 +285,11 @@ public class MainActivity extends AppCompatActivity implements
 
     // CreatedStoryHeaderDB methods
 
+    /**
+     * Adds a story header to the created stories database.
+     * @param storyHeader The story header to add.
+     * @return True if the story header was successfully added, false otherwise.
+     */
     private boolean addCreatedStoryHeader(StoryHeader storyHeader) {
         CreatedStoryHeaderDB createdStoryHeaderDB = new CreatedStoryHeaderDB(this);
         boolean wasAdded = createdStoryHeaderDB.insertStory(storyHeader);
@@ -277,6 +297,12 @@ public class MainActivity extends AppCompatActivity implements
         return wasAdded;
     }
 
+    /**
+     * Updates the story header in the created stories database by overwriting the
+     * existing story header with the same author and storyId.
+     * @param storyHeader The new version of the story header.
+     * @return True if the story header was updated, false otherwise.
+     */
     private boolean updateCreatedStoryHeader(StoryHeader storyHeader) {
         CreatedStoryHeaderDB createdStoryHeaderDB = new CreatedStoryHeaderDB(this);
         boolean wasAdded = createdStoryHeaderDB.updateStoryHeader(storyHeader);
@@ -284,6 +310,12 @@ public class MainActivity extends AppCompatActivity implements
         return wasAdded;
     }
 
+    /**
+     * Deletes a story header from the created stories database.
+     * @param author The author of the story header.
+     * @param storyId The storyId of the story header.
+     * @return True if the story header was successfully deleted, false otherwise.
+     */
     private boolean deleteCreatedStoryHeader(String author, String storyId) {
         CreatedStoryHeaderDB createdStoryHeaderDB = new CreatedStoryHeaderDB(this);
         boolean wasDeleted = createdStoryHeaderDB.deleteStory(author, storyId);
@@ -291,6 +323,12 @@ public class MainActivity extends AppCompatActivity implements
         return wasDeleted;
     }
 
+    /**
+     * Returns the created story header with the given author and storyId.
+     * @param author The author of the story header.
+     * @param storyId The storyId of the story header.
+     * @return The created story header with the given author and storyId.
+     */
     private StoryHeader getCreatedStoryHeader(String author, String storyId) {
         CreatedStoryHeaderDB createdStoryHeaderDB = new CreatedStoryHeaderDB(this);
         StoryHeader header = createdStoryHeaderDB.getStory(author, storyId);
@@ -298,6 +336,10 @@ public class MainActivity extends AppCompatActivity implements
         return header;
     }
 
+    /**
+     * Returns all the story headers of the stories that have been created by the current user.
+     * @return All the story headers of the stories that have been created by the current user.
+     */
     private List<StoryHeader> getCreatedStoryHeaders() {
         CreatedStoryHeaderDB createdStoryHeaderDB = new CreatedStoryHeaderDB(this);
         String author = getCurrentUser();
@@ -306,6 +348,14 @@ public class MainActivity extends AppCompatActivity implements
         return list;
     }
 
+    /**
+     * Returns true if the story with the given author and storyId is marked as final in
+     * the created stories database (or does not exist), false otherwise.
+     * @param author The author of the story.
+     * @param storyId The storyId of the story.
+     * @return True if the story with the given author and storyId is marked as final in
+     * the created stories database (or does not exist), false otherwise.
+     */
     private boolean isCreatedStoryFinal(String author, String storyId) {
         CreatedStoryHeaderDB createdStoryHeaderDB = new CreatedStoryHeaderDB(this);
         boolean isFinal = createdStoryHeaderDB.isStoryFinal(author, storyId);
@@ -313,6 +363,12 @@ public class MainActivity extends AppCompatActivity implements
         return isFinal;
     }
 
+    /**
+     * Sets the story with the given author and storyId to the "final" value in isFinal.
+     * @param author The author of the story.
+     * @param storyId The storyId of the story.
+     * @return True if the story is updated, false otherwise.
+     */
     private boolean setCreatedStoryFinal(String author, String storyId, boolean isFinal) {
         CreatedStoryHeaderDB createdStoryHeaderDB = new CreatedStoryHeaderDB(this);
         boolean success = createdStoryHeaderDB.setStoryFinal(author, storyId, isFinal);
@@ -322,6 +378,11 @@ public class MainActivity extends AppCompatActivity implements
 
     // CreatedStoryElementDB methods
 
+    /**
+     * Adds a story element to the created elements database.
+     * @param storyElement The story element to add.
+     * @return True if the story element was successfully added, false otherwise.
+     */
     private boolean addCreatedStoryElement(StoryElement storyElement) {
         CreatedStoryElementDB createdStoryElementDB = new CreatedStoryElementDB(this);
         boolean wasAdded = createdStoryElementDB.insertStoryElement(storyElement);
@@ -329,6 +390,13 @@ public class MainActivity extends AppCompatActivity implements
         return wasAdded;
     }
 
+    /**
+     * Deletes a story element from the created elements database.
+     * @param author The author of the story element.
+     * @param storyId The storyId of the story element.
+     * @param elementId The elementId of the story element.
+     * @return True if the story element was successfully deleted, false otherwise.
+    */
     private boolean deleteCreatedStoryElement(String author, String storyId, int elementId) {
         CreatedStoryElementDB createdStoryElementDB = new CreatedStoryElementDB(this);
         boolean wasDeleted = createdStoryElementDB.deleteStoryElement(author, storyId, elementId);
@@ -336,6 +404,12 @@ public class MainActivity extends AppCompatActivity implements
         return wasDeleted;
     }
 
+    /**
+     * Deletes all story elements of a given story from the created elements database.
+     * @param author The author of the story.
+     * @param storyId The storyId of the story.
+     * @return True if the story elements were successfully deleted, false otherwise.
+     */
     private boolean deleteAllCreatedStoryElementsOfStory(String author, String storyId) {
         CreatedStoryElementDB createdStoryElementDB = new CreatedStoryElementDB(this);
         boolean wasDeleted = createdStoryElementDB.deleteAllStoryElementsOfStory(
@@ -344,6 +418,13 @@ public class MainActivity extends AppCompatActivity implements
         return wasDeleted;
     }
 
+    /**
+     * Returns the created story element with the given author, storyId, and story element.
+     * @param author The author of the story element.
+     * @param storyId The storyId of the story element.
+     * @param elementId The elementId of the story element.
+     * @return The created story element with the given author, storyId, and story element.
+     */
     private StoryElement getCreatedStoryElement(String author, String storyId, int elementId) {
         CreatedStoryElementDB createdStoryElementDB = new CreatedStoryElementDB(this);
         StoryElement storyElement =
@@ -352,6 +433,12 @@ public class MainActivity extends AppCompatActivity implements
         return storyElement;
     }
 
+    /**
+     * Returns all story elements of a given story from the created elements database.
+     * @param author The author of the story.
+     * @param storyId The storyId of the story.
+     * @return All story elements of a given story from the created elements database.
+     */
     private List<StoryElement> getCreatedStoryElementsByStory(String author, String storyId) {
         CreatedStoryElementDB createdStoryElementDB = new CreatedStoryElementDB(this);
         List<StoryElement> list = createdStoryElementDB.getStoryElementsByStory(author, storyId);
@@ -359,6 +446,12 @@ public class MainActivity extends AppCompatActivity implements
         return list;
     }
 
+    /**
+     * Updates the story element in the created stories database by overwriting the
+     * existing story element with the same author, storyId, and elementId.
+     * @param storyElement The new version of the story element.
+     * @return True if the story element was updated, false otherwise.
+     */
     private boolean updateCreatedStoryElement(StoryElement storyElement) {
         CreatedStoryElementDB createdStoryElementDB = new CreatedStoryElementDB(this);
         boolean wasDeleted = createdStoryElementDB.updateStoryElement(storyElement);
@@ -366,6 +459,12 @@ public class MainActivity extends AppCompatActivity implements
         return wasDeleted;
     }
 
+    /**
+     * Gets the next available element ID for the created story with the given author and storyId.
+     * @param author The author of the story.
+     * @param storyId The storyId of the story.
+     * @return The next available element ID for the created story.
+     */
     private int getNextCreatedStoryElementId(String author, String storyId) {
         CreatedStoryElementDB createdStoryElementDB = new CreatedStoryElementDB(this);
         int nextId = createdStoryElementDB.getNextElementId(author, storyId);
@@ -373,6 +472,14 @@ public class MainActivity extends AppCompatActivity implements
         return nextId;
     }
 
+    /**
+     * Returns true if the created story with the given author and storyId has elements
+     * in the created elements database, false otherwise.
+     * @param author The author of the story.
+     * @param storyId The storyId of the story.
+     * @return True if the created story with the given author and storyId has elements
+     * in the created elements database, false otherwise.
+     */
     private boolean hasStoryElements(String author, String storyId) {
         CreatedStoryElementDB createdStoryElementDB = new CreatedStoryElementDB(this);
         boolean wasDeleted = createdStoryElementDB.hasStoryElements(author, storyId);
@@ -419,9 +526,7 @@ public class MainActivity extends AppCompatActivity implements
             storyTitle = getBookmarkedStory(array[0], array[1]).getTitle();
         }
         String[] returnArray = new String[4];
-        for (int i = 0; i < 3; i++) {
-            returnArray[i] = array[i];
-        }
+        System.arraycopy(array, 0, returnArray, 0, 3);
         returnArray[3] = storyTitle;
         return returnArray;
     }
@@ -601,11 +706,10 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public boolean onCreatedStoryOverviewDeleteLocalStory(String author, String storyId) {
-        boolean deleted = true;
-        List<StoryElement> elements = getCreatedStoryElementsByStory(author, storyId);
-        for (StoryElement elem: elements) {
-            deleted &= deleteCreatedStoryElement(author, storyId, elem.getElementId());
-        }
+        // Deletes all elements of the story
+        deleteAllCreatedStoryElementsOfStory(author, storyId);
+        // Deletes the header of the story if all of the elements were successfully deleted.
+        boolean deleted = !hasStoryElements(author, storyId);
         return deleted && deleteCreatedStoryHeader(author, storyId);
     }
 
@@ -618,7 +722,6 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public boolean onCreatedStoryOverviewDeleteStoryElement(
             String author, String storyId, int elementId) {
-        deleteAllCreatedStoryElementsOfStory(author, storyId);
         return deleteCreatedStoryElement(author, storyId, elementId);
     }
 
@@ -695,11 +798,27 @@ public class MainActivity extends AppCompatActivity implements
 
     // Shared Async Methods
 
+    /**
+     * Downloads a story element from the online database.
+     */
     private class StoryGetElementTask extends AbstractDownloadStoryElementTask {
 
+        /**
+         * The title of the story that the element is associated with.
+         */
         private final String mStoryTitle;
+        /**
+         * True if the current fragment should be added to the backstack when the fragment is
+         * replaced, false otherwise.
+         */
         private final boolean mAddToBackstack;
 
+        /**
+         * Constructs a new StoryGetElementTask.
+         * @param storyTitle The title of the story that the element is associated with.
+         * @param addToBackstack True if the current fragment should be added to the backstack
+         *                       when the fragment is replaced, false otherwise.
+         */
         public StoryGetElementTask(String storyTitle, boolean addToBackstack) {
             super();
             mStoryTitle = storyTitle;
@@ -714,18 +833,19 @@ public class MainActivity extends AppCompatActivity implements
             try {
                 JSONObject jsonObject = new JSONObject(s);
                 String status = jsonObject.getString("result");
+                // Success
                 if (status.equalsIgnoreCase("success")) {
                     String elementString = jsonObject.getString("storyElement");
                     StoryElement element = StoryElement.parseJson(elementString);
-                    Toast.makeText(MainActivity.this, "Success",
-                            Toast.LENGTH_SHORT).show();
+                    // Display the downloaded story element.
                     launchStoryElement(element, mStoryTitle, mAddToBackstack, true, true);
-
+                // Failure
                 } else {
                     String reason = jsonObject.getString("error");
                     Toast.makeText(MainActivity.this, "Failed: " + reason,
                             Toast.LENGTH_SHORT).show();
                 }
+             // JSON exception
             } catch (Exception e) {
                 Log.d(TAG, "Parsing JSON Exception: " + e.getMessage());
                 e.printStackTrace();
