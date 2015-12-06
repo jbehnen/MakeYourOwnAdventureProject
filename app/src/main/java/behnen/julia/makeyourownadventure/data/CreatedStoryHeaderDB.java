@@ -20,11 +20,10 @@ public class CreatedStoryHeaderDB {
     public static final String DB_NAME = "CreatedStoryHeader.db";
     private static final String TABLE_NAME = "CreatedStoryHeader";
 
-    private CreatedStoryHeaderDBHelper mCreatedStoryHeaderDBHelper;
     private SQLiteDatabase mSQLiteDatabase;
 
     public CreatedStoryHeaderDB(Context context) {
-        mCreatedStoryHeaderDBHelper = new CreatedStoryHeaderDBHelper(
+        CreatedStoryHeaderDBHelper mCreatedStoryHeaderDBHelper = new CreatedStoryHeaderDBHelper(
                 context, DB_NAME, null, DB_VERSION);
         mSQLiteDatabase = mCreatedStoryHeaderDBHelper.getWritableDatabase();
     }
@@ -129,27 +128,6 @@ public class CreatedStoryHeaderDB {
 
         c.close();
         return list;
-    }
-
-    public boolean storyExists(String author, String storyId) {
-        String[] columns = {
-                "storyId"
-        };
-
-        Cursor c = mSQLiteDatabase.query(
-                TABLE_NAME,
-                columns,
-                "author = ?",
-                new String[]{author},
-                null,
-                null,
-                null
-        );
-
-        c.moveToFirst();
-        boolean exists = c.getCount() > 0;
-        c.close();
-        return exists;
     }
 
     private class CreatedStoryHeaderDBHelper extends SQLiteOpenHelper {

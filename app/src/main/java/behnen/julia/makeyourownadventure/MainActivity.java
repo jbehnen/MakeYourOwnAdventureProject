@@ -20,7 +20,7 @@ import behnen.julia.makeyourownadventure.asyncs.AbstractDownloadStoryElementTask
 import behnen.julia.makeyourownadventure.data.BookmarkedStoryDB;
 import behnen.julia.makeyourownadventure.data.CreatedStoryElementDB;
 import behnen.julia.makeyourownadventure.data.CreatedStoryHeaderDB;
-import behnen.julia.makeyourownadventure.data.UserPreferencesDB;
+import behnen.julia.makeyourownadventure.data.CurrentElementDB;
 import behnen.julia.makeyourownadventure.model.StoryElement;
 import behnen.julia.makeyourownadventure.model.StoryHeader;
 
@@ -102,13 +102,26 @@ public class MainActivity extends AppCompatActivity implements
 
     // Shared methods
 
+    /**
+     * Returns the username of the logged-in user.
+     * @return The username of the logged-in user.
+     */
     private String getCurrentUser() {
         return mSharedPreferences.getString(getString(R.string.USERNAME), null);
     }
 
+    /**
+     * Display the given story element when another story element is currently displayed.
+     *
+     * @param author The author of the story element.
+     * @param storyId The storyId of the story element.
+     * @param elementId The elementId of the story element.
+     * @param eraseLast True if the current fragment should be removed from the back stack,
+     *                  false otherwise.
+     * @param isOnline True if the story element is stored online, false if it is stored locally.
+     */
     private void nextStoryElement(String author, String storyId, int elementId,
                                   boolean eraseLast, boolean isOnline) {
-        Log.d(TAG, "nextStoryElement");
         if (isOnline) {
             new StoryGetElementTask(true)
                     .execute(author, storyId, Integer.toString(elementId));
@@ -117,9 +130,18 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    /**
+     * Displays the given story element.
+     *
+     * @param storyElement The story element to be displayed.
+     * @param eraseLast True if the current fragment should be removed from the back stack,
+     *                  false otherwise.
+     * @param isOnline True if the story element is stored online, false if it is stored locally.
+     * @param isActive True if the story element should be interactive (playable),
+     *                 false if it is a demo.
+     */
     private void launchStoryElement(StoryElement storyElement, boolean eraseLast,
                                     boolean isOnline, boolean isActive) {
-        Log.d(TAG, "launchStoryElement: " + storyElement);
         if (isOnline && isActive) {
             updateCurrentStoryElement(storyElement.getAuthor(), storyElement.getStoryId(),
                     storyElement.getElementId());
@@ -134,52 +156,87 @@ public class MainActivity extends AppCompatActivity implements
         ft.commit();
     }
 
+    /**
+     * Displays a story element stored locally.
+     * @param author The author of the story element.
+     * @param storyId The storyId of the story element.
+     * @param elementId The elementId of the story element.
+     * @param eraseLast True if the current fragment should be removed from the back stack,
+     *                  false otherwise.
+     */
     private void launchLocalStoryElement(String author, String storyId, int elementId,
                                          boolean eraseLast) {
-        Log.d(TAG, "launchLocalStoryElement");
         StoryElement storyElement = getCreatedStoryElement(author, storyId, elementId);
         launchStoryElement(storyElement, eraseLast, false, true);
     }
 
     // DATABASE METHODS
 
-    // UserPreferencesDB methods
+    // CurrentElementDB methods
 
-    private boolean addUserPreferences() {
-        UserPreferencesDB userPreferencesDB = new UserPreferencesDB(this);
+    /**
+     * Adds an entry for the current user to the current element database.
+     *
+     * @return True if the user was added successfully, false otherwise.
+     */
+    private boolean addCurrentElement() {
+        CurrentElementDB currentElementDB = new CurrentElementDB(this);
         String username = getCurrentUser();
-        boolean wasAdded = userPreferencesDB.insertUserPreferences(username);
-        userPreferencesDB.closeDB();
+        boolean wasAdded = currentElementDB.insertCurrentElement(username);
+        currentElementDB.closeDB();
         return wasAdded;
     }
 
+    /**
+     * Updates the user's current story element stored in the database.
+     *
+     * @param author The author of the story element.
+     * @param storyId The storyId of the story element.
+     * @param elementId The elementId of the story element.
+     * @return True if the entry was updated successfully, false otherwise.
+     */
     private boolean updateCurrentStoryElement(String author, String storyId, int elementId) {
-        UserPreferencesDB userPreferencesDB = new UserPreferencesDB(this);
+        CurrentElementDB currentElementDB = new CurrentElementDB(this);
         String username = getCurrentUser();
         boolean wasUpdated =
-                userPreferencesDB.updateUserPreferences(username, author, storyId, elementId);
-        userPreferencesDB.closeDB();
+                currentElementDB.updateCurrentElement(username, author, storyId, elementId);
+        currentElementDB.closeDB();
         return wasUpdated;
     }
 
+    /**
+     * Clears the user's current story element entry stored in the database.
+     *
+     * @return True if the entry was cleared successfully, false otherwise.
+     */
     private boolean clearCurrentStoryElement() {
-        UserPreferencesDB userPreferencesDB = new UserPreferencesDB(this);
+        CurrentElementDB currentElementDB = new CurrentElementDB(this);
         String username = getCurrentUser();
-        boolean wasCleared = userPreferencesDB.clearUserPreferences(username);
-        userPreferencesDB.closeDB();
+        boolean wasCleared = currentElementDB.clearCurrentElement(username);
+        currentElementDB.closeDB();
         return wasCleared;
     }
 
+    /**
+     * Returns the current user's current story element data stored in the database.
+     * @return The current user's current story element data stored in the database,
+     *         where index 0 is the author, 1 is the storyId, and 2 is the elementId.
+     */
     private String[] getCurrentStoryElement() {
-        UserPreferencesDB userPreferencesDB = new UserPreferencesDB(this);
+        CurrentElementDB currentElementDB = new CurrentElementDB(this);
         String username = getCurrentUser();
-        String[] preferences = userPreferencesDB.getUserPreferences(username);
-        userPreferencesDB.closeDB();
+        String[] preferences = currentElementDB.getCurrentElement(username);
+        currentElementDB.closeDB();
         return preferences;
     }
 
     // BookmarkedStoryDB methods
 
+    /**
+     * Adds a story header to the bookmarked stories database.
+     * @param storyHeader The story header to add.
+     * @return True if the story header was successfully added, false otherwise.
+     */
     private boolean addBookmarkedStory(StoryHeader storyHeader) {
         BookmarkedStoryDB bookmarkedStoryDB = new BookmarkedStoryDB(this);
         String username = getCurrentUser();
@@ -188,6 +245,12 @@ public class MainActivity extends AppCompatActivity implements
         return wasAdded;
     }
 
+    /**
+     * Deletes a story header from the bookmarked stories database.
+     * @param author The author of the story header.
+     * @param storyId The storyId of the story header.
+     * @return True if the story header was successfully deleted, false otherwise.
+     */
     private boolean deleteBookmarkedStory(String author, String storyId) {
         BookmarkedStoryDB bookmarkedStoryDB = new BookmarkedStoryDB(this);
         String username = getCurrentUser();
@@ -196,6 +259,10 @@ public class MainActivity extends AppCompatActivity implements
         return wasDeleted;
     }
 
+    /**
+     * Returns all the story headers of the stories that have been bookmarked by the current user.
+     * @return All the story headers of the stories that have been bookmarked by the current user.
+     */
     private List<StoryHeader> getBookmarkedStories() {
         BookmarkedStoryDB bookmarkedStoryDB = new BookmarkedStoryDB(this);
         String username = getCurrentUser();
@@ -246,13 +313,6 @@ public class MainActivity extends AppCompatActivity implements
         boolean success = createdStoryHeaderDB.setStoryFinal(author, storyId, isFinal);
         createdStoryHeaderDB.closeDB();
         return success;
-    }
-
-    private boolean createdStoryExists(String author, String storyId) {
-        CreatedStoryHeaderDB createdStoryHeaderDB = new CreatedStoryHeaderDB(this);
-        boolean exists = createdStoryHeaderDB.storyExists(author, storyId);
-        createdStoryHeaderDB.closeDB();
-        return exists;
     }
 
     // CreatedStoryElementDB methods
@@ -320,7 +380,7 @@ public class MainActivity extends AppCompatActivity implements
         editor.putBoolean(getString(R.string.LOGGEDIN), true);
         editor.commit();
 
-        addUserPreferences();
+        addCurrentElement();
         // TODO: make sure that sign-in/insert doesn't crash app
 
         FragmentManager fm = getSupportFragmentManager();

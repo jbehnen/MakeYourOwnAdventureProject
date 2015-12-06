@@ -38,7 +38,7 @@ public final class StoryHeader {
      * @param theAuthor The author of the story that this StoryHeader represents.
      * @param theId The story ID of the story that this StoryHeader represents.
      * @param theTitle  The title of the story that this StoryHeader represents.
-     * @param theDescription The title of the story that this StoryHeader represents.
+     * @param theDescription The description of the story that this StoryHeader represents.
      */
     public StoryHeader(String theAuthor, String theId, String theTitle, String theDescription) {
         mTitle = theTitle;

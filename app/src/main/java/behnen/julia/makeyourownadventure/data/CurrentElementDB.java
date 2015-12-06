@@ -9,26 +9,26 @@ import android.database.sqlite.SQLiteOpenHelper;
 /**
  * Created by Julia on 11/15/2015.
  */
-public class UserPreferencesDB {
+public class CurrentElementDB {
 
     public static final int DB_VERSION = 1;
-    public static final String DB_NAME = "UserPreferences.db";
-    private static final String TABLE_NAME = "UserPreferences";
+    public static final String DB_NAME = "CurrentElement.db";
+    private static final String TABLE_NAME = "CurrentElement";
 
-    private UserPreferencesDBHelper mUserPreferencesDBHelper;
+    private CurrentElementDBHelper mCurrentElementDBHelper;
     private SQLiteDatabase mSQLiteDatabase;
 
-    public UserPreferencesDB(Context context) {
-        mUserPreferencesDBHelper = new UserPreferencesDBHelper(
+    public CurrentElementDB(Context context) {
+        mCurrentElementDBHelper = new CurrentElementDBHelper(
                 context, DB_NAME, null, DB_VERSION);
-        mSQLiteDatabase = mUserPreferencesDBHelper.getWritableDatabase();
+        mSQLiteDatabase = mCurrentElementDBHelper.getWritableDatabase();
     }
     
     public void closeDB() {
         mSQLiteDatabase.close();
     }
     
-    public boolean insertUserPreferences(String username) {
+    public boolean insertCurrentElement(String username) {
         ContentValues contentValues = new ContentValues();
         contentValues.put("username", username);
         contentValues.putNull("author");
@@ -47,7 +47,7 @@ public class UserPreferencesDB {
 //        }
     }
 
-    public boolean updateUserPreferences(
+    public boolean updateCurrentElement(
             String username, String author, String storyId, int elementId) {
         ContentValues contentValues = new ContentValues();
         contentValues.put("author", author);
@@ -62,7 +62,7 @@ public class UserPreferencesDB {
         return rowId != -1;
     }
 
-    public boolean clearUserPreferences(String username) {
+    public boolean clearCurrentElement(String username) {
         ContentValues contentValues = new ContentValues();
         contentValues.putNull("author");
         contentValues.putNull("storyId");
@@ -76,7 +76,7 @@ public class UserPreferencesDB {
         return rowId != -1;
     }
 
-    public String[] getUserPreferences(String username) {
+    public String[] getCurrentElement(String username) {
         String[] columns = {
           "author", "storyId", "elementId",
         };
@@ -92,36 +92,36 @@ public class UserPreferencesDB {
         );
 
         c.moveToFirst();
-        String[] preferences = new String[3];
-        preferences[0] = c.getString(0);
-        preferences[1] = c.getString(1);
-        preferences[2] = c.getString(2);
+        String[] element = new String[3];
+        element[0] = c.getString(0);
+        element[1] = c.getString(1);
+        element[2] = c.getString(2);
         c.close();
-        return preferences;
+        return element;
     }
 
-    private class UserPreferencesDBHelper extends SQLiteOpenHelper {
+    private class CurrentElementDBHelper extends SQLiteOpenHelper {
 
-        private static final String CREATE_USER_PREFERENCES_SQL =
-                "CREATE TABLE IF NOT EXISTS UserPreferences " +
+        private static final String CREATE_CURRENT_ELEMENT_SQL =
+                "CREATE TABLE IF NOT EXISTS CurrentElement " +
                         "(username TEXT PRIMARY KEY, author TEXT, storyId TEXT, elementId STRING)";
 
-        private static final String DROP_USER_PREFERENCES_SQL =
-                "DROP TABLE IF EXISTS UserPreferences";
+        private static final String DROP_CURRENT_ELEMENT_SQL =
+                "DROP TABLE IF EXISTS CurrentElement";
         
-        public UserPreferencesDBHelper(Context context, String name,
+        public CurrentElementDBHelper(Context context, String name,
                                      SQLiteDatabase.CursorFactory factory, int version) {
             super(context, name, factory, version);
         }
         
         @Override
         public void onCreate(SQLiteDatabase sqLiteDatabase) {
-            sqLiteDatabase.execSQL(CREATE_USER_PREFERENCES_SQL);
+            sqLiteDatabase.execSQL(CREATE_CURRENT_ELEMENT_SQL);
         }
         
         @Override
         public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int il) {
-            sqLiteDatabase.execSQL(DROP_USER_PREFERENCES_SQL);
+            sqLiteDatabase.execSQL(DROP_CURRENT_ELEMENT_SQL);
             onCreate(sqLiteDatabase);
         }
     }
