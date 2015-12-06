@@ -133,6 +133,7 @@
     <string name="story_element_title">Play Story</string>
     <string name="preview_title">Preview</string>
     <string name="story_overview_title">Saved Story</string>
+    <string name="action_main_menu">Main Menu</string>
 
     <string-array name="choice_ending_array">
         <item name="prompt_choice">Choice</item>

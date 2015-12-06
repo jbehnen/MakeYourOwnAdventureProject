@@ -93,11 +93,6 @@ public class MainActivity extends AppCompatActivity implements
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -416,7 +411,7 @@ public class MainActivity extends AppCompatActivity implements
     public void onMainMenuBookmarkedStoriesAction() {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.main_fragment_container, new BookmarkedStoriesFragment())
-                .addToBackStack(getClass().getName())
+                .addToBackStack(null)
                 .commit();
     }
 
@@ -424,7 +419,7 @@ public class MainActivity extends AppCompatActivity implements
     public void onMainMenuCreateEditStoriesAction() {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.main_fragment_container, new CreateEditStoriesFragment())
-                .addToBackStack(getClass().getName())
+                .addToBackStack(null)
                 .commit();
     }
 
@@ -432,7 +427,7 @@ public class MainActivity extends AppCompatActivity implements
     public void onMainMenuAboutAction() {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.main_fragment_container, new AboutFragment())
-                .addToBackStack(getClass().getName())
+                .addToBackStack(null)
                 .commit();
     }
 
