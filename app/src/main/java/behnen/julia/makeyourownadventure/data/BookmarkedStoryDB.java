@@ -54,6 +54,31 @@ public class BookmarkedStoryDB {
         return rowsAffected == 1;
     }
 
+    public StoryHeader getStoryHeader(String username, String author, String storyId) {
+        String[] columns = {
+                "storyTitle", "storyDescription"
+        };
+
+        Cursor c = mSQLiteDatabase.query(
+                TABLE_NAME,
+                columns,
+                "username = ? AND author = ? and storyId = ?",
+                new String[]{username, author, storyId},
+                null,
+                null,
+                null
+        );
+
+        c.moveToFirst();
+
+        String title = c.getString(0);
+        String description = c.getString(1);
+        StoryHeader storyHeader = new StoryHeader(author, storyId, title, description);
+
+        c.close();
+        return storyHeader;
+    }
+
     public List<StoryHeader> getStoriesByUsername(String username) {
         String[] columns = {
           "author", "storyId", "storyTitle", "storyDescription"

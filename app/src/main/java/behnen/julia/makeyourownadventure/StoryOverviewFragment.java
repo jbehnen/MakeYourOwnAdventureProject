@@ -23,7 +23,7 @@ public class StoryOverviewFragment extends Fragment {
     private OnStoryOverviewInteractionListener mCallback;
 
     public interface OnStoryOverviewInteractionListener {
-        void onStoryOverviewFragmentPlayStory(String author, String storyId);
+        void onStoryOverviewFragmentPlayStory(String author, String storyId, String title);
         boolean onStoryOverviewFragmentDeleteStory(String author, String storyId);
     }
 
@@ -74,7 +74,8 @@ public class StoryOverviewFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (mCallback != null) {
-                    mCallback.onStoryOverviewFragmentPlayStory(storyHeader.getAuthor(), storyHeader.getStoryId());
+                    mCallback.onStoryOverviewFragmentPlayStory(storyHeader.getAuthor(),
+                            storyHeader.getStoryId(), storyHeader.getTitle());
                 }
             }
         });

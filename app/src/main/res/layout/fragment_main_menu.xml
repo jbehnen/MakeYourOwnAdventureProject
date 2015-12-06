@@ -10,24 +10,28 @@
         android:orientation="vertical"
         style="@style/FragmentStyle">
 
-        <TextView
-            android:id="@+id/main_menu_element_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
         <ImageView
             android:id="@+id/main_menu_image"
-            android:layout_width="wrap_content"
-            android:layout_height="150dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:src="@drawable/logo"
             android:contentDescription="@string/current_story_image">
         </ImageView>
 
-        <!--<ImageView-->
-            <!--android:id="@+id/story_image"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:contentDescription="@string/content_description_story_image"/>-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:id="@+id/main_menu_story_title"
+            android:layout_gravity="center_horizontal"/>
+
+        <TextView
+            android:id="@+id/main_menu_element_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:gravity="center_horizontal"/>
 
         <Button
             android:id="@+id/main_menu_continue_story_button"

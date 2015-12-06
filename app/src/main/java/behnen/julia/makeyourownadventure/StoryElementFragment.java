@@ -24,9 +24,11 @@ public class StoryElementFragment extends Fragment {
     private static final String TAG = "StoryElementFragment";
 
     private static final String STORY_ELEMENT = "storyElement";
+    private static final String STORY_TITLE = "storyTitle";
     private static final String IS_ONLINE = "isOnline";
     private static final String IS_ACTIVE = "isActive";
 
+    private String mStoryTitle;
     private ImageView mImage;
     private boolean mIsOnline;
     private boolean mIsActive;
@@ -35,15 +37,17 @@ public class StoryElementFragment extends Fragment {
 
     public interface OnStoryElementInteractionListener {
         void onStoryElementChoiceAction(
-                String author, String storyId, int elementId, boolean isOnline);
-        void onStoryElementRestartAction(String author, String storyId, boolean isOnline);
+                String storyTitle, String author, String storyId, int elementId, boolean isOnline);
+        void onStoryElementRestartAction(
+                String storyTitle,String author, String storyId, boolean isOnline);
         void onStoryElementMainMenuAction();
     }
 
-    public static StoryElementFragment newInstance(StoryElement storyElement, boolean isOnline,
-                                                   boolean isActive) {
+    public static StoryElementFragment newInstance(StoryElement storyElement, String storyTitle,
+                                                   boolean isOnline, boolean isActive) {
         Bundle args = new Bundle();
         args.putString(STORY_ELEMENT, storyElement.toString());
+        args.putString(STORY_TITLE, storyTitle);
         args.putBoolean(IS_ONLINE, isOnline);
         args.putBoolean(IS_ACTIVE, isActive);
 
@@ -104,6 +108,7 @@ public class StoryElementFragment extends Fragment {
 
         // TODO: test for bundle arguments existing/not null
         StoryElement storyElement = StoryElement.parseJson(getArguments().getString(STORY_ELEMENT));
+        mStoryTitle = getArguments().getString(STORY_TITLE);
         mIsOnline = getArguments().getBoolean(IS_ONLINE);
         mIsActive = getArguments().getBoolean(IS_ACTIVE);
 
@@ -115,10 +120,7 @@ public class StoryElementFragment extends Fragment {
     private void displayStoryElement(View v, StoryElement storyElement) {
         new DownloadImageTask().execute(storyElement.getImageUrl());
 
-        // TODO get title from shared prefs
-        String title = "Temporary Title";
-
-        ((TextView) v.findViewById(R.id.story_element_story_title)).setText(title);
+        ((TextView) v.findViewById(R.id.story_element_story_title)).setText(mStoryTitle);
         ((TextView) v.findViewById(R.id.story_element_element_title))
                 .setText(storyElement.getTitle());
         ((TextView) v.findViewById(R.id.story_element_description))
@@ -143,8 +145,8 @@ public class StoryElementFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     if (mCallback != null) {
-                        mCallback.onStoryElementRestartAction(
-                                storyElement.getAuthor(), storyElement.getStoryId(), mIsOnline);
+                        mCallback.onStoryElementRestartAction(mStoryTitle, storyElement.getAuthor(),
+                                storyElement.getStoryId(), mIsOnline);
                     }
                 }
             });
@@ -171,7 +173,7 @@ public class StoryElementFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     if (mCallback != null) {
-                        mCallback.onStoryElementChoiceAction(storyElement.getAuthor(),
+                        mCallback.onStoryElementChoiceAction(mStoryTitle, storyElement.getAuthor(),
                                 storyElement.getStoryId(), storyElement.getChoice1Id(), mIsOnline);
                     }
                 }
@@ -180,7 +182,7 @@ public class StoryElementFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     if (mCallback != null) {
-                        mCallback.onStoryElementChoiceAction(storyElement.getAuthor(),
+                        mCallback.onStoryElementChoiceAction(mStoryTitle, storyElement.getAuthor(),
                                 storyElement.getStoryId(), storyElement.getChoice2Id(), mIsOnline);
                     }
                 }

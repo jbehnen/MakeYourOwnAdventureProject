@@ -9,7 +9,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.Toast;
 
 import org.json.JSONObject;
@@ -86,16 +85,6 @@ public class MainActivity extends AppCompatActivity implements
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        return super.onOptionsItemSelected(item);
-    }
-
     // Shared methods
 
     /**
@@ -116,13 +105,13 @@ public class MainActivity extends AppCompatActivity implements
      *                  false otherwise.
      * @param isOnline True if the story element is stored online, false if it is stored locally.
      */
-    private void nextStoryElement(String author, String storyId, int elementId,
+    private void nextStoryElement(String storyTitle, String author, String storyId, int elementId,
                                   boolean eraseLast, boolean isOnline) {
         if (isOnline) {
-            new StoryGetElementTask(true)
+            new StoryGetElementTask(storyTitle, true)
                     .execute(author, storyId, Integer.toString(elementId));
         } else {
-            launchLocalStoryElement(author, storyId, elementId, eraseLast);
+            launchLocalStoryElement(storyTitle, author, storyId, elementId, eraseLast);
         }
     }
 
@@ -136,15 +125,15 @@ public class MainActivity extends AppCompatActivity implements
      * @param isActive True if the story element should be interactive (playable),
      *                 false if it is a demo.
      */
-    private void launchStoryElement(StoryElement storyElement, boolean eraseLast,
+    private void launchStoryElement(StoryElement storyElement, String storyTitle, boolean eraseLast,
                                     boolean isOnline, boolean isActive) {
         if (isOnline && isActive) {
             updateCurrentStoryElement(storyElement.getAuthor(), storyElement.getStoryId(),
                     storyElement.getElementId());
         }
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.main_fragment_container,
-                        StoryElementFragment.newInstance(storyElement, isOnline, isActive));
+        ft.replace(R.id.main_fragment_container, StoryElementFragment.newInstance(
+                                storyElement, storyTitle, isOnline, isActive));
         if (eraseLast) {
             getSupportFragmentManager().popBackStack();
         }
@@ -160,10 +149,10 @@ public class MainActivity extends AppCompatActivity implements
      * @param eraseLast True if the current fragment should be removed from the back stack,
      *                  false otherwise.
      */
-    private void launchLocalStoryElement(String author, String storyId, int elementId,
+    private void launchLocalStoryElement(String storyTitle, String author, String storyId, int elementId,
                                          boolean eraseLast) {
         StoryElement storyElement = getCreatedStoryElement(author, storyId, elementId);
-        launchStoryElement(storyElement, eraseLast, false, true);
+        launchStoryElement(storyElement, storyTitle, eraseLast, false, true);
     }
 
     // DATABASE METHODS
@@ -256,6 +245,20 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     /**
+     * Returns the bookmarked story header with the given author and storyId.
+     * @param author The author of the story header.
+     * @param storyId The storyId of the story header.
+     * @return The bookmarked story header with the given author and storyId.
+     */
+    private StoryHeader getBookmarkedStory(String author, String storyId) {
+        BookmarkedStoryDB bookmarkedStoryDB = new BookmarkedStoryDB(this);
+        String username = getCurrentUser();
+        StoryHeader storyHeader = bookmarkedStoryDB.getStoryHeader(username, author, storyId);
+        bookmarkedStoryDB.closeDB();
+        return storyHeader;
+    }
+
+    /**
      * Returns all the story headers of the stories that have been bookmarked by the current user.
      * @return All the story headers of the stories that have been bookmarked by the current user.
      */
@@ -290,9 +293,17 @@ public class MainActivity extends AppCompatActivity implements
         return wasDeleted;
     }
 
-    private List<StoryHeader> getCreatedStoryHeaders(String username) {
+    private StoryHeader getCreatedStoryHeader(String author, String storyId) {
         CreatedStoryHeaderDB createdStoryHeaderDB = new CreatedStoryHeaderDB(this);
-        List<StoryHeader> list = createdStoryHeaderDB.getStoriesByAuthor(username);
+        StoryHeader header = createdStoryHeaderDB.getStory(author, storyId);
+        createdStoryHeaderDB.closeDB();
+        return header;
+    }
+
+    private List<StoryHeader> getCreatedStoryHeaders() {
+        CreatedStoryHeaderDB createdStoryHeaderDB = new CreatedStoryHeaderDB(this);
+        String author = getCurrentUser();
+        List<StoryHeader> list = createdStoryHeaderDB.getStoriesByAuthor(author);
         createdStoryHeaderDB.closeDB();
         return list;
     }
@@ -397,14 +408,19 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public String[] onMainMenuResume() {
-        return getCurrentStoryElement();
+        String[] array = getCurrentStoryElement();
+        String storyTitle = getBookmarkedStory(array[0], array[1]).getTitle();
+        String[] returnArray = new String[4];
+        for (int i = 0; i < 3; i++) {
+            returnArray[i] = array[i];
+        }
+        returnArray[3] = storyTitle;
+        return returnArray;
     }
 
     @Override
-    public void onMainMenuContinueStoryAction(StoryElement storyElement) {
-        String[] element = getCurrentStoryElement();
-        new StoryGetElementTask(true)
-                .execute(element[0], element[1], element[2]);
+    public void onMainMenuContinueStoryAction(StoryElement storyElement, String storyTitle) {
+        launchStoryElement(storyElement, storyTitle, false, true, true);
     }
 
     @Override
@@ -476,8 +492,8 @@ public class MainActivity extends AppCompatActivity implements
     // StoryOverviewFragment callback methods
 
     @Override
-    public void onStoryOverviewFragmentPlayStory(String author, String storyId) {
-        new StoryGetElementTask(false)
+    public void onStoryOverviewFragmentPlayStory(String author, String storyId, String title) {
+        new StoryGetElementTask(title, false)
                 .execute(author, storyId, Integer.toString(StoryElement.START_ID));
     }
 
@@ -496,18 +512,24 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onStoryElementChoiceAction(
-            String author, String storyId, int elementId, boolean isOnline) {
+            String title, String author, String storyId, int elementId, boolean isOnline) {
         Log.d(TAG, "onStoryElementChoiceAction");
-        nextStoryElement(author, storyId, elementId, true, isOnline);
+        nextStoryElement(title, author, storyId, elementId, true, isOnline);
     }
 
     @Override
-    public void onStoryElementRestartAction(String author, String storyId, boolean isOnline) {
-        nextStoryElement(author, storyId, StoryElement.START_ID, true, isOnline);
+    public void onStoryElementRestartAction(
+            String storyTitle, String author, String storyId, boolean isOnline) {
+        nextStoryElement(storyTitle, author, storyId, StoryElement.START_ID, true, isOnline);
     }
 
     @Override
     public void onStoryElementMainMenuAction() {
+        // From
+        // http://stackoverflow.com/questions/17107005/how-to-clear-fragment-backstack-in-android
+        while (getSupportFragmentManager().getBackStackEntryCount() > 0){
+            getSupportFragmentManager().popBackStackImmediate();
+        }
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.main_fragment_container, new MainMenuFragment())
                 .commit();
@@ -517,8 +539,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public List<StoryHeader> onCreateEditStoriesGetStories() {
-        String username = getCurrentUser();
-        return getCreatedStoryHeaders(username);
+        return getCreatedStoryHeaders();
     }
 
     @Override
@@ -565,8 +586,8 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onCreatedStoryOverviewPlayStory(String author, String storyId) {
-        launchLocalStoryElement(author, storyId, StoryElement.START_ID, false);
+    public void onCreatedStoryOverviewPlayStory(String author, String storyId, String storyTitle) {
+        launchLocalStoryElement(storyTitle, author, storyId, StoryElement.START_ID, false);
     }
 
     @Override
@@ -576,10 +597,7 @@ public class MainActivity extends AppCompatActivity implements
         for (StoryElement elem: elements) {
             deleted &= deleteCreatedStoryElement(author, storyId, elem.getElementId());
         }
-        if (deleted) {
-            deleted &= deleteCreatedStoryHeader(author, storyId);
-        }
-        return deleted;
+        return deleted && deleteCreatedStoryHeader(author, storyId);
     }
 
     @Override
@@ -644,7 +662,9 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onEditStoryElementPreview(StoryElement storyElement) {
-        launchStoryElement(storyElement, false, false, false);
+        String storyTitle = getCreatedStoryHeader(
+                storyElement.getAuthor(), storyElement.getStoryId()).getTitle();
+        launchStoryElement(storyElement, storyTitle, false, false, false);
     }
 
     @Override
@@ -660,18 +680,19 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public List<StoryElement> onEditStoryElementGetAllElements(String author, String storyId) {
-        List<StoryElement> list = getCreatedStoryElementsByStory(author, storyId);
-        return list;
+        return getCreatedStoryElementsByStory(author, storyId);
     }
 
     // Shared Async Methods
 
     private class StoryGetElementTask extends AbstractDownloadStoryElementTask {
 
+        private final String mStoryTitle;
         private final boolean mAddToBackstack;
 
-        public StoryGetElementTask(boolean addToBackstack) {
+        public StoryGetElementTask(String storyTitle, boolean addToBackstack) {
             super();
+            mStoryTitle = storyTitle;
             mAddToBackstack = addToBackstack;
         }
 
@@ -688,7 +709,7 @@ public class MainActivity extends AppCompatActivity implements
                     StoryElement element = StoryElement.parseJson(elementString);
                     Toast.makeText(MainActivity.this, "Success",
                             Toast.LENGTH_SHORT).show();
-                    launchStoryElement(element, mAddToBackstack, true, true);
+                    launchStoryElement(element, mStoryTitle, mAddToBackstack, true, true);
 
                 } else {
                     String reason = jsonObject.getString("error");

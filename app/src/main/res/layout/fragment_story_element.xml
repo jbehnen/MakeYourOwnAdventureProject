@@ -11,16 +11,24 @@
         android:orientation="vertical"
         style="@style/FragmentStyle">
 
-        <!-- TODO: Update blank fragment layout -->
         <TextView
             android:id="@+id/story_element_story_title"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:gravity="center_horizontal"/>
 
         <TextView
             android:id="@+id/story_element_element_title"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:gravity="center_horizontal"/>
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="8dp"
+            />
 
         <ImageView
             android:id="@+id/story_element_image"
@@ -28,10 +36,21 @@
             android:layout_height="wrap_content"
             android:contentDescription="@string/story_element_image_description"/>
 
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="8dp"
+            />
+
         <TextView
             android:id="@+id/story_element_description"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"/>
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="8dp"
+            />
 
         <Button
             android:id="@+id/story_element_button1"

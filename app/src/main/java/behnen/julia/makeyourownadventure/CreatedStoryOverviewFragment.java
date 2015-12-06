@@ -66,7 +66,7 @@ public class CreatedStoryOverviewFragment extends Fragment {
     public interface OnCreatedStoryOverviewInteractionListener {
         boolean onCreatedStoryOverviewUpdateHeader(StoryHeader storyHeader);
         void onCreatedStoryOverviewEditElements(String author, String storyId);
-        void onCreatedStoryOverviewPlayStory(String author, String storyId);
+        void onCreatedStoryOverviewPlayStory(String author, String storyId, String storyTitle);
         boolean onCreatedStoryOverviewDeleteLocalStory(String author, String storyId);
         void onCreatedStoryOverviewOnCompletedUpload(StoryHeader storyHeader);
         boolean onCreatedStoryOverviewDeleteStoryElement(
@@ -220,7 +220,8 @@ public class CreatedStoryOverviewFragment extends Fragment {
                 sendIntent.setAction(Intent.ACTION_SEND);
                 sendIntent.putExtra(Intent.EXTRA_TEXT, "I just uploaded a new story on " +
                         "Make Your Own Adventure. Check it out! Author: " +
-                        mStoryHeader.getAuthor() + ", Story ID: " + mStoryHeader.getStoryId());
+                        mStoryHeader.getAuthor() +
+                        ", Story ID: " + mStoryHeader.getStoryId() + ".");
                 sendIntent.setType("text/plain");
                 startActivity(Intent.createChooser(
                         sendIntent, getResources().getText(R.string.send_to)));
@@ -267,7 +268,7 @@ public class CreatedStoryOverviewFragment extends Fragment {
                         Toast.LENGTH_LONG).show();
             } else {
                 mCallback.onCreatedStoryOverviewPlayStory(mStoryHeader.getAuthor(),
-                        mStoryHeader.getStoryId());
+                        mStoryHeader.getStoryId(), mStoryHeader.getTitle());
             }
         }
     }

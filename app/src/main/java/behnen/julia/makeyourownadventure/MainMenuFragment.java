@@ -32,6 +32,7 @@ public class MainMenuFragment extends Fragment {
 
     private StoryElement mStoryElement;
 
+    private TextView mStoryTitle;
     private TextView mElementTitle;
     private ImageView mImage;
     private Button mContinueStoryButton;
@@ -55,7 +56,7 @@ public class MainMenuFragment extends Fragment {
          * Callback triggered when the user has pressed the "Continue Story" button
          * in MainMenuFragment.
          */
-        void onMainMenuContinueStoryAction(StoryElement storyElement);
+        void onMainMenuContinueStoryAction(StoryElement storyElement, String storyTitle);
 
         /**
          * Callback triggered when the user has pressed the "Bookmarked Stories" button
@@ -92,14 +93,20 @@ public class MainMenuFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        mStoryTitle.setVisibility(View.GONE);
+        mElementTitle.setVisibility(View.GONE);
         mContinueStoryButton.setEnabled(false);
         getActivity().setTitle(R.string.main_menu_title);
         mImage.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.logo));
         if (mCallback != null) {
-            String[] preferences = mCallback.onMainMenuResume();
-            if (preferences[1] != null) {
-                new StoryGetElementTask().execute(preferences[0], preferences[1], preferences[2]);
+            String[] elementInfo = mCallback.onMainMenuResume();
+            if (elementInfo[1] != null) {
+                new StoryGetElementTask().execute(elementInfo[0], elementInfo[1], elementInfo[2]);
+                Log.d(TAG, elementInfo[3]);
+                mStoryTitle.setText(elementInfo[3]);
             } else {
+                mStoryTitle.setVisibility(View.GONE);
+                mElementTitle.setVisibility(View.GONE);
                 Toast.makeText(getActivity(), "No current story", Toast.LENGTH_SHORT).show();
             }
         }
@@ -112,6 +119,7 @@ public class MainMenuFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_main_menu, container, false);
 
+        mStoryTitle = (TextView) v.findViewById(R.id.main_menu_story_title);
         mElementTitle = (TextView) v.findViewById(R.id.main_menu_element_title);
         mImage = (ImageView) v.findViewById(R.id.main_menu_image);
 
@@ -126,7 +134,8 @@ public class MainMenuFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (mCallback != null) {
-                    mCallback.onMainMenuContinueStoryAction(mStoryElement);
+                    mCallback.onMainMenuContinueStoryAction(
+                            mStoryElement, mStoryTitle.getText().toString());
                 }
             }
         });
@@ -192,6 +201,8 @@ public class MainMenuFragment extends Fragment {
         new DownloadImageTask().execute(mStoryElement.getImageUrl());
         mContinueStoryButton.setEnabled(true);
         mElementTitle.setText(mStoryElement.getTitle());
+        mStoryTitle.setVisibility(View.VISIBLE);
+        mElementTitle.setVisibility(View.VISIBLE);
     }
 
     private class StoryGetElementTask extends AbstractDownloadStoryElementTask {
