@@ -15,7 +15,7 @@ import java.net.URL;
  * Represents an asynchronous POST request.
  *
  * @author Julia Behnen
- * @version November 4, 2015
+ * @version December 6, 2015
  */
 public abstract class AbstractPostAsyncTask<J, K, L> extends AsyncTask<J, K, L> {
 
