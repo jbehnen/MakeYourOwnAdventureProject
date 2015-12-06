@@ -28,6 +28,7 @@
             android:hint="@string/prompt_username"
             android:inputType="text"
             android:maxLines="1"
+            android:maxLength="25"
             android:singleLine="true"/>
 
         <EditText
@@ -37,6 +38,7 @@
             android:hint="@string/prompt_password"
             android:inputType="textPassword"
             android:maxLines="1"
+            android:maxLength="25"
             android:singleLine="true"/>
 
         <EditText
@@ -46,6 +48,7 @@
             android:hint="@string/prompt_password_confirm"
             android:inputType="textPassword"
             android:maxLines="1"
+            android:maxLength="25"
             android:singleLine="true"/>
 
         <EditText
@@ -55,6 +58,7 @@
             android:hint="@string/prompt_email"
             android:inputType="textEmailAddress"
             android:maxLines="1"
+            android:maxLength="50"
             android:singleLine="true"/>
 
         <Button

@@ -63,6 +63,15 @@ public class CreatedStoryElementDB {
         return rowsAffected == 1;
     }
 
+    public boolean deleteAllStoryElementsOfStory(String author, String storyId) {
+        long rowsAffected = mSQLiteDatabase.delete(
+                TABLE_NAME,
+                "author = ? AND storyId = ?",
+                new String[]{author, storyId}
+        );
+        return rowsAffected == 1;
+    }
+
     public StoryElement getStoryElement(String author, String storyId, int elementId) {
         String[] columns = {
                 "elementTitle", "imageUrl", "elementDescription", "isEnding",

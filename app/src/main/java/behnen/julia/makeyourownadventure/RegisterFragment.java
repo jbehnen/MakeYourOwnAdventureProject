@@ -119,11 +119,11 @@ public class RegisterFragment extends Fragment {
         // Check for a valid username
         if (TextUtils.isEmpty(username)) {
             mUsernameEditText.setError(getString(R.string.error_field_required));
-            focusView = mEmailEditText;
+            focusView = mUsernameEditText;
             cancel = true;
         } else if (!isUsernameValid(username)) {
             mUsernameEditText.setError(getString(R.string.error_invalid_username));
-            focusView = mEmailEditText;
+            focusView = mUsernameEditText;
             cancel = true;
         }
 

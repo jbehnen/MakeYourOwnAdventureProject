@@ -14,6 +14,7 @@
             android:id="@+id/create_new_story_story_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:maxLength="255"
             android:hint="@string/prompt_story_id"/>
 
         <EditText

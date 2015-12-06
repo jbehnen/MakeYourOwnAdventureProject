@@ -4,6 +4,7 @@ package behnen.julia.makeyourownadventure;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,10 +41,6 @@ public class CreateNewStoryFragment extends Fragment {
     private EditText mDescriptionEditText;
 
     private String mAuthor;
-
-    private String mCurrentStoryId;
-    private String mCurrentTitle;
-    private String mCurrentDescription;
 
     private OnCreateNewStoryInteractionListener mCallback;
 
@@ -106,15 +103,36 @@ public class CreateNewStoryFragment extends Fragment {
         createStoryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mCurrentStoryId = mStoryIdEditText.getText().toString();
-                mCurrentTitle = mTitleEditText.getText().toString();
-                mCurrentDescription = mDescriptionEditText.getText().toString();
-
-                new StoryRegisterTask().execute(mAuthor, mCurrentStoryId);
+                attemptRegisterStory();
             }
         });
 
         return view;
+    }
+
+    public void attemptRegisterStory() {
+        boolean cancel = false;
+        View focusView = null;
+
+        String storyId = mStoryIdEditText.getText().toString();
+        String title = mTitleEditText.getText().toString();
+        String description = mDescriptionEditText.getText().toString();
+
+        // Check for valid storyID
+        if (TextUtils.isEmpty(storyId)) {
+            mStoryIdEditText.setError(getString(R.string.error_field_required));
+            focusView = mStoryIdEditText;
+            cancel = true;
+        }
+
+        if (cancel) {
+            // There was an error; don't attempt login and focus the first
+            // form field with an error.
+            focusView.requestFocus();
+            Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
+        } else {
+            new StoryRegisterTask(storyId, title, description).execute(mAuthor);
+        }
     }
 
     @Override
@@ -143,15 +161,25 @@ public class CreateNewStoryFragment extends Fragment {
      */
     public class StoryRegisterTask extends AbstractPostAsyncTask<String, Void, String> {
 
+        String mStoryId;
+        String mTitle;
+        String mDescription;
+
+        public StoryRegisterTask(String storyId, String title, String description) {
+            mStoryId = storyId;
+            mTitle = title;
+            mDescription = description;
+        }
+
         /**
          * Starts the registration process.
-         * @param params The story author and story ID, in that order.
+         * @param params The story author.
          * @return A string holding the result of the request.
          */
         @Override
         protected String doInBackground(String...params) {
             String urlParameters = "author=" + params[0]
-                    + "&story_id=" + params[1];
+                    + "&story_id=" + mStoryId;
             try {
                 return downloadUrl(REGISTER_STORY_URL, urlParameters, TAG);
             } catch (IOException e) {
@@ -171,9 +199,8 @@ public class CreateNewStoryFragment extends Fragment {
                     Toast.makeText(getActivity(), "Story registered",
                             Toast.LENGTH_SHORT).show();
                     if (mCallback != null) {
-                        mCallback.onCreateNewStorySaveLocalCopy(new StoryHeader(mAuthor,
-                                mCurrentStoryId,
-                                mCurrentTitle, mCurrentDescription));
+                        mCallback.onCreateNewStorySaveLocalCopy(new StoryHeader(
+                                mAuthor, mStoryId, mTitle, mDescription));
                     }
                 } else {
                     String reason = jsonObject.getString("error");

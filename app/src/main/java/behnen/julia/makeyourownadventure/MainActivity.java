@@ -336,6 +336,14 @@ public class MainActivity extends AppCompatActivity implements
         return wasDeleted;
     }
 
+    private boolean deleteAllCreatedStoryElementsOfStory(String author, String storyId) {
+        CreatedStoryElementDB createdStoryElementDB = new CreatedStoryElementDB(this);
+        boolean wasDeleted = createdStoryElementDB.deleteAllStoryElementsOfStory(
+                author, storyId);
+        createdStoryElementDB.closeDB();
+        return wasDeleted;
+    }
+
     private StoryElement getCreatedStoryElement(String author, String storyId, int elementId) {
         CreatedStoryElementDB createdStoryElementDB = new CreatedStoryElementDB(this);
         StoryElement storyElement =
@@ -607,6 +615,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public boolean onCreatedStoryOverviewDeleteStoryElement(
             String author, String storyId, int elementId) {
+        deleteAllCreatedStoryElementsOfStory(author, storyId);
         return deleteCreatedStoryElement(author, storyId, elementId);
     }
 
