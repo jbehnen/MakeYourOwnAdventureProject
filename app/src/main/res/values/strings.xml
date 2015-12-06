@@ -30,7 +30,7 @@
     <string name="content_description_story_image">Current story imageUrl</string>
     <string name="action_continue_story">Continue story</string>
     <string name="action_the_story_so_far">The Story So Far</string>
-    <string name="action_downloaded_stories">Bookmarked Stories</string>
+    <string name="action_downloaded_stories">Saved Stories</string>
     <string name="action_my_stories">Create Or Edit Stories</string>
     <string name="action_about">About</string>
     <string name="action_sign_out">Sign out</string>
@@ -116,6 +116,22 @@
     <string name="contentSharingDialogText">Story uploaded and added to bookmarked stories. Would you like to share it?</string>
     <string name="share_action">Share</string>
     <string name="send_to">Send To</string>
+
+    // Action bar titles
+    <string name="about_title">About</string>
+    <string name="bookmarked_stories_title">Saved Stories</string>
+    <string name="created_story_elements_title">Edit Story Elements</string>
+    <string name="created_story_overview_title">Created Story</string>
+    <string name="create_edit_stories_title">Created Stories</string>
+    <string name="create_new_story_title">Create New Story</string>
+    <string name="edit_story_element_title">Edit Story Element</string>
+    <string name="get_new_story_title">Save New Story</string>
+    <string name="main_menu_title">Make Your Own Adventure</string>
+    <string name="register_title">Register</string>
+    <string name="sign_in_title">Sign In</string>
+    <string name="story_element_title">Play Story</string>
+    <string name="preview_title">Preview</string>
+    <string name="story_overview_title">Saved Story</string>
 
     <string-array name="choice_ending_array">
         <item name="prompt_choice">Choice</item>

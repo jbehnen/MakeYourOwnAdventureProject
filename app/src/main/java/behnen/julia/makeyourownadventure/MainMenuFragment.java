@@ -93,6 +93,7 @@ public class MainMenuFragment extends Fragment {
     public void onResume() {
         super.onResume();
         mContinueStoryButton.setEnabled(false);
+        getActivity().setTitle(R.string.main_menu_title);
         mImage.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.logo));
         if (mCallback != null) {
             String[] preferences = mCallback.onMainMenuResume();

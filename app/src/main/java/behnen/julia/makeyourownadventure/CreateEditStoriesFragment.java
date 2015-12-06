@@ -39,6 +39,20 @@ public class CreateEditStoriesFragment extends Fragment {
         setRetainInstance(true);
     }
 
+    /**
+     * Resumes fragment and updates activity action bar title.
+     *
+     * Action bar title update code adapted from
+     * http://stackoverflow.com/questions/13472258/
+     * handling-actionbar-title-with-the-fragment-back-stack
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Set title
+        getActivity().setTitle(R.string.create_edit_stories_title);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
