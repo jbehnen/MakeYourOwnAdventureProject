@@ -100,14 +100,13 @@ public class MainMenuFragment extends Fragment {
         mImage.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.logo));
         if (mCallback != null) {
             String[] elementInfo = mCallback.onMainMenuResume();
-            if (elementInfo[1] != null) {
+            if (elementInfo[1].length() != 0) {
                 new StoryGetElementTask().execute(elementInfo[0], elementInfo[1], elementInfo[2]);
                 Log.d(TAG, elementInfo[3]);
                 mStoryTitle.setText(elementInfo[3]);
             } else {
                 mStoryTitle.setVisibility(View.GONE);
                 mElementTitle.setVisibility(View.GONE);
-                Toast.makeText(getActivity(), "No current story", Toast.LENGTH_SHORT).show();
             }
         }
     }

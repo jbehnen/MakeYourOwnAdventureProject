@@ -1,8 +1,6 @@
-package behnen.julia.makeyourownadventure;
+package behnen.julia.makeyourownadventure.model;
 
 import junit.framework.TestCase;
-
-import behnen.julia.makeyourownadventure.model.StoryHeader;
 
 /**
  * Tests the StoryHeader class.

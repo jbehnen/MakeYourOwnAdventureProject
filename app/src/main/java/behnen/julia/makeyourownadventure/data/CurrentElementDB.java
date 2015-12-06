@@ -31,9 +31,9 @@ public class CurrentElementDB {
     public boolean insertCurrentElement(String username) {
         ContentValues contentValues = new ContentValues();
         contentValues.put("username", username);
-        contentValues.putNull("author");
-        contentValues.putNull("storyId");
-        contentValues.putNull("elementId");
+        contentValues.put("author", "");
+        contentValues.put("storyId", "");
+        contentValues.put("elementId", 0);
 
         try {
             long rowId = mSQLiteDatabase.insert(TABLE_NAME, null, contentValues);
@@ -61,9 +61,9 @@ public class CurrentElementDB {
 
     public boolean clearCurrentElement(String username) {
         ContentValues contentValues = new ContentValues();
-        contentValues.putNull("author");
-        contentValues.putNull("storyId");
-        contentValues.putNull("elementId");
+        contentValues.put("author", "");
+        contentValues.put("storyId", "");
+        contentValues.put("elementId", 0);
 
         long rowId = mSQLiteDatabase.update(
                 TABLE_NAME,

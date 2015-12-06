@@ -414,7 +414,10 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public String[] onMainMenuResume() {
         String[] array = getCurrentStoryElement();
-        String storyTitle = getBookmarkedStory(array[0], array[1]).getTitle();
+        String storyTitle = "";
+        if (array[1].length() != 0) {
+            storyTitle = getBookmarkedStory(array[0], array[1]).getTitle();
+        }
         String[] returnArray = new String[4];
         for (int i = 0; i < 3; i++) {
             returnArray[i] = array[i];
