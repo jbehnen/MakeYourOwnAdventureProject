@@ -72,7 +72,7 @@ public abstract class AbstractPostAsyncTask<J, K, L> extends AsyncTask<J, K, L> 
     }
 
     /**
-     * Reads an InputStream and converts it to a String of with a set maximum length.
+     * Reads an InputStream and converts it to a String with a set maximum length.
      * @param stream The stream to be read.
      * @param len The maximum characters in the returned string; the cutoff value
      *            for the amount of the stream that is read.

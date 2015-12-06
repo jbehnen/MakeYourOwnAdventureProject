@@ -19,7 +19,7 @@ public abstract class AbstractDownloadStoryElementTask
     private static final String TAG = "AbstractDownloadStoryElementTask";
 
     /**
-     * Starts the story header retrieval process.
+     * Starts the story element retrieval process.
      * @param params The story header author, story ID, and element ID, in that order.
      * @return A string holding the result of the request.
      */

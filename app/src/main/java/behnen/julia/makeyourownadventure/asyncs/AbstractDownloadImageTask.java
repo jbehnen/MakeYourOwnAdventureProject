@@ -9,7 +9,10 @@ import java.io.InputStream;
 import java.net.URL;
 
 /**
- * Created by Julia on 11/13/2015.
+ * Downloads an image from the shared image folder for this app.
+ *
+ * @author Julia Behnen
+ * @version December 6, 2015
  */
 public abstract class AbstractDownloadImageTask extends AsyncTask<String, Void, Bitmap> {
 
@@ -19,15 +22,10 @@ public abstract class AbstractDownloadImageTask extends AsyncTask<String, Void, 
     private static final String SHARED_IMAGES_URL =
             "http://cssgate.insttech.washington.edu/~jbehnen/myoa/images/shared/";
 
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-    }
-
     /**
      * Starts the image download process.
      * @param urls The URL of the image.
-     * @return A string holding the result of the request.
+     * @return A bitmap holding the result of the request.
      */
     @Override
     protected Bitmap doInBackground(String... urls) {
@@ -38,7 +36,9 @@ public abstract class AbstractDownloadImageTask extends AsyncTask<String, Void, 
                 InputStream is = new BufferedInputStream(urlObject.openStream());
                 bitmap = BitmapFactory.decodeStream(is);
 
-            } catch (Exception e) {}
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return bitmap;
     }
