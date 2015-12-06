@@ -73,8 +73,6 @@ public final class StoryElement {
      */
     private final String mChoice2Text;
 
-    // TODO: reorganize constructors
-
     /**
      * StoryElement constructor.
      *
@@ -103,8 +101,8 @@ public final class StoryElement {
         if (isEnding) {
             mChoice1Id = elementId;
             mChoice2Id = elementId;
-            mChoice1Text = "";
-            mChoice2Text = "";
+            mChoice1Text = DEFAULT_CHOICE1_TEXT;
+            mChoice2Text = DEFAULT_CHOICE2_TEXT;
         } else {
             mChoice1Id = choice1Id;
             mChoice2Id = choice2Id;
@@ -114,54 +112,15 @@ public final class StoryElement {
     }
 
     /**
-     * StoryElement constructor. Sufficient to construct a fully-described choice.
+     * Constructs a new, default story element with minimal information.
      *
      * @param author The author of the story that this StoryElement is associated with.
      * @param storyId The story ID of the story that this StoryElement is associated with.
      * @param elementId The element ID of the StoryElement.
-     * @param title The title of the StoryElement.
-     * @param imageUrl The URL of the image used in the StoryElement.
-     * @param description The description of the StoryElement.
-     * @param choice1Id The element ID of the StoryElement that the first choice points to.
-     * @param choice2Id The element ID of the StoryElement that the second choice points to.
-     * @param choice1Text The text description of the first choice.
-     * @param choice2Text The text description of the second choice.
      */
-    public StoryElement(String author, String storyId, int elementId, String title, String imageUrl,
-                        String description, int choice1Id, int choice2Id,
-                        String choice1Text, String choice2Text) {
-        mAuthor = author;
-        mStoryId = storyId;
-        mElementId = elementId;
-        mTitle = title;
-        mImageUrl = imageUrl;
-        mDescription = description;
-        mIsEnding = false;
-        mChoice1Id = choice1Id;
-        mChoice2Id = choice2Id;
-        mChoice1Text = choice1Text;
-        mChoice2Text = choice2Text;
-    }
-
-    /**
-     * StoryElement constructor which is sufficient to construct a fully-described ending.
-     *
-     * @param author The author of the story that this StoryElement is associated with.
-     * @param storyId The story ID of the story that this StoryElement is associated with.
-     * @param elementId The element ID of the StoryElement.
-     * @param title The title of the StoryElement.
-     * @param imageUrl The URL of the image used in the StoryElement.
-     * @param description The description of the StoryElement.
-     */
-    public StoryElement(String author, String storyId, int elementId, String title,
-                        String imageUrl, String description) {
-        this(author, storyId, elementId, title, imageUrl, description, true, elementId,
-                elementId, "", "");
-    }
-
     public StoryElement(String author, String storyId, int elementId) {
         this(author, storyId, elementId, DEFAULT_TITLE, DEFAULT_IMAGE_URL, DEFAULT_DESCRIPTION,
-                elementId, elementId, DEFAULT_CHOICE1_TEXT, DEFAULT_CHOICE2_TEXT);
+                false, elementId, elementId, DEFAULT_CHOICE1_TEXT, DEFAULT_CHOICE2_TEXT);
     }
 
     /**

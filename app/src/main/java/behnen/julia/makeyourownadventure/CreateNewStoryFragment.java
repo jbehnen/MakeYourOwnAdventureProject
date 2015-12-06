@@ -51,7 +51,17 @@ public class CreateNewStoryFragment extends Fragment {
         void onCreateNewStorySaveLocalCopy(StoryHeader storyHeader);
     }
 
+    /**
+     * DO NOT USE. Only create the fragment using the given newInstance method.
+     */
+    public CreateNewStoryFragment() {
+
+    }
+
     public static CreateNewStoryFragment newInstance(String author) {
+        if (author == null) {
+            throw new IllegalArgumentException();
+        }
         Bundle args = new Bundle();
         args.putString(AUTHOR, author);
 
@@ -90,7 +100,6 @@ public class CreateNewStoryFragment extends Fragment {
         mTitleEditText = (EditText) view.findViewById(R.id.create_new_story_title);
         mDescriptionEditText = (EditText) view.findViewById(R.id.create_new_story_description);
 
-        // TODO test for not-null
         mAuthor = getArguments().getString(AUTHOR);
 
         Button createStoryButton = (Button) view.findViewById(R.id.create_new_story_button);
@@ -115,7 +124,7 @@ public class CreateNewStoryFragment extends Fragment {
             mCallback = (OnCreateNewStoryInteractionListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
-                    + "must implement OnSignInInteractionListener");
+                    + "must implement OnCreateNewStoryInteractionListener");
         }
     }
 
@@ -165,7 +174,6 @@ public class CreateNewStoryFragment extends Fragment {
                         mCallback.onCreateNewStorySaveLocalCopy(new StoryHeader(mAuthor,
                                 mCurrentStoryId,
                                 mCurrentTitle, mCurrentDescription));
-                        getFragmentManager().popBackStackImmediate();
                     }
                 } else {
                     String reason = jsonObject.getString("error");
@@ -174,7 +182,8 @@ public class CreateNewStoryFragment extends Fragment {
                 }
             } catch (Exception e) {
                 Log.d(TAG, "Parsing JSON Exception" + e.getMessage());
-                Toast.makeText(getActivity(), "Parsing JSON exception: " + s,
+                Toast.makeText(getActivity(),
+                        getActivity().getResources().getString(R.string.async_error),
                         Toast.LENGTH_SHORT).show();
             }
         }

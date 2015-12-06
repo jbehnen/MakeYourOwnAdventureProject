@@ -34,7 +34,17 @@ public class CreatedStoryElementsFragment extends Fragment {
         void onCreatedStoryElementsAddElement(String author, String storyId);
     }
 
+    /**
+     * DO NOT USE. Only create the fragment using the given newInstance method.
+     */
+    public CreatedStoryElementsFragment() {
+
+    }
+
     public static CreatedStoryElementsFragment newInstance(String author, String storyId) {
+        if (author == null || storyId == null) {
+            throw new IllegalArgumentException();
+        }
         Bundle args = new Bundle();
         args.putString(AUTHOR, author);
         args.putString(STORY_ID, storyId);
@@ -73,7 +83,6 @@ public class CreatedStoryElementsFragment extends Fragment {
         FloatingActionButton addStoryButton =
                 (FloatingActionButton) view.findViewById(R.id.created_story_elements_add_element_action);
 
-        // TODO: check for valid arguments
         final String author = getArguments().getString(AUTHOR);
         final String storyId = getArguments().getString(STORY_ID);
 
@@ -113,7 +122,7 @@ public class CreatedStoryElementsFragment extends Fragment {
             mCallback = (OnCreatedStoryElementsInteractionListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
-                    + "must implement RegisterInteractionListener");
+                    + "must implement OnCreatedStoryElementsInteractionListener");
         }
     }
 

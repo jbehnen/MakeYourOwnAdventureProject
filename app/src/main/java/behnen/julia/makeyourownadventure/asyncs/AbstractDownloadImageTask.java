@@ -38,10 +38,7 @@ public abstract class AbstractDownloadImageTask extends AsyncTask<String, Void, 
                 InputStream is = new BufferedInputStream(urlObject.openStream());
                 bitmap = BitmapFactory.decodeStream(is);
 
-            } catch (Exception e) {
-//                Toast.makeText(getActivity(), "Unable to download the image, Reason: "
-//                        + e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
+            } catch (Exception e) {}
         }
         return bitmap;
     }

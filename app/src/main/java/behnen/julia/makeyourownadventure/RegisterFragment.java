@@ -122,7 +122,7 @@ public class RegisterFragment extends Fragment {
             focusView = mEmailEditText;
             cancel = true;
         } else if (!isUsernameValid(username)) {
-            mEmailEditText.setError(getString(R.string.error_invalid_username));
+            mUsernameEditText.setError(getString(R.string.error_invalid_username));
             focusView = mEmailEditText;
             cancel = true;
         }
@@ -197,6 +197,10 @@ public class RegisterFragment extends Fragment {
         return password.length() > 4;
     }
 
+    private void onSuccessfulRegistration() {
+        getFragmentManager().popBackStackImmediate();
+    }
+
     /**
      * Represents an asynchronous login task used to register the user.
      */
@@ -230,7 +234,7 @@ public class RegisterFragment extends Fragment {
                 if (status.equalsIgnoreCase("success")) {
                     Toast.makeText(getActivity(), "Success",
                             Toast.LENGTH_SHORT).show();
-                    getFragmentManager().popBackStackImmediate();
+                    onSuccessfulRegistration();
                 } else {
                     String reason = jsonObject.getString("error");
                     Toast.makeText(getActivity(), "Failed: " + reason,
@@ -238,7 +242,8 @@ public class RegisterFragment extends Fragment {
                 }
             } catch (Exception e) {
                 Log.d(TAG, "Parsing JSON Exception" + e.getMessage());
-                Toast.makeText(getActivity(), "Parsing JSON exception: " + s,
+                Toast.makeText(getActivity(),
+                        getActivity().getResources().getString(R.string.async_error),
                         Toast.LENGTH_SHORT).show();
             }
         }

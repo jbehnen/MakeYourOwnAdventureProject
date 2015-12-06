@@ -34,7 +34,7 @@ import behnen.julia.makeyourownadventure.model.StoryHeader;
  */
 public class MainActivity extends AppCompatActivity implements
         SignInFragment.OnSignInInteractionListener,
-        MainMenuFragment.MainMenuInteractionListener,
+        MainMenuFragment.OnMainMenuInteractionListener,
         BookmarkedStoriesFragment.OnBookmarkedStoriesInteractionListener,
         GetNewStoryFragment.OnGetNewStoryInteractionListener,
         StoryOverviewFragment.OnStoryOverviewInteractionListener,
@@ -44,8 +44,6 @@ public class MainActivity extends AppCompatActivity implements
         CreatedStoryOverviewFragment.OnCreatedStoryOverviewInteractionListener,
         CreatedStoryElementsFragment.OnCreatedStoryElementsInteractionListener,
         EditStoryElementFragment.OnEditStoryElementInteractionListener {
-
-    // TODO: fix lifecycle on fragments with editable fields/spinners
 
     private static final String TAG = "MainActivity";
 
@@ -164,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements
      *
      * @return True if the user was added successfully, false otherwise.
      */
-    private boolean addCurrentElement() {
+    private boolean addCurrentUser() {
         CurrentElementDB currentElementDB = new CurrentElementDB(this);
         String username = getCurrentUser();
         boolean wasAdded = currentElementDB.insertCurrentElement(username);
@@ -387,8 +385,7 @@ public class MainActivity extends AppCompatActivity implements
         editor.putBoolean(getString(R.string.LOGGEDIN), true);
         editor.commit();
 
-        addCurrentElement();
-        // TODO: make sure that sign-in/insert doesn't crash app
+        addCurrentUser();
 
         FragmentManager fm = getSupportFragmentManager();
         fm.beginTransaction()
@@ -492,13 +489,13 @@ public class MainActivity extends AppCompatActivity implements
     // StoryOverviewFragment callback methods
 
     @Override
-    public void onStoryOverviewFragmentPlayStory(String author, String storyId, String title) {
+    public void onStoryOverviewPlayStory(String author, String storyId, String title) {
         new StoryGetElementTask(title, false)
                 .execute(author, storyId, Integer.toString(StoryElement.START_ID));
     }
 
     @Override
-    public boolean onStoryOverviewFragmentDeleteStory(String author, String storyId) {
+    public boolean onStoryOverviewDeleteStory(String author, String storyId) {
         String[] currentStory = getCurrentStoryElement();
         // if active story is being deleted, clear it from user preferences
         if (currentStory[0].equals(author) && currentStory[1].equals(storyId)) {
@@ -567,6 +564,7 @@ public class MainActivity extends AppCompatActivity implements
         addCreatedStoryHeader(storyHeader);
         addCreatedStoryElement(new StoryElement(storyHeader.getAuthor(), storyHeader.getStoryId(),
                 StoryElement.START_ID));
+        getSupportFragmentManager().popBackStackImmediate();
     }
 
     // CreatedStoryOverviewFragment callback methods
@@ -719,7 +717,8 @@ public class MainActivity extends AppCompatActivity implements
             } catch (Exception e) {
                 Log.d(TAG, "Parsing JSON Exception: " + e.getMessage());
                 e.printStackTrace();
-                Toast.makeText(MainActivity.this, "Parsing JSON exception",
+                Toast.makeText(MainActivity.this,
+                        getResources().getString(R.string.async_error),
                         Toast.LENGTH_SHORT).show();
             }
         }

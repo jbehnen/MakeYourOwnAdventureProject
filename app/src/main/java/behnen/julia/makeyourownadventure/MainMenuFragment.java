@@ -40,7 +40,7 @@ public class MainMenuFragment extends Fragment {
     /**
      * The context which implements the interface methods.
      */
-    private MainMenuInteractionListener mCallback;
+    private OnMainMenuInteractionListener mCallback;
 
     /**
      * This interface must be implemented by activities that contain this
@@ -48,7 +48,7 @@ public class MainMenuFragment extends Fragment {
      * to the activity and potentially other fragments contained in that
      * activity.
      */
-    public interface MainMenuInteractionListener {
+    public interface OnMainMenuInteractionListener {
 
         String[] onMainMenuResume();
 
@@ -183,10 +183,10 @@ public class MainMenuFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            mCallback = (MainMenuInteractionListener) context;
+            mCallback = (OnMainMenuInteractionListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
-                    + "must implement MainMenuInteractionListener");
+                    + "must implement OnMainMenuInteractionListener");
         }
     }
 
@@ -228,7 +228,8 @@ public class MainMenuFragment extends Fragment {
             } catch (Exception e) {
                 Log.d(TAG, "Parsing JSON Exception: " + e.getMessage());
                 e.printStackTrace();
-                Toast.makeText(getContext(), "Unable to load story",
+                Toast.makeText(getContext(),
+                        getActivity().getResources().getString(R.string.async_error),
                         Toast.LENGTH_SHORT).show();
             }
         }

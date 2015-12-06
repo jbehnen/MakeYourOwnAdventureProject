@@ -38,10 +38,12 @@ public class StoryHeaderAdapter extends ArrayAdapter<StoryHeader> {
         // Lookup view for data population
         TextView title = (TextView) convertView.findViewById(R.id.story_header_item_title);
         TextView author = (TextView) convertView.findViewById(R.id.story_header_item_author);
+        TextView storyId = (TextView) convertView.findViewById(R.id.story_header_item_storyId);
 
         // Populate the data into the template view using the data object
         title.setText(storyHeader.getTitle());
         author.setText(storyHeader.getAuthor());
+        storyId.setText(storyHeader.getStoryId());
 
         // Return the completed view to render on screen
         return convertView;

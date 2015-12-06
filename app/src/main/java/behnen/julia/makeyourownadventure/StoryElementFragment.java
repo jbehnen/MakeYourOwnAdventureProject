@@ -43,8 +43,18 @@ public class StoryElementFragment extends Fragment {
         void onStoryElementMainMenuAction();
     }
 
+    /**
+     * DO NOT USE. Only create the fragment using the given newInstance method.
+     */
+    public StoryElementFragment() {
+
+    }
+
     public static StoryElementFragment newInstance(StoryElement storyElement, String storyTitle,
                                                    boolean isOnline, boolean isActive) {
+        if (storyElement == null || storyTitle == null) {
+            throw new IllegalArgumentException();
+        }
         Bundle args = new Bundle();
         args.putString(STORY_ELEMENT, storyElement.toString());
         args.putString(STORY_TITLE, storyTitle);
@@ -63,7 +73,7 @@ public class StoryElementFragment extends Fragment {
             mCallback = (OnStoryElementInteractionListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
-                    + "must implement OnSignInInteractionListener");
+                    + "must implement OnStoryElementInteractionListener");
         }
     }
 
@@ -106,7 +116,6 @@ public class StoryElementFragment extends Fragment {
 
         mImage = (ImageView) v.findViewById(R.id.story_element_image);
 
-        // TODO: test for bundle arguments existing/not null
         StoryElement storyElement = StoryElement.parseJson(getArguments().getString(STORY_ELEMENT));
         mStoryTitle = getArguments().getString(STORY_TITLE);
         mIsOnline = getArguments().getBoolean(IS_ONLINE);

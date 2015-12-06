@@ -98,7 +98,7 @@ public class GetNewStoryFragment extends Fragment {
             mCallback = (OnGetNewStoryInteractionListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
-                    + "must implement OnSignInInteractionListener");
+                    + "must implement OnGetNewStoryInteractionListener");
         }
     }
 
@@ -106,6 +106,10 @@ public class GetNewStoryFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mCallback = null;
+    }
+
+    private void onSaveSuccess() {
+        getFragmentManager().popBackStackImmediate();
     }
 
     /**
@@ -147,11 +151,10 @@ public class GetNewStoryFragment extends Fragment {
                                 StoryHeader.parseJson(jsonObject.getString("storyHeader"));
                         boolean added = mCallback.onGetNewStoryAddStory(storyHeader);
                         if (added) {
-                            Toast.makeText(getActivity(), "Story bookmarked",
+                            Toast.makeText(getActivity(), "Story saved",
                                     Toast.LENGTH_SHORT).show();
-                            getFragmentManager().popBackStackImmediate();
+                            onSaveSuccess();
                         } else {
-                            // TODO: get error code and specify why (eg existing story)
                             Toast.makeText(getActivity(), "Story could not be saved",
                                     Toast.LENGTH_SHORT).show();
                         }
@@ -164,7 +167,8 @@ public class GetNewStoryFragment extends Fragment {
                 }
             } catch (Exception e) {
                 Log.d(TAG, "Parsing JSON Exception" + e.getMessage());
-                Toast.makeText(getActivity(), "Parsing JSON exception: " + s,
+                Toast.makeText(getActivity(),
+                        getActivity().getResources().getString(R.string.async_error),
                         Toast.LENGTH_SHORT).show();
                 mGetStoryButton.setEnabled(true);
             }

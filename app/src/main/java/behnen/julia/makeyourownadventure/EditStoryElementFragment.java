@@ -62,7 +62,17 @@ public class EditStoryElementFragment extends Fragment {
         List<StoryElement> onEditStoryElementGetAllElements(String author, String storyId);
     }
 
+    /**
+     * DO NOT USE. Only create the fragment using the given newInstance method.
+     */
+    public EditStoryElementFragment() {
+
+    }
+
     public static EditStoryElementFragment newInstance(StoryElement storyElement) {
+        if (storyElement == null) {
+            throw new IllegalArgumentException();
+        }
         Bundle args = new Bundle();
         args.putString(STORY_ELEMENT, storyElement.toString());
 
@@ -99,11 +109,9 @@ public class EditStoryElementFragment extends Fragment {
         View view = inflater.inflate(
                 R.layout.fragment_edit_story_element, container, false);
 
-        // TODO check valid arguments
         mStoryElement = StoryElement.parseJson(getArguments().getString(STORY_ELEMENT));
 
         // Image management
-        // TODO: handle image load failure
         mImage = (ImageView) view.findViewById(R.id.edit_story_element_image);
         new DownloadImageTask().execute(mStoryElement.getImageUrl());
 
@@ -121,8 +129,6 @@ public class EditStoryElementFragment extends Fragment {
         initializeSpinners(view);
         initializeButtons(view);
 
-        // TODO: toggle based on choice/not choice
-
         return view;
     }
 
@@ -133,7 +139,7 @@ public class EditStoryElementFragment extends Fragment {
             mCallback = (OnEditStoryElementInteractionListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
-                    + "must implement RegisterInteractionListener");
+                    + "must implement OnEditStoryElementInteractionListener");
         }
     }
 
@@ -182,8 +188,10 @@ public class EditStoryElementFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 new DownloadImageTask().execute((String) mImageUrl.getSelectedItem());
             }
+
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
         });
 
         if (mCallback != null) {
@@ -219,7 +227,11 @@ public class EditStoryElementFragment extends Fragment {
             public void onClick(View v) {
                 if (mCallback != null) {
                     boolean success = mCallback.onEditStoryElementSave(getCurrentStoryElement());
-                    getFragmentManager().popBackStackImmediate();
+                    if (success) {
+                        getFragmentManager().popBackStackImmediate();
+                    } else {
+                        Toast.makeText(getActivity(), "Save failed", Toast.LENGTH_SHORT);
+                    }
                 }
             }
         });
@@ -266,11 +278,8 @@ public class EditStoryElementFragment extends Fragment {
 
         String endingString = mChoiceEnding.getSelectedItem().toString();
         // TODO: ensure consistency using strings.xml
-        Log.d(TAG, "Ending string: " + endingString);
         boolean isEnding = endingString.equals("Ending");
-        Log.d(TAG, "isEnding: " + isEnding);
 
-        // TODO: implement IDs
         int choice1Id = mStoryElementList.get(
                 mChoice1Target.getSelectedItemPosition()).getElementId();
         int choice2Id = mStoryElementList.get(
@@ -320,18 +329,13 @@ public class EditStoryElementFragment extends Fragment {
      * @param elements Must be of nonzero size.
      */
     private void launchConflictingElementsDialog(List<Integer> elements) {
-        StringBuilder sb = new StringBuilder("Element cannot be deleted while it " +
-                "is referenced in element(s) " );
-        int listSize = elements.size();
+        StringBuilder sb = new StringBuilder(
+                getActivity().getResources().getString(R.string.conflicting_elements));
+        sb.append(" ");
         sb.append(elements.get(0));
-        for (int i = 1; i < listSize - 1; i++) {
-            sb.append(", " + elements.get(i));
-        }
-        if (listSize == 2) {
-            sb.append(" and " + elements.get(listSize - 1));
-        }
-        if (listSize > 2) {
-            sb.append(", and " + elements.get(listSize - 1));
+        for (int i = 1; i < elements.size(); i++) {
+            sb.append(", ");
+            sb.append(elements.get(i));
         }
         sb.append(".");
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());

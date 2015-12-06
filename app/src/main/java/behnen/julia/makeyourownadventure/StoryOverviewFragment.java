@@ -23,11 +23,21 @@ public class StoryOverviewFragment extends Fragment {
     private OnStoryOverviewInteractionListener mCallback;
 
     public interface OnStoryOverviewInteractionListener {
-        void onStoryOverviewFragmentPlayStory(String author, String storyId, String title);
-        boolean onStoryOverviewFragmentDeleteStory(String author, String storyId);
+        void onStoryOverviewPlayStory(String author, String storyId, String title);
+        boolean onStoryOverviewDeleteStory(String author, String storyId);
+    }
+
+    /**
+     * DO NOT USE. Only create the fragment using the given newInstance method.
+     */
+    public StoryOverviewFragment() {
+
     }
 
     public static StoryOverviewFragment newInstance(StoryHeader storyHeader) {
+        if (storyHeader == null) {
+            throw new IllegalArgumentException();
+        }
         Bundle args = new Bundle();
         args.putSerializable(ARG_STORY_HEADER, storyHeader.toString());
 
@@ -63,7 +73,6 @@ public class StoryOverviewFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_story_overview, container, false);
 
-        // TODO: ensure that this argument doesn't crash the code if emptyh
         final StoryHeader storyHeader =
                 StoryHeader.parseJson((String) getArguments().getSerializable(ARG_STORY_HEADER));
 
@@ -74,7 +83,7 @@ public class StoryOverviewFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (mCallback != null) {
-                    mCallback.onStoryOverviewFragmentPlayStory(storyHeader.getAuthor(),
+                    mCallback.onStoryOverviewPlayStory(storyHeader.getAuthor(),
                             storyHeader.getStoryId(), storyHeader.getTitle());
                 }
             }
@@ -86,7 +95,7 @@ public class StoryOverviewFragment extends Fragment {
             public void onClick(View v) {
                 if (mCallback != null) {
                     boolean deleted =
-                            mCallback.onStoryOverviewFragmentDeleteStory(
+                            mCallback.onStoryOverviewDeleteStory(
                                     storyHeader.getAuthor(), storyHeader.getStoryId());
                     if (deleted) {
                         getFragmentManager().popBackStackImmediate();
@@ -121,7 +130,7 @@ public class StoryOverviewFragment extends Fragment {
             mCallback = (OnStoryOverviewInteractionListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
-                    + "must implement RegisterInteractionListener");
+                    + "must implement OnStoryOverviewInteractionListener");
         }
     }
 

@@ -97,7 +97,7 @@ public class CreateEditStoriesFragment extends Fragment {
             mCallback = (OnCreateEditStoriesInteractionListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
-                    + "must implement RegisterInteractionListener");
+                    + "must implement OnCreateEditStoriesInteractionListener");
         }
     }
 

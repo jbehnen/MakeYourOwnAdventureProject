@@ -96,7 +96,7 @@ public class BookmarkedStoriesFragment extends Fragment {
             mCallback = (OnBookmarkedStoriesInteractionListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
-                    + "must implement RegisterInteractionListener");
+                    + "must implement OnBookmarkedStoriesInteractionListener");
         }
     }
 

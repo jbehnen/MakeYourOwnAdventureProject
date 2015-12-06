@@ -195,8 +195,9 @@ public class SignInFragment extends Fragment {
             } catch (Exception e) {
                 enableButtons(true);
                 Log.d(TAG, "Parsing JSON Exception" + e.getMessage());
-//                Toast.makeText(getActivity(), "Parsing JSON exception: " + s,
-//                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(),
+                        getActivity().getResources().getString(R.string.async_error),
+                        Toast.LENGTH_SHORT).show();
             }
         }
     }
