@@ -180,8 +180,6 @@ public class SignInFragment extends Fragment {
                 JSONObject jsonObject = new JSONObject(s);
                 String status = jsonObject.getString("result");
                 if (status.equalsIgnoreCase("success")) {
-                    Toast.makeText(getActivity(), "Success",
-                            Toast.LENGTH_SHORT).show();
                     enableButtons(true);
                     if (mCallback != null) {
                         mCallback.onSignInSignInAction(mUsernameEditText.getText().toString());
