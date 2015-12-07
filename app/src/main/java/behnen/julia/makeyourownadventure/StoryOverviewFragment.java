@@ -147,7 +147,7 @@ public class StoryOverviewFragment extends Fragment {
      * @param view The view being updated.
      * @param storyHeader The story header being displayed.
      */
-    private final void displayStoryInfo(View view, StoryHeader storyHeader) {
+    private void displayStoryInfo(View view, StoryHeader storyHeader) {
         if (storyHeader != null) {
             TextView author = (TextView) view.findViewById(R.id.story_overview_author);
             TextView storyId = (TextView) view.findViewById(R.id.story_overview_story_id);
