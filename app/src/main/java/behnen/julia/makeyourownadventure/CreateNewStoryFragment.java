@@ -195,9 +195,9 @@ public class CreateNewStoryFragment extends Fragment {
      */
     public class StoryRegisterTask extends AbstractPostAsyncTask<String, Void, String> {
 
-        String mStoryId;
-        String mTitle;
-        String mDescription;
+        private String mStoryId;
+        private String mTitle;
+        private String mDescription;
 
         public StoryRegisterTask(String storyId, String title, String description) {
             mStoryId = storyId;

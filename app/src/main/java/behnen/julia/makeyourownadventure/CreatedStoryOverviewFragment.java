@@ -48,16 +48,6 @@ public class CreatedStoryOverviewFragment extends Fragment {
      */
     private static final String DELETE_STORY_URL =
             "http://cssgate.insttech.washington.edu/~jbehnen/myoa/php/deleteStoryHeader.php";
-
-    /**
-     * The tag used to identify a header-editing request in dialog interactions.
-     */
-    private static final int REQUEST_HEADER = 0;
-    /**
-     * The tag used to identify a content-sharing request in dialog interactions.
-     */
-    private static final int REQUEST_CONTENT_SHARING = 1;
-
     /**
      * The URL for story header upload requests.
      */
@@ -68,6 +58,15 @@ public class CreatedStoryOverviewFragment extends Fragment {
      */
     private static final String UPLOAD_STORY_ELEMENT_URL =
             "http://cssgate.insttech.washington.edu/~jbehnen/myoa/php/uploadStoryElement.php";
+
+    /**
+     * The tag used to identify a header-editing request in dialog interactions.
+     */
+    private static final int REQUEST_HEADER = 0;
+    /**
+     * The tag used to identify a content-sharing request in dialog interactions.
+     */
+    private static final int REQUEST_CONTENT_SHARING = 1;
 
     /**
      * The story header being managed by this fragment.
@@ -550,9 +549,9 @@ public class CreatedStoryOverviewFragment extends Fragment {
      */
     public class StoryElementUploadTask extends AbstractPostAsyncTask<String, Void, String> {
 
-        String mAuthor;
-        String mStoryId;
-        int mElementId;
+        private String mAuthor;
+        private String mStoryId;
+        private int mElementId;
 
         /**
          * Starts the story element upload process.

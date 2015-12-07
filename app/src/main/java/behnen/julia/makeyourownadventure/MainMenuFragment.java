@@ -210,7 +210,7 @@ public class MainMenuFragment extends Fragment {
      * and displays it.
      * @param element The current story element.
      */
-    public void setStoryElement(StoryElement element) {
+  private void setStoryElement(StoryElement element) {
         mStoryElement = element;
         // download image
         new DownloadImageTask().execute(mStoryElement.getImageUrl());
